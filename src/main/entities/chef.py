@@ -6,5 +6,5 @@ class Chef:
 
         self.id = None # integer
         self.name = None # string
-        self.chef_ability = None # string
+        self.chef_skills = None # string
 
