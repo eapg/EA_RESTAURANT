@@ -11,9 +11,10 @@
 * Inventory Ingredient Entity - This entity will be used to store the Ingredients and its quantity
 * Inventory Entity - This entity will store all the items and their quantities
 * Order details Entity - This entity will store all the details of the order .
+* Order entity - This order will be used to process the client order.
 
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/order-detail-entity/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/order-entity/UML_Diagram.png?raw=true)
 
