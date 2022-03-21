@@ -6,8 +6,9 @@
 
 ### ENTITIES:
 
-* Product Entity
+* Product Entity - This entity will be used to create products like pizza, hamburgers, pasta and beverages.
+* Ingredient Entity - This entity will be used to create ingredients to make the products of the restaurant.
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/product-entity/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/ingredient-entity/UML_Diagram.png?raw=true)

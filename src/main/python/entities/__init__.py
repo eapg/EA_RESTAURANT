@@ -1,1 +1,1 @@
-__all__ = ['product']
+__all__ = ['product', 'ingredient']
