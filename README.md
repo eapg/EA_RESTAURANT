@@ -12,9 +12,10 @@
 * Inventory Entity - This entity will store all the items and their quantities
 * Order details Entity - This entity will store all the details of the order .
 * Order entity - This order will be used to process the client order.
+* Chef entity - This entity will be used to create the different chefs who will work in the restaurant.
 
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/order-entity/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/chef-entity/UML_Diagram.png?raw=true)
 
