@@ -14,8 +14,12 @@
 * Order entity - This order will be used to process the client order.
 * Chef entity - This entity will be used to create the different chefs who will work in the restaurant.
 
+### Repositories:
+
+* Generic Repository - This repository will be used as an interface to expose generic methods that could be used by
+  the developer in order to implement generic operation over a given entity.
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/chef-entity/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/generic-repository/UML_Diagram.png?raw=true)
 
