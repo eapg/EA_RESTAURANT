@@ -19,9 +19,11 @@
 * Generic Repository - This repository will be used as an interface to expose generic methods that could be used by
   the developer in order to implement generic operation over a given entity.
 * Product Repository - This repository will be used to implement operations to manages products entities.
+* Item Repository - This repository will be used to implement operations to manages items entities
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/product-repository/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/item-repository/UML_Diagram.png?raw=true)
+
 
 
