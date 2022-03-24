@@ -25,7 +25,7 @@
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-repository/UML_Diagram.png?raw=true?style=centerme)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-repository/UML_Diagram.png?raw=true#center)
 
 
 
