@@ -22,10 +22,11 @@
 * Item Repository - This repository will be used to implement operations to manages items entities
 * Inventory Item Repository - This repository will be used to implement operations to manages inventory items entities.
 * Inventory Repository - This repository will be used to implement operations to manages inventory entities
+* Order Repository - This repository will be used to implement operations to manages order entities
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-repository/UML_Diagram.png?raw=true#center)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/order-repository/UML_Diagram.png?raw=true)
 
 
 
