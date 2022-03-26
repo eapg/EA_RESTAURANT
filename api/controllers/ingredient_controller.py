@@ -1,5 +1,4 @@
 class IngredientController:
-
     def __init__(self, ingredient_repository):
         self._ingredient_repository = ingredient_repository  # IngredientRepository
 

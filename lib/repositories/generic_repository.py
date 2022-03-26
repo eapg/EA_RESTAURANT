@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 
 
 class GenericRepository(ABC):
-
     @abstractmethod
     def add(self, obj):
         pass
@@ -24,4 +23,3 @@ class GenericRepository(ABC):
     @abstractmethod
     def update_by_id(self, obj_id, obj):
         pass
-

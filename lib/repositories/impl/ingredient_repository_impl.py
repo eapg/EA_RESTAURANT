@@ -4,7 +4,6 @@ from lib.repositories.ingredient_repository import IngredientRepository
 
 
 class IngredientRepositoryImpl(IngredientRepository):
-
     def __init__(self):
 
         self._ingredients = {}
@@ -27,6 +26,6 @@ class IngredientRepositoryImpl(IngredientRepository):
     def update_by_id(self, ingredient_id, ingredient):
         current_ingredient = self.get_by_id(ingredient_id)
         current_ingredient.name = ingredient.name or current_ingredient.name
-        current_ingredient.description = ingredient.description or current_ingredient.description
-
-
+        current_ingredient.description = (
+            ingredient.description or current_ingredient.description
+        )

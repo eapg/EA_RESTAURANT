@@ -4,7 +4,6 @@ from lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
-
     def __init__(self):
         self._products = {}
         self._current_id = 0
@@ -24,4 +23,4 @@ class ProductRepositoryImpl(ProductRepository):
         self._products.pop(product_id)
 
     def update_by_id(self, obj_id, obj):
-        pass # pending for the future
+        pass  # pending for the future

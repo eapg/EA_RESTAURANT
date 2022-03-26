@@ -1,12 +1,12 @@
 import unittest
 
-from tests.utils.fixtures.ingredient_fixture import build_ingredient
-from tests.utils.fixtures.ingredient_fixture import build_ingredients
-from lib.repositories.impl.ingredient_repository_impl import IngredientRepositoryImpl
+from lib.repositories.impl.ingredient_repository_impl import \
+    IngredientRepositoryImpl
+from tests.utils.fixtures.ingredient_fixture import (build_ingredient,
+                                                     build_ingredients)
 
 
 class IngredientRepositoryImplTestCase(unittest.TestCase):
-
     def test_add_ingredient_successfully(self):
         ingredient = build_ingredient()
         ingredient_repository = IngredientRepositoryImpl()
@@ -52,8 +52,16 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
 
         ingredients = ingredient_repository.get_all()
 
-        self.assertEqual(ingredients, [ingredients_to_insert[0], ingredients_to_insert[1], ingredients_to_insert[2],
-                                       ingredients_to_insert[3], ingredients_to_insert[4]])
+        self.assertEqual(
+            ingredients,
+            [
+                ingredients_to_insert[0],
+                ingredients_to_insert[1],
+                ingredients_to_insert[2],
+                ingredients_to_insert[3],
+                ingredients_to_insert[4],
+            ],
+        )
 
     def test_get_all_ingredients_empty_successfully(self):
         ingredient_repository = IngredientRepositoryImpl()
@@ -75,7 +83,9 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
 
         ingredients = ingredient_repository.get_all()
 
-        self.assertEqual(ingredients, [ingredients_to_insert[0], ingredients_to_insert[2]])
+        self.assertEqual(
+            ingredients, [ingredients_to_insert[0], ingredients_to_insert[2]]
+        )
 
     def test_delete_throws_key_error_when_there_are_no_ingredients(self):
         ingredient_repository = IngredientRepositoryImpl()
@@ -90,7 +100,7 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
         ingredient_repository.add(ingredients_to_insert[0])
         ingredient_repository.add(ingredients_to_insert[1])
 
-        ingredient_to_update = build_ingredient(name='updated-name')
+        ingredient_to_update = build_ingredient(name="updated-name")
 
         ingredient_repository.update_by_id(2, ingredient_to_update)
         updated_ingredient = ingredient_repository.get_by_id(2)

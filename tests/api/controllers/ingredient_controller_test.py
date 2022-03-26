@@ -1,13 +1,12 @@
 import unittest
 from unittest import mock
 
-from tests.utils.fixtures.ingredient_fixture import build_ingredient
-from tests.utils.fixtures.ingredient_fixture import build_ingredients
 from api.controllers.ingredient_controller import IngredientController
+from tests.utils.fixtures.ingredient_fixture import (build_ingredient,
+                                                     build_ingredients)
 
 
 class IngredientRepositoryControllerTestCase(unittest.TestCase):
-
     def setUp(self):
         self.ingredient_repository = mock.Mock()
         self.ingredient_controller = IngredientController(self.ingredient_repository)

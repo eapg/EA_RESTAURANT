@@ -16,15 +16,14 @@
 
 ### Repositories:
 
-* Generic Repository - This repository will be used as an interface to expose generic methods that could be used by
-  the developer in order to implement generic operation over a given entity.
+* Generic Repository - This repository will be used as an interface to expose generic methods that could be used by the
+  developer in order to implement generic operation over a given entity.
 * Product Repository - This repository will be used to implement operations to manages products entities.
 * Item Repository - This repository will be used to implement operations to manages items entities
 
 UML Diagram:
 
 ![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/item-repository/UML_Diagram.png?raw=true)
-
 
 ## Project Setup
 
@@ -38,9 +37,22 @@ Download and install the following tools:
 
 * Open `miniconda3`.
 * Go to the project path
-* Run `conda create --prefix=.venv`
+* Run `conda create --prefix=.venv python=3.10.0`
 
 ### Running tests
 
-This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing.
-To run tests just run `python -m unittest discover --pattern=*_test.py`
+This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
+run `python -m unittest discover --pattern=*_test.py`
+
+### Linter and Formatter
+
+This project is using:
+
+* [black](https://pypi.org/project/black/)
+* [isort](https://pypi.org/project/isort/)
+
+Commands:
+
+* Format: `black .`
+* Sort imports: `isort .`
+* Lint file: `pylint [path-to-file.py]`
