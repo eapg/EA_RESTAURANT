@@ -3,7 +3,7 @@
 from lib.repositories.generic_repository import GenericRepository
 
 
-class ItemRepository(GenericRepository):
+class IngredientRepository(GenericRepository):
 
     def __init__(self):
         self.__items = {}
