@@ -1,9 +1,9 @@
 # This file has the product repository
 
-from src.main.repositories.generic_repository import GeneralRepository
+from lib.repositories.generic_repository import GenericRepository
 
 
-class ProductRepository(GeneralRepository):
+class ProductRepository(GenericRepository):
 
     def __init__(self):
         self.__products = {}

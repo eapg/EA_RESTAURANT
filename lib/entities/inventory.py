@@ -5,5 +5,5 @@ class Inventory:
     def __init__(self):
 
         self.id = None # integer
-        self.inventory_item_list = {} # dictionary
+        self.inventory_ingredients = [] # list
 
