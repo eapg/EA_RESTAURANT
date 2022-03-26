@@ -24,11 +24,12 @@
 * Inventory Repository - This repository will be used to implement operations to manages inventory entities
 * Order Repository - This repository will be used to implement operations to manages order entities
 * Order Detail Repository - This repository will be used to implement operations to manages order details entities
+* Chef Repository - This repository will be used to implement operations to manages chef entities.
 
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/order-detail-repository/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/chef-repository/UML_Diagram.png?raw=true)
 
 
 
