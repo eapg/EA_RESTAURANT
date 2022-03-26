@@ -1,6 +1,6 @@
 # This file has the item repository
 
-from src.main.repositories.generic_repository import GenericRepository
+from lib.repositories.generic_repository import GenericRepository
 
 
 class ItemRepository(GenericRepository):

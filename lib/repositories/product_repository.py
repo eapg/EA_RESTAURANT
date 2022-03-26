@@ -1,6 +1,6 @@
 # This file has the product repository
 
-from src.main.repositories.generic_repository import GenericRepository
+from lib.repositories.generic_repository import GenericRepository
 
 
 class ProductRepository(GenericRepository):
