@@ -38,4 +38,9 @@ Download and install the following tools:
 
 * Open `miniconda3`.
 * Go to the project path
-* Run `conda create --name .venv`
+* Run `conda create --prefix=.venv`
+
+### Running tests
+
+This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing.
+To run tests just run `python -m unittest discover --pattern=*_test.py`
