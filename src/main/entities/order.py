@@ -5,5 +5,5 @@ class Order:
     def __init__(self):
 
         self.id = None # integer
-        self.order_details = None # object
+        self.order_details = None # list
 

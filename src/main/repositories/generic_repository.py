@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 
 
-class GeneralRepository(ABC):
+class GenericRepository(ABC):
 
     @abstractmethod
     def add(self, obj):

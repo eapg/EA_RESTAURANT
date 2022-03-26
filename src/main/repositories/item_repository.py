@@ -1,9 +1,9 @@
 # This file has the item repository
 
-from src.main.repositories.generic_repository import GeneralRepository
+from src.main.repositories.generic_repository import GenericRepository
 
 
-class ItemRepository(GeneralRepository):
+class ItemRepository(GenericRepository):
 
     def __init__(self):
         self.__items = {}
