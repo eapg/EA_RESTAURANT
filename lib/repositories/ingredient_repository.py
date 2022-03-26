@@ -26,5 +26,6 @@ class IngredientRepository(GenericRepository):
     def update_by_id(self, item_id, item):
         current_item = self.get_by_id(item_id)
         current_item.name = item.name
+        current_item.description = item.description
 
 

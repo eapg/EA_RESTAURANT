@@ -6,3 +6,4 @@ class Ingredient:
 
         self.id = None # integer
         self.name = None # string
+        self.description = None # string
