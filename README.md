@@ -26,4 +26,16 @@ UML Diagram:
 ![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/item-repository/UML_Diagram.png?raw=true)
 
 
+## Project Setup
 
+Download and install the following tools:
+
+* [Python 3](https://www.python.org/downloads/)
+* [PyCharm](https://www.jetbrains.com/pycharm/)
+* [MiniConda](https://docs.conda.io/en/latest/miniconda.html)
+
+### Windows users
+
+* Open `miniconda3`.
+* Go to the project path
+* Run `conda create --name .venv`
