@@ -50,6 +50,7 @@ This project is using:
 
 * [black](https://pypi.org/project/black/)
 * [isort](https://pypi.org/project/isort/)
+* [pylint](https://pypi.org/project/pylint/)
 
 Commands:
 
