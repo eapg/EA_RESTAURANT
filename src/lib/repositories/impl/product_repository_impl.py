@@ -6,7 +6,7 @@ from src.lib.repositories.product_repository import ProductRepository
 class ProductRepositoryImpl(ProductRepository):
     def __init__(self):
         self._products = {}
-        self._current_id = 0
+        self._current_id = 1
 
     def add(self, product):
         product.id = self._current_id
@@ -17,7 +17,7 @@ class ProductRepositoryImpl(ProductRepository):
         return self._products[product_id]
 
     def get_all(self):
-        return self._products.values()
+        return list(self._products.values())
 
     def delete_by_id(self, product_id):
         self._products.pop(product_id)
