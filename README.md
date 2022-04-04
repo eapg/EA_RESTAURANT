@@ -22,10 +22,11 @@
 * Item Repository - This repository will be used to implement operations to manages items entities
 * Inventory Ingredient Repository - This repository will be used to implement operations to manages inventory 
   ingredients entities.
+* Inventory Repository - This repository will be used to implement operations to manages inventory entities.
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-ingredient-repository/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-repository/UML_Diagram.png?raw=true)
 
 ## Project Setup
 
