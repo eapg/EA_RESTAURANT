@@ -19,14 +19,22 @@
 * Generic Repository - This repository will be used as an interface to expose generic methods that could be used by the
   developer in order to implement generic operation over a given entity.
 * Product Repository - This repository will be used to implement operations to manages products entities.
-* Item Repository - This repository will be used to implement operations to manages items entities
+* Item Repository - This repository will be used to implement operations to manages items entities.
 * Inventory Ingredient Repository - This repository will be used to implement operations to manages inventory 
   ingredients entities.
 * Inventory Repository - This repository will be used to implement operations to manages inventory entities.
+* Order Repository - This repository will be used to implement operations to manages orders entities.
+* Order Detail Repository - This repository will be used to implement operations to manages orders detail entities.
+* Chef Repository - This repository will be used to implement operations to manages chef entities.
+
+### Controllers:
+
+* The controllers work as interface between users and repositories. they will respond to users events and 
+  make requests to repositories.
 
 UML Diagram:
 
-![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/inventory-repository/UML_Diagram.png?raw=true)
+![UML](https://github.com/eapg/EA_RESTAURANT/blob/feature/updating-readme-file/UML_Diagram.png?raw=true)
 
 ## Project Setup
 
