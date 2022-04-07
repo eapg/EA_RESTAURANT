@@ -7,6 +7,8 @@ class Order:
 
         self.id = None  # integer
         self.order_details = None  # list
+        self.status = None  # enum
+        self.assigned_chef = None  # object
 
     def __eq__(self, other):
         return equals(self, other)
