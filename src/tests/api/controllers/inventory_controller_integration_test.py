@@ -1,15 +1,11 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.inventory_controller import (
-    InventoryController,
-)
-from src.lib.repositories.impl.inventory_repository_impl import (
-    InventoryRepositoryImpl,
-)
+from src.api.controllers.inventory_controller import InventoryController
+from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
 from src.tests.utils.fixtures.inventory_fixture import (
-    build_inventory,
     build_inventories,
+    build_inventory,
 )
 
 

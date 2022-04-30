@@ -14,8 +14,6 @@ def build_product(product_id=None, name=None, description=None, ingredients=None
 
 def build_products(count=1):
     return [
-        build_product(
-            name=f"testing-product{n}", description=f"testing-description{n}"
-        )
+        build_product(name=f"testing-product{n}", description=f"testing-description{n}")
         for n in range(count)
     ]

@@ -1,13 +1,10 @@
 import unittest
 
-from src.lib.repositories.impl.inventory_repository_impl import (
-    InventoryRepositoryImpl,
-)
+from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
 from src.tests.utils.fixtures.inventory_fixture import (
-    build_inventory,
     build_inventories,
+    build_inventory,
 )
-
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredient,
 )

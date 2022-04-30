@@ -1,8 +1,8 @@
 import unittest
 
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
+from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 
 
 class OrderRepositoryImplTestCase(unittest.TestCase):
