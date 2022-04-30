@@ -1,8 +1,7 @@
 # This file has the inventory ingredient repository impl
 
-from src.lib.repositories.inventory_ingredient_repository import (
-    InventoryIngredientRepository,
-)
+from src.lib.repositories.inventory_ingredient_repository import \
+    InventoryIngredientRepository
 
 
 class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):

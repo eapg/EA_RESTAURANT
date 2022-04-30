@@ -2,7 +2,8 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.product_controller import ProductController
-from src.tests.utils.fixtures.product_fixture import build_product, build_products
+from src.tests.utils.fixtures.product_fixture import (build_product,
+                                                      build_products)
 
 
 class ProductRepositoryControllerTestCase(unittest.TestCase):

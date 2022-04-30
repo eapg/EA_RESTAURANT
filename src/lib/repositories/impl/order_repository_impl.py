@@ -25,4 +25,3 @@ class OrderRepositoryImpl(OrderRepository):
     def update_by_id(self, order_id, order):
         current_order = self.get_by_id(order_id)
         current_order.order_details = order.order_details or current_order.order_details
-

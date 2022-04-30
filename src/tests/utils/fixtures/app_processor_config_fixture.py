@@ -1,13 +1,17 @@
 from src.core.engine.app_processor_config import AppProcessorConfig
 
 
-def build_app_engine_config(
-    id=None, interval=None, on_start=None, on_destroy=None, on_execute=None
+def build_app_processor_config(
+    id=None,
+    interval=None,
+    on_start=None,
+    on_destroy=None,
+    before_execute=None,
+    after_execute=None,
 ):
-    app_engine_config = AppProcessorConfig()
-    app_engine_config.id = id or "test engine config"
-    app_engine_config.interval = interval or 5
-    app_engine_config.on_start = on_start
-    app_engine_config.on_destroy = on_destroy
-    app_engine_config.on_execute = on_execute
-    return app_engine_config
+    app_processor_config = AppProcessorConfig(id or "config_test", interval or 0.01)
+    app_processor_config.on_start = on_start
+    app_processor_config.on_destroy = on_destroy
+    app_processor_config.before_execute = before_execute
+    app_processor_config.after_execute = after_execute
+    return app_processor_config

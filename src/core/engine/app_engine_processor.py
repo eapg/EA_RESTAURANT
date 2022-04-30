@@ -8,19 +8,18 @@ from src.core.engine.processors.kitchen_simulator import KitchenSimulator
 
 class AppEngineProcessor:
     def __init__(self):
-        kitchen_simulator_config = AppProcessorConfig(
-            id="kitchen_simulator_test", interval=10
-        )
-        kitchen_simulator = KitchenSimulator(
-            app_processor_config=kitchen_simulator_config
-        )
+        kitchen_simulator_config = AppProcessorConfig("kitchen_simulator_test", 10)
+        kitchen_simulator = KitchenSimulator(kitchen_simulator_config)
         self.app_context = AppEngineProcessorContext(processors=[kitchen_simulator])
 
         kitchen_simulator.app_context = self.app_context
 
     # method to Start thread process
     def start(self):
-        [processor.start() for processor in self.app_context.processors]
+        if self.app_context.processors:
+            [processor.start() for processor in self.app_context.processors]
+        else:
+            raise "No processors found"
 
 
 # function to run the simulation of the AppEngineProcessor()

@@ -2,13 +2,8 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.chef_controller import ChefController
-from src.lib.repositories.impl.chef_repository_impl import (
-    ChefRepositoryImpl,
-)
-from src.tests.utils.fixtures.chef_fixture import (
-    build_chef,
-    build_chefs,
-)
+from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
+from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
 
 
 class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):

@@ -1,17 +1,27 @@
-from unittest.mock import patch
-from unittest import TestCase
+from unittest import TestCase, mock
+
 from src.core.engine.app_engine_processor import AppEngineProcessor
-from src.tests.utils.fixtures.kitchen_simulator_fixture import build_kitchen_simulator
 
 
 class AppEngineProcessorIntegrationTest(TestCase):
-
-    @patch(
-        "src.core.engine.app_engine_processor.KitchenSimulator.process",
-        return_value=build_kitchen_simulator(),
-    )
-    def test_process_run(self, mocked_kitchen_simulator_process):
-
+    def test_process_run(self):
         app_engine_processor = AppEngineProcessor()
+        kitchen_simulator = app_engine_processor.app_context.processors[0]
+        mocked_kitchen_simulator = mock.Mock(wraps=kitchen_simulator)
+        app_engine_processor.app_context.processors[0] = mocked_kitchen_simulator
+
+        def after_execute(_app_processor_config, _app_context):
+            kitchen_simulator.destroyed = True
+
+        kitchen_simulator.app_processor_config.after_execute = mock.Mock(
+            wraps=after_execute
+        )
+        kitchen_simulator.process = mock.Mock(wraps=kitchen_simulator.process)
+        kitchen_simulator.app_processor_config.interval = 0.01
+
         app_engine_processor.start()
-        mocked_kitchen_simulator_process.assert_called()
+        app_engine_processor.app_context.processors[0].join()
+
+        mocked_kitchen_simulator.start.assert_called_once()
+        kitchen_simulator.app_processor_config.after_execute.assert_called_once()
+        kitchen_simulator.process.assert_called_once()

@@ -1,8 +1,7 @@
 # structure for the ioc to have just one instance
 
-from src.core.decorators.singleton_decorator import singleton
-from src.lib.repositories.impl import *
 from src.api.controllers import *
+from src.lib.repositories.impl import *
 
 
 class Ioc:
