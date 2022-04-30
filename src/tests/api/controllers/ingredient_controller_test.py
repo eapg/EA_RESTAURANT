@@ -2,8 +2,10 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.ingredient_controller import IngredientController
-from src.tests.utils.fixtures.ingredient_fixture import (build_ingredient,
-                                                         build_ingredients)
+from src.tests.utils.fixtures.ingredient_fixture import (
+    build_ingredient,
+    build_ingredients,
+)
 
 
 class IngredientRepositoryControllerTestCase(unittest.TestCase):

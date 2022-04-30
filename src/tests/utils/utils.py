@@ -1,7 +1,9 @@
 import unittest
 
-from src.tests.utils.fixtures.ingredient_fixture import (build_ingredient,
-                                                         build_ingredients)
+from src.tests.utils.fixtures.ingredient_fixture import (
+    build_ingredient,
+    build_ingredients,
+)
 from src.utils.utils import equals
 
 
