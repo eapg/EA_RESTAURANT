@@ -16,3 +16,8 @@ class InventoryController:
 
     def update_by_id(self, inventory_id, inventory):
         self._inventory_repository.update_by_id(inventory_id, inventory)
+
+    def ingredient_availability(self, inventory_id, ingredient_id, availability):
+        return self._inventory_repository.inventory_ingredient_availability(
+            inventory_id, ingredient_id, availability
+        )

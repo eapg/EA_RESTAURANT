@@ -22,7 +22,8 @@ class Ioc:
         ] = inventory_ingredient_repository_impl.InventoryIngredientRepositoryImpl()
         self._instance_ioc[
             "inventory_repository"
-        ] = inventory_repository_impl.InventoryRepositoryImpl()
+        ] = inventory_repository_impl.InventoryRepositoryImpl(self._instance_ioc[
+            "inventory_ingredient_repository"])
         self._instance_ioc[
             "order_repository"
         ] = order_repository_impl.OrderRepositoryImpl()

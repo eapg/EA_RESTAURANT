@@ -1,6 +1,14 @@
 import unittest
 
 from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
+    InventoryIngredientRepositoryImpl,
+)
+from src.lib.repositories.impl.ingredient_repository_impl import (
+    IngredientRepositoryImpl,
+)
+
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import (
     build_inventories,
     build_inventory,
@@ -119,4 +127,33 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         self.assertEqual(
             updated_inventory.inventory_ingredients,
             inventory_to_update.inventory_ingredients,
+        )
+
+    def test_ingredient_availability(self):
+
+        # repositories
+        ingredient_repository = IngredientRepositoryImpl()
+        inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
+        inventory_repository = InventoryRepositoryImpl(inventory_ingredient_repository)
+
+        ingredient = build_ingredient(name="pizza")
+        ingredient_repository.add(ingredient)
+        ingredient_from_repository = ingredient_repository.get_by_id(1)
+
+        inventory_ingredient = build_inventory_ingredient(
+            ingredient=ingredient_from_repository, ingredient_quantity=50
+        )
+        inventory_ingredient_repository.add(inventory_ingredient)
+
+        inventory = build_inventory()
+        inventory.inventory_ingredients[
+            ingredient.id
+        ] = inventory_ingredient_repository.get_by_id(1)
+        inventory_repository.add(inventory)
+
+        self.assertTrue(
+            inventory_repository.inventory_ingredient_availability(1, 1, 45)
+        )
+        self.assertFalse(
+            inventory_repository.inventory_ingredient_availability(1, 1, 60)
         )

@@ -2,16 +2,29 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.inventory_controller import InventoryController
+from src.lib.repositories.impl.ingredient_repository_impl import (
+    IngredientRepositoryImpl,
+)
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
+    InventoryIngredientRepositoryImpl,
+)
 from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import (
     build_inventories,
     build_inventory,
+)
+from src.tests.utils.fixtures.inventory_ingredient_fixture import (
+    build_inventory_ingredient,
 )
 
 
 class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def setUp(self):
-        self.inventory_repository = mock.Mock(wraps=InventoryRepositoryImpl())
+        self.inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
+        self.inventory_repository = mock.Mock(
+            wraps=InventoryRepositoryImpl(self.inventory_ingredient_repository)
+        )
         self.inventory_controller = InventoryController(self.inventory_repository)
 
     def test_add_inventory_to_repository_using_controller(self):
@@ -119,4 +132,33 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         self.assertEqual(
             updated_inventory.inventory_ingredients,
             inventory_to_update.inventory_ingredients,
+        )
+
+    def test_check_ingredient_availability_from_repository_using_controller(self):
+
+        # repositories
+        ingredient_repository = IngredientRepositoryImpl()
+        inventory_repository = InventoryRepositoryImpl(
+            self.inventory_ingredient_repository
+        )
+
+        ingredient = build_ingredient(name="pizza")
+        ingredient_repository.add(ingredient)
+        ingredient_from_repository = ingredient_repository.get_by_id(1)
+
+        inventory_ingredient = build_inventory_ingredient(
+            ingredient=ingredient_from_repository, ingredient_quantity=50
+        )
+        self.inventory_ingredient_repository.add(inventory_ingredient)
+
+        inventory = build_inventory()
+        inventory.inventory_ingredients[
+            ingredient.id
+        ] = self.inventory_ingredient_repository.get_by_id(1)
+        inventory_repository.add(inventory)
+
+        self.inventory_controller.add(inventory)
+        self.inventory_controller.ingredient_availability(1, 1, 45)
+        self.inventory_repository.inventory_ingredient_availability.assert_called_with(
+            1, 1, 45
         )

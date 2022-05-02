@@ -52,3 +52,8 @@ class InventoryRepositoryControllerTestCase(unittest.TestCase):
         self.inventory_controller.update_by_id(1, inventory)
 
         self.inventory_repository.update_by_id.assert_called_with(1, inventory)
+
+    def test_check_ingredient_availability_successfully(self):
+
+        self.inventory_controller.ingredient_availability(1, 1, 20)
+        self.inventory_repository.inventory_ingredient_availability.assert_called_with(1, 1, 20)
