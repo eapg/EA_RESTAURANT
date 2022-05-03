@@ -1,11 +1,12 @@
 from src.lib.entities.ingredient import Ingredient
 
 
-def build_ingredient(ingredient_id=None, name=None, description=None):
+def build_ingredient(ingredient_id=None, name=None, description=None, ingredient_type=None):
     ingredient = Ingredient()
     ingredient.id = ingredient_id
     ingredient.name = name or "testing-ingredient"
     ingredient.description = description or "testing-description"
+    ingredient.ingredient_type = ingredient_type
 
     return ingredient
 

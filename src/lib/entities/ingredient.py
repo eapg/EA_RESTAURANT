@@ -8,6 +8,7 @@ class Ingredient:
         self.id = None  # integer
         self.name = None  # string
         self.description = None  # string
+        self.ingredient_type = None # string
 
     def __eq__(self, other):
         return equals(self, other)
