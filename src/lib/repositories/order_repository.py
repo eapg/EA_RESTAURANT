@@ -5,4 +5,6 @@ from src.lib.repositories.generic_repository import GenericRepository
 
 
 class OrderRepository(GenericRepository, metaclass=ABCMeta):
-    pass
+    @staticmethod
+    def get_orders_to_process():
+        pass
