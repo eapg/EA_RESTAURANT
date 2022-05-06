@@ -3,6 +3,7 @@ import unittest
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
+from src.constants.order_status import OrderStatus
 
 
 class OrderRepositoryImplTestCase(unittest.TestCase):
@@ -105,3 +106,16 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(orders), 2)
         self.assertEqual(updated_order.order_details, order_to_update.order_details)
+
+    def test_get_orders_to_process(self):
+        order_1 = build_order()
+        order_2 = build_order()
+        order_3 = build_order(status=OrderStatus.COMPLETED)
+
+        order_repository = OrderRepositoryImpl()
+        order_repository.add(order_1)
+        order_repository.add(order_2)
+        order_repository.add(order_3)
+
+        self.assertEqual(len(order_repository.get_orders_to_process()), 2)
+

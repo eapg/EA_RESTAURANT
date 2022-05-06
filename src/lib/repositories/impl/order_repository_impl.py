@@ -1,6 +1,7 @@
 # This file has the order repository
 
 from src.lib.repositories.order_repository import OrderRepository
+from src.constants.order_status import OrderStatus
 
 
 class OrderRepositoryImpl(OrderRepository):
@@ -25,3 +26,9 @@ class OrderRepositoryImpl(OrderRepository):
     def update_by_id(self, order_id, order):
         current_order = self.get_by_id(order_id)
         current_order.order_details = order.order_details or current_order.order_details
+
+    def get_orders_to_process(self):
+        orders = self.get_all()
+
+        orders_to_process = filter(lambda order: order.status == OrderStatus.NEW_ORDER, orders)
+        return list(orders_to_process)

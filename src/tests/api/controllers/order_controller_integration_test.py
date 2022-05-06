@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+from src.constants.order_status import OrderStatus
 
 from src.api.controllers.order_controller import OrderController
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
@@ -110,3 +111,17 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
         self.assertEqual(len(orders), 2)
         self.assertEqual(updated_order.order_details, order_to_update.order_details)
+
+    def test_get_orders_to_process_successfully(self):
+
+        order_1 = build_order()
+        order_2 = build_order()
+        order_3 = build_order(status=OrderStatus.COMPLETED)
+
+        self.order_controller.add(order_1)
+        self.order_controller.add(order_2)
+        self.order_controller.add(order_3)
+
+        orders_to_process = self.order_controller.get_orders_to_process()
+        self.order_repository.get_orders_to_process.assert_called()
+        self.assertEqual(orders_to_process, [order_1, order_2])

@@ -16,3 +16,6 @@ class OrderController:
 
     def update_by_id(self, order_id, order):
         self._order_repository.update_by_id(order_id, order)
+
+    def get_orders_to_process(self):
+        return self._order_repository.get_orders_to_process()
