@@ -1,11 +1,13 @@
 from src.lib.entities.order import Order
 
 
-def build_order(order_id=None, order_details=None):
+def build_order(order_id=None, order_details=None, order_status=None, assigned_chef=None):
 
     order = Order()
     order.id = order_id
-    order.ingredients = order_details or []
+    order.order_details = order_details or []
+    order.order_status = order_status
+    order.assigned_chef = assigned_chef
 
     return order
 
