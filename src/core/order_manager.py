@@ -13,7 +13,7 @@ class OrderManager:
         }
 
     def add_to_queue(self, order):
-        self._order_status_to_order_queue_map[order.order_status.value].put(order)
+        self._order_status_to_order_queue_map[order.status.value].put(order.id)
 
     def get_queue_from_status(self, order_status):
         return self._order_status_to_order_queue_map[order_status].get()
