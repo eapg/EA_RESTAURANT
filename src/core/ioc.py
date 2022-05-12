@@ -12,6 +12,9 @@ class Ioc:
 
     def _init_repositories(self):
         self._instance_ioc[
+            "product_ingredient_repository"
+        ] = product_ingredient_repository_impl.ProductIngredientRepositoryImpl()
+        self._instance_ioc[
             "product_repository"
         ] = product_repository_impl.ProductRepositoryImpl()
         self._instance_ioc[
@@ -27,6 +30,9 @@ class Ioc:
             "order_repository"
         ] = order_repository_impl.OrderRepositoryImpl()
         self._instance_ioc[
+            "order_detail_product_repository"
+        ] = order_detail_product_repository_impl.OrderDetailProductRepositoryImpl()
+        self._instance_ioc[
             "order_detail_repository"
         ] = order_detail_repository_impl.OrderDetailRepositoryImpl()
         self._instance_ioc[
@@ -34,6 +40,11 @@ class Ioc:
         ] = chef_repository_impl.ChefRepositoryImpl()
 
     def _init_controllers(self):
+        self._instance_ioc[
+            "product_ingredient_controller"
+        ] = product_ingredient_controller.ProductIngredientController(
+            self._instance_ioc["product_ingredient_repository"]
+        )
         self._instance_ioc["product_controller"] = product_controller.ProductController(
             self._instance_ioc["product_repository"]
         )
@@ -54,6 +65,11 @@ class Ioc:
         )
         self._instance_ioc["order_controller"] = order_controller.OrderController(
             self._instance_ioc["order_repository"]
+        )
+        self._instance_ioc[
+            "order_detail_product_controller"
+        ] = order_detail_product_controller.OrderDetailProductController(
+            self._instance_ioc["order_detail_product_repository"]
         )
         self._instance_ioc[
             "order_detail_controller"

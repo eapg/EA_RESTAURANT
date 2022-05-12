@@ -6,4 +6,6 @@ __all__ = [
     "order_controller",
     "order_detail_controller",
     "chef_controller",
+    "product_ingredient_controller",
+    "order_detail_product_controller"
 ]
