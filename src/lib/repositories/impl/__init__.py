@@ -6,4 +6,6 @@ __all__ = [
     "inventory_ingredient_repository_impl",
     "order_repository_impl",
     "order_detail_repository_impl",
+    "product_ingredient_repository_impl",
+    "order_detail_product_repository_impl"
 ]
