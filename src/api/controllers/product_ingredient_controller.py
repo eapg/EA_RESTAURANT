@@ -16,3 +16,6 @@ class ProductIngredientController:
 
     def update_by_id(self, product_ingredient_id, product_ingredient):
         self._product_ingredient_repository.update_by_id(product_ingredient_id, product_ingredient)
+
+    def get_product_ingredients_by_product(self, product):
+        return self._product_ingredient_repository.get_product_ingredients_by_product(product)
