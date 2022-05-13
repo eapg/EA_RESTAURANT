@@ -4,6 +4,8 @@ from unittest import mock
 from src.api.controllers.product_ingredient_controller import ProductIngredientController
 from src.lib.repositories.impl.product_ingredient_repository_impl import ProductIngredientRepositoryImpl
 from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient, build_product_ingredients
+from src.tests.utils.fixtures.product_fixture import build_product
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 
 
 class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
@@ -111,3 +113,23 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
 
         self.assertEqual(len(product_ingredients), 2)
         self.assertEqual(updated_product_ingredient.quantity, product_ingredient_to_update.quantity)
+
+    def test_get_product_ingredients_of_product_from_repository_using_controller(self):
+        ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
+        product_1 = build_product(product_id=1, name="test product")
+        product_ingredient_1 = build_product_ingredient(
+            ingredient=ingredient_1, product=product_1
+        )
+        product_ingredient_2 = build_product_ingredient()
+
+        self.product_ingredient_controller.add(product_ingredient_1)
+        self.product_ingredient_controller.add(product_ingredient_2)
+
+        product_ingredients_returned = (
+            self.product_ingredient_controller.get_product_ingredients_by_product(
+                product_1
+            )
+        )
+        self.product_ingredient_repository.get_product_ingredients_by_product.assert_called_with(
+            product_1
+        )
