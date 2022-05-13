@@ -8,7 +8,6 @@ class Product:
         self.id = None  # integer
         self.name = None  # string
         self.description = None  # string
-        self.product_ingredients = []  # list
 
     def __eq__(self, other):
         return equals(self, other)

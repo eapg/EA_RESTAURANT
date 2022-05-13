@@ -1,13 +1,12 @@
 from src.lib.entities.product import Product
 
 
-def build_product(product_id=None, name=None, description=None, ingredients=None):
+def build_product(product_id=None, name=None, description=None):
 
     product = Product()
     product.id = product_id
     product.name = name or "testing-product"
     product.description = description or "product-description"
-    product.ingredients = ingredients or []
 
     return product
 
