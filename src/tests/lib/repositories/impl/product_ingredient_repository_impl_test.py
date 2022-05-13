@@ -2,7 +2,8 @@ import unittest
 
 from src.lib.repositories.impl.product_ingredient_repository_impl import ProductIngredientRepositoryImpl
 from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient, build_product_ingredients
-
+from src.tests.utils.fixtures.product_fixture import build_product
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 
 class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
     def test_add_product_ingredient_successfully(self):
@@ -104,3 +105,15 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(product_ingredients), 2)
         self.assertEqual(updated_product_ingredient.quantity, product_ingredient_to_update.quantity)
+
+    def test_get_product_ingredients_by_product(self):
+        product_ingredient_repository = ProductIngredientRepositoryImpl()
+        ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
+        product_1 = build_product(product_id=1, name="test product")
+        product_ingredient_1 = build_product_ingredient(ingredient=ingredient_1, product=product_1)
+        product_ingredient_2 = build_product_ingredient()
+        product_ingredient_repository.add(product_ingredient_1)
+        product_ingredient_repository.add(product_ingredient_2)
+
+        product_ingredient_returned = product_ingredient_repository.get_product_ingredients_of_product(product_1)
+        self.assertEqual(product_ingredient_1, product_ingredient_returned[0])
