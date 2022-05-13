@@ -20,3 +20,8 @@ class OrderDetailProductController:
         self._order_detail_product_repository.update_by_id(
             order_detail_product_id, order_detail_product
         )
+
+    def get_by_order_detail_id(self, order_detail):
+        return self._order_detail_product_repository.get_by_order_detail_id(
+            order_detail
+        )

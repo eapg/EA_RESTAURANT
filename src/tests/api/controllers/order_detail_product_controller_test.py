@@ -1,10 +1,14 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.order_detail_product_controller import \
-    OrderDetailProductController
+from src.api.controllers.order_detail_product_controller import (
+    OrderDetailProductController,
+)
 from src.tests.utils.fixtures.order_detail_product_fixture import (
-    build_order_detail_product, build_order_detail_products)
+    build_order_detail_product,
+    build_order_detail_products,
+)
+from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 
 
 class OrderDetailProductRepositoryControllerTestCase(unittest.TestCase):
@@ -64,4 +68,18 @@ class OrderDetailProductRepositoryControllerTestCase(unittest.TestCase):
 
         self.order_detail_product_repository.update_by_id.assert_called_with(
             1, order_detail_product
+        )
+
+    def test_get_by_order_detail_id_successfully(self):
+        order_detail_product = build_order_detail_product()
+        order_detail_1 = build_order_detail()
+
+        self.order_detail_product_controller.add(order_detail_product)
+        order_detail_products_returned = (
+            self.order_detail_product_controller.get_by_order_detail_id(
+                order_detail_1
+            )
+        )
+        self.order_detail_product_repository.get_by_order_detail_id.assert_called_with(
+            order_detail_1
         )
