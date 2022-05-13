@@ -6,7 +6,6 @@ class OrderDetail:
     def __init__(self):
 
         self.id = None  # integer
-        self.order_detail_products = []  # list
 
     def __eq__(self, other):
         return equals(self, other)
