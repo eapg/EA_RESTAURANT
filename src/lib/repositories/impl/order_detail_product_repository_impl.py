@@ -36,3 +36,14 @@ class OrderDetailProductRepositoryImpl(OrderDetailProductRepository):
         current_order_detail_product.quantity = (
             order_detail_product.quantity or current_order_detail_product.quantity
         )
+
+    def get_by_order_detail_id(self, order_detail):
+        order_detail_products = self.get_all()
+        order_detail_products_by_order_detail = filter(
+            (
+                lambda order_detail_product: order_detail_product.order_detail.id
+                == order_detail.id
+            ),
+            order_detail_products,
+        )
+        return list(order_detail_products_by_order_detail)
