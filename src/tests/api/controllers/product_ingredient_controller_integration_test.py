@@ -114,7 +114,7 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         self.assertEqual(len(product_ingredients), 2)
         self.assertEqual(updated_product_ingredient.quantity, product_ingredient_to_update.quantity)
 
-    def test_get_product_ingredients_of_product_from_repository_using_controller(self):
+    def test_get_by_product_id_from_repository_using_controller(self):
         ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
         product_1 = build_product(product_id=1, name="test product")
         product_ingredient_1 = build_product_ingredient(
@@ -126,10 +126,10 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         self.product_ingredient_controller.add(product_ingredient_2)
 
         product_ingredients_returned = (
-            self.product_ingredient_controller.get_product_ingredients_by_product(
+            self.product_ingredient_controller.get_by_product_id(
                 product_1
             )
         )
-        self.product_ingredient_repository.get_product_ingredients_by_product.assert_called_with(
+        self.product_ingredient_repository.get_by_product_id.assert_called_with(
             product_1
         )

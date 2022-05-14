@@ -117,7 +117,7 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
             updated_product_ingredient.quantity, product_ingredient_to_update.quantity
         )
 
-    def test_get_product_ingredients_by_product(self):
+    def test_get_by_product_id_successfully(self):
         product_ingredient_repository = ProductIngredientRepositoryImpl()
         ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
         product_1 = build_product(product_id=1, name="test product")
@@ -129,6 +129,6 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
         product_ingredient_repository.add(product_ingredient_2)
 
         product_ingredient_returned = (
-            product_ingredient_repository.get_product_ingredients_by_product(product_1)
+            product_ingredient_repository.get_by_product_id(product_1)
         )
         self.assertEqual(product_ingredient_1, product_ingredient_returned[0])

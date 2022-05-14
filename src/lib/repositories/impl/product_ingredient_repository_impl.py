@@ -36,7 +36,7 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
             product_ingredient.quantity or current_product_ingredient.quantity
         )
 
-    def get_product_ingredients_by_product(self, product):
+    def get_by_product_id(self, product):
         product_ingredients = self.get_all()
         product_ingredients_of_product = filter(
             (lambda product_ingredient: product.id == product_ingredient.product.id),
