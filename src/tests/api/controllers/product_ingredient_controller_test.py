@@ -51,10 +51,10 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
 
         self.product_ingredient_repository.update_by_id.assert_called_with(1, product_ingredient)
 
-    def test_get_product_ingredients_by_product_successfully(self):
+    def test_get_by_product_id_successfully(self):
         product_ingredient = build_product_ingredient()
         product_1 = build_product()
 
         self.product_ingredient_controller.add(product_ingredient)
-        product_ingredient_returned = self.product_ingredient_controller.get_product_ingredients_by_product(product_1)
-        self.product_ingredient_repository.get_product_ingredients_by_product.assert_called_with(product_1)
+        product_ingredient_returned = self.product_ingredient_controller.get_by_product_id(product_1)
+        self.product_ingredient_repository.get_by_product_id.assert_called_with(product_1)
