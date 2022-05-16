@@ -20,3 +20,6 @@ class InventoryIngredientController:
         self._inventory_ingredient_repository.update_by_id(
             inventory_ingredient_id, inventory_ingredient
         )
+
+    def get_by_ingredient_id(self, ingredient):
+        return self._inventory_ingredient_repository.get_by_ingredient_id(ingredient)

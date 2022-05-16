@@ -8,6 +8,7 @@ from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredient,
     build_inventory_ingredients,
 )
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 
 
 class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
@@ -68,3 +69,9 @@ class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
         self.inventory_ingredient_repository.update_by_id.assert_called_with(
             1, inventory_ingredient
         )
+
+    def test_get_by_ingredient_id(self):
+        ingredient = build_ingredient()
+
+        self.inventory_ingredient_controller.get_by_ingredient_id(ingredient)
+        self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(ingredient)

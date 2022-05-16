@@ -1,16 +1,13 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.inventory_ingredient_controller import (
-    InventoryIngredientController,
-)
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
+from src.api.controllers.inventory_ingredient_controller import \
+    InventoryIngredientController
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
+    InventoryIngredientRepositoryImpl
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-)
+    build_inventory_ingredient, build_inventory_ingredients)
 
 
 class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
@@ -134,4 +131,21 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         self.assertEqual(
             updated_inventory_ingredient.ingredient_quantity,
             inventory_ingredient_to_update.ingredient_quantity,
+        )
+
+    def test_get_by_ingredient_id_from_repository_using_controller(self):
+        ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
+        inventory_ingredient_1 = build_inventory_ingredient(
+            ingredient=ingredient_1, ingredient_quantity=10
+        )
+        inventory_ingredient_2 = build_inventory_ingredient()
+
+        self.inventory_ingredient_controller.add(inventory_ingredient_1)
+        self.inventory_ingredient_controller.add(inventory_ingredient_2)
+
+        inventory_ingredient_returned = (
+            self.inventory_ingredient_controller.get_by_ingredient_id(ingredient_1)
+        )
+        self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
+            ingredient_1
         )
