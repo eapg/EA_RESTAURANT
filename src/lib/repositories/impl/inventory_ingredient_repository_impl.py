@@ -34,3 +34,14 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredient.ingredient_quantity
             or current_inventory_ingredient.ingredient_quantity
         )
+
+    def get_by_ingredient_id(self, ingredient):
+        inventory_ingredients = self.get_all()
+        inventory_ingredient_by_ingredient_id = filter(
+            (
+                lambda inventory_ingredient: inventory_ingredient.ingredient.id
+                == ingredient.id
+            ),
+            inventory_ingredients,
+        )
+        return list(inventory_ingredient_by_ingredient_id)
