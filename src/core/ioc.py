@@ -2,13 +2,18 @@
 
 from src.api.controllers import *
 from src.lib.repositories.impl import *
+from src.core import order_manager
 
 
 class Ioc:
     def __init__(self):
         self._instance_ioc = {}
+        self._init_order_manager()
         self._init_repositories()
         self._init_controllers()
+
+    def _init_order_manager(self):
+        self._instance_ioc["order_manager"] = order_manager.OrderManager()
 
     def _init_repositories(self):
         self._instance_ioc[
