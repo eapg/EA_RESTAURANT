@@ -7,6 +7,7 @@ class InventoryIngredient:
 
         self.id = None  # integer
         self.ingredient = None  # object
+        self.inventory = None # object
         self.ingredient_quantity = None  # integer
 
     def __eq__(self, other):
