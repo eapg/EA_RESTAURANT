@@ -4,11 +4,12 @@ from unittest import mock
 from src.api.controllers.inventory_ingredient_controller import (
     InventoryIngredientController,
 )
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
+from src.tests.utils.fixtures.inventory_fixture import build_inventory
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredient,
     build_inventory_ingredients,
 )
-from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 
 
 class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
@@ -74,4 +75,17 @@ class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
         ingredient = build_ingredient()
 
         self.inventory_ingredient_controller.get_by_ingredient_id(ingredient)
-        self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(ingredient)
+        self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
+            ingredient
+        )
+
+    def test_validate_ingredient_availability_successfully(self):
+        ingredient = build_ingredient()
+        inventory = build_inventory()
+        quantity_to_use = 10
+        self.inventory_ingredient_controller.validate_ingredient_availability(
+            inventory.id, ingredient.id, quantity_to_use
+        )
+        self.inventory_ingredient_repository.validate_ingredient_availability.assert_called_with(
+            inventory.id, ingredient.id, quantity_to_use
+        )
