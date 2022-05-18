@@ -32,3 +32,7 @@ class OrderRepositoryImpl(OrderRepository):
 
         orders_to_process = filter(lambda order: order.status == OrderStatus.NEW_ORDER, orders)
         return list(orders_to_process)
+
+    def update_order_status_by_id(self, order, new_order_status):
+        order_to_update = self.get_by_id(order.id)
+        order_to_update.status = new_order_status

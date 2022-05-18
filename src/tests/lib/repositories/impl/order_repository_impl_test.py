@@ -119,3 +119,11 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(order_repository.get_orders_to_process()), 2)
 
+    def test_update_order_status_by_id(self):
+        order_1 = build_order(status=OrderStatus.NEW_ORDER)
+        order_repository = OrderRepositoryImpl()
+        order_repository.add(order_1)
+        order_repository.update_order_status_by_id(order_1, OrderStatus.ORDER_PLACED)
+
+        order_with_status_updated = order_repository.get_by_id(order_1.id)
+        self.assertEqual(order_with_status_updated.status, OrderStatus.ORDER_PLACED)
