@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.order_controller import OrderController
+from src.constants.order_status import OrderStatus
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 
 
@@ -54,3 +55,8 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
 
         orders_to_process = self.order_controller.get_orders_to_process()
         self.order_repository.get_orders_to_process.assert_called()
+
+    def test_update_order_status_by_id_successfully(self):
+        order = build_order()
+        self.order_controller.update_order_status_by_id(order, OrderStatus.COMPLETED)
+        self.order_repository.update_order_status_by_id.assert_called_with(order, OrderStatus.COMPLETED)

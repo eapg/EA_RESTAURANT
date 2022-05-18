@@ -19,3 +19,6 @@ class OrderController:
 
     def get_orders_to_process(self):
         return self._order_repository.get_orders_to_process()
+
+    def update_order_status_by_id(self, order, new_order_status):
+        self._order_repository.update_order_status_by_id(order, new_order_status)

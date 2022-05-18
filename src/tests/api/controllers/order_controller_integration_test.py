@@ -125,3 +125,14 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         orders_to_process = self.order_controller.get_orders_to_process()
         self.order_repository.get_orders_to_process.assert_called()
         self.assertEqual(orders_to_process, [order_1, order_2])
+
+    def test_update_order_status_by_id(self):
+        order_1 = build_order(status=OrderStatus.NEW_ORDER)
+        self.order_controller.add(order_1)
+        self.order_controller.update_order_status_by_id(
+            order_1, OrderStatus.ORDER_PLACED
+        )
+
+        self.order_repository.update_order_status_by_id.assert_called_with(
+            order_1, OrderStatus.ORDER_PLACED
+        )
