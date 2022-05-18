@@ -41,3 +41,8 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         current_order_status_history.to_status = (
             order_status_history.to_status or current_order_status_history.to_status
         )
+
+    def get_by_order_id(self, order_id):
+        order_status_histories = self.get_all()
+        order_status_histories_by_order_id = filter((lambda order_status_history: order_status_history.order.id == order_id), order_status_histories)
+        return list(order_status_histories_by_order_id)
