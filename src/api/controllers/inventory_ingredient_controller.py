@@ -23,3 +23,8 @@ class InventoryIngredientController:
 
     def get_by_ingredient_id(self, ingredient):
         return self._inventory_ingredient_repository.get_by_ingredient_id(ingredient)
+
+    def validate_ingredient_availability(self, inventory_id, ingredient_id, quantity_to_use):
+        return self._inventory_ingredient_repository.validate_ingredient_availability(
+            inventory_id, ingredient_id, quantity_to_use
+        )
