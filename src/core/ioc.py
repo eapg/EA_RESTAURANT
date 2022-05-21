@@ -44,6 +44,10 @@ class Ioc:
             "chef_repository"
         ] = chef_repository_impl.ChefRepositoryImpl()
 
+        self._instance_ioc[
+            "order_status_history_repository"
+        ] = order_status_history_repository_impl.OrderStatusHistoryRepositoryImpl()
+
     def _init_controllers(self):
         self._instance_ioc[
             "product_ingredient_controller"
@@ -83,6 +87,11 @@ class Ioc:
         )
         self._instance_ioc["chef_controller"] = chef_controller.ChefController(
             self._instance_ioc["chef_repository"]
+        )
+        self._instance_ioc[
+            "order_status_history_controller"
+        ] = order_status_history_controller.OrderStatusHistoryController(
+            self._instance_ioc["order_status_history_repository"]
         )
 
     def get_instance(self, instance_id):
