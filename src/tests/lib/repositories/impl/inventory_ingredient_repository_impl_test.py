@@ -8,6 +8,7 @@ from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredients,
 )
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
+from src.tests.utils.fixtures.inventory_fixture import build_inventory
 
 
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
@@ -134,3 +135,23 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
             inventory_ingredient_repository.get_by_ingredient_id(ingredient_1)
         )
         self.assertEqual(inventory_ingredient_returned[0], inventory_ingredient_1)
+
+    def test_validate_ingredient_availability(self):
+        inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
+        inventory_1 = build_inventory(inventory_id=1)
+        ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
+
+        inventory_ingredient_1 = build_inventory_ingredient(
+            ingredient=ingredient_1, inventory=inventory_1, ingredient_quantity=10
+        )
+        inventory_ingredient_repository.add(inventory_ingredient_1)
+        self.assertTrue(
+            inventory_ingredient_repository.validate_ingredient_availability(
+                inventory_1.id, ingredient_1.id, 5
+            )
+        )
+        self.assertFalse(
+            inventory_ingredient_repository.validate_ingredient_availability(
+                inventory_1.id, ingredient_1.id, 15
+            )
+        )

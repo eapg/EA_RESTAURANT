@@ -45,3 +45,22 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredients,
         )
         return list(inventory_ingredient_by_ingredient_id)
+
+    def validate_ingredient_availability(
+        self, inventory_id, ingredient_id, quantity_to_use
+    ):
+
+        inventory_ingredients = self.get_all()
+        ingredient_to_validate = list(
+            filter(
+                (
+                    lambda inventory_ingredient: inventory_ingredient.ingredient.id
+                    == ingredient_id
+                    and inventory_ingredient.inventory.id == inventory_id
+                ),
+                inventory_ingredients,
+            )
+        )
+        if ingredient_to_validate[0].ingredient_quantity > quantity_to_use:
+            return True
+        return False
