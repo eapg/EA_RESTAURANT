@@ -9,3 +9,10 @@ class OrderStatusHistoryRepository(GenericRepository, metaclass=ABCMeta):
     def get_by_order_id(self, order_id):
         pass
 
+    @abstractmethod
+    def get_last_status_history_by_order_id(self, order_id):
+        pass
+
+    @abstractmethod
+    def set_next_status_history_by_order_id(self, order_id, new_status):
+        pass
