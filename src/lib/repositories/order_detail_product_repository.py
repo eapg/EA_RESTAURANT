@@ -6,5 +6,5 @@ from src.lib.repositories.generic_repository import GenericRepository
 
 class OrderDetailProductRepository(GenericRepository, metaclass=ABCMeta):
     @abstractmethod
-    def get_by_order_detail_id(self, order_detail):
+    def get_by_order_detail_id(self, order_detail_id):
         pass

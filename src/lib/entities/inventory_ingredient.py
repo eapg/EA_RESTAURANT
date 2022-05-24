@@ -6,8 +6,8 @@ class InventoryIngredient:
     def __init__(self):
 
         self.id = None  # integer
-        self.ingredient = None  # object
-        self.inventory = None # object
+        self.ingredient_id = None  # integer
+        self.inventory_id = None  # integer
         self.ingredient_quantity = None  # integer
         self.entity_status = None  # enum
         self.create_date = None  # date

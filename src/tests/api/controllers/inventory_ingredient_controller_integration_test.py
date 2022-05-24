@@ -141,7 +141,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
     def test_get_by_ingredient_id_from_repository_using_controller(self):
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient=ingredient_1, ingredient_quantity=10
+            ingredient_id=ingredient_1.id, ingredient_quantity=10
         )
         inventory_ingredient_2 = build_inventory_ingredient()
 
@@ -161,7 +161,9 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
 
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient=ingredient_1, inventory=inventory_1, ingredient_quantity=10
+            ingredient_id=ingredient_1.id,
+            inventory_id=inventory_1.id,
+            ingredient_quantity=10,
         )
         self.inventory_ingredient_controller.add(inventory_ingredient_1)
         self.inventory_ingredient_controller.validate_ingredient_availability(

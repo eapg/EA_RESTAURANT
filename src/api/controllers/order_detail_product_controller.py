@@ -21,7 +21,7 @@ class OrderDetailProductController:
             order_detail_product_id, order_detail_product
         )
 
-    def get_by_order_detail_id(self, order_detail):
+    def get_by_order_detail_id(self, order_detail_id):
         return self._order_detail_product_repository.get_by_order_detail_id(
-            order_detail
+            order_detail_id
         )
