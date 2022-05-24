@@ -4,6 +4,7 @@ from unittest import mock
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
+from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
 )
@@ -16,9 +17,11 @@ from src.tests.utils.fixtures.order_status_history_fixture import (
 
 class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def setUp(self):
+
         self.order_status_history_repository = mock.Mock(
             wraps=OrderStatusHistoryRepositoryImpl()
         )
+
         self.order_status_history_controller = OrderStatusHistoryController(
             self.order_status_history_repository
         )
@@ -117,9 +120,7 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
         self.order_status_history_controller.add(order_status_histories_to_insert[0])
         self.order_status_history_controller.add(order_status_histories_to_insert[1])
 
-        order_status_history_to_update = build_order_status_history(
-            order=build_order(order_id=10)
-        )
+        order_status_history_to_update = build_order_status_history(order_id=10)
 
         self.order_status_history_controller.update_by_id(
             2, order_status_history_to_update
@@ -133,12 +134,13 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
 
         self.assertEqual(len(order_status_histories), 2)
         self.assertEqual(
-            updated_order_status_history.order, order_status_history_to_update.order
+            updated_order_status_history.order_id,
+            order_status_history_to_update.order_id,
         )
 
     def test_get_by_order_id_from_repository_using_controller(self):
         order_1 = build_order(order_id=1)
-        order_status_history_1 = build_order_status_history(order=order_1)
+        order_status_history_1 = build_order_status_history(order_id=order_1.id)
         order_status_history_2 = build_order_status_history()
         self.order_status_history_controller.add(order_status_history_1)
         self.order_status_history_controller.add(order_status_history_2)
@@ -148,4 +150,15 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
         )
         self.order_status_history_repository.get_by_order_id.assert_called_with(
             order_1.id
+        )
+
+    def test_set_next_status_history_by_order_id_from_repository_using_controller(self):
+
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        self.order_status_history_controller.set_next_status_history_by_order_id(
+            order_1.id, order_1.status
+        )
+
+        self.order_status_history_repository.set_next_status_history_by_order_id.assert_called_with(
+            order_1.id, order_1.status
         )
