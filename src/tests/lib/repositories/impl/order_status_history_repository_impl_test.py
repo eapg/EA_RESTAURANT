@@ -1,5 +1,6 @@
 import unittest
-
+from unittest import mock
+from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
 )
@@ -105,9 +106,7 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
         order_status_history_repository.add(order_status_histories_to_insert[0])
         order_status_history_repository.add(order_status_histories_to_insert[1])
 
-        order_status_history_to_update = build_order_status_history(
-            order=build_order(order_id=10)
-        )
+        order_status_history_to_update = build_order_status_history(order_id=5)
 
         order_status_history_repository.update_by_id(2, order_status_history_to_update)
         updated_order_status_history = order_status_history_repository.get_by_id(2)
@@ -115,13 +114,14 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(order_status_histories), 2)
         self.assertEqual(
-            updated_order_status_history.order, order_status_history_to_update.order
+            updated_order_status_history.order_id,
+            order_status_history_to_update.order_id,
         )
 
     def test_get_by_order_id_successfully(self):
         order_status_history_repository = OrderStatusHistoryRepositoryImpl()
         order_1 = build_order(order_id=1)
-        order_status_history_1 = build_order_status_history(order=order_1)
+        order_status_history_1 = build_order_status_history(order_id=order_1.id)
         order_status_history_2 = build_order_status_history()
         order_status_history_repository.add(order_status_history_1)
         order_status_history_repository.add(order_status_history_2)
@@ -130,3 +130,27 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
             order_status_history_repository.get_by_order_id(order_1.id)
         )
         self.assertEqual(order_status_histories_returned[0], order_status_history_1)
+
+    def test_set_next_status_history_by_order_id(self):
+        order_status_history_repository = OrderStatusHistoryRepositoryImpl()
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_status_history_repository.get_last_status_history_by_order_id = mock.Mock(
+            wraps=order_status_history_repository.get_last_status_history_by_order_id
+        )
+        order_status_history_repository.set_next_status_history_by_order_id(
+            order_1.id, order_1.status
+        )
+        order_1.status = OrderStatus.ORDER_PLACED
+        order_status_history_repository.set_next_status_history_by_order_id(
+            order_1.id, order_1.status
+        )
+        order_status_history_repository.get_last_status_history_by_order_id.assert_called_with(
+            order_1.id
+        )
+        order_status_histories = order_status_history_repository.get_all()
+        self.assertEqual(
+            order_status_histories[0].to_time, order_status_histories[1].from_time
+        )
+        self.assertEqual(
+            order_status_histories[0].to_status, order_status_histories[1].from_status
+        )
