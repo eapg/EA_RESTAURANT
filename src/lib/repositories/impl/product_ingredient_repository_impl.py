@@ -26,20 +26,20 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
 
     def update_by_id(self, product_ingredient_id, product_ingredient):
         current_product_ingredient = self.get_by_id(product_ingredient_id)
-        current_product_ingredient.product = (
-            product_ingredient.product or current_product_ingredient.product
+        current_product_ingredient.product_id = (
+            product_ingredient.product_id or current_product_ingredient.product_id
         )
-        current_product_ingredient.ingredient = (
-            product_ingredient.ingredient or current_product_ingredient.ingredient
+        current_product_ingredient.ingredient_id = (
+            product_ingredient.ingredient_id or current_product_ingredient.ingredient_id
         )
         current_product_ingredient.quantity = (
             product_ingredient.quantity or current_product_ingredient.quantity
         )
 
-    def get_by_product_id(self, product):
+    def get_by_product_id(self, product_id):
         product_ingredients = self.get_all()
         product_ingredients_of_product = filter(
-            (lambda product_ingredient: product.id == product_ingredient.product.id),
+            (lambda product_ingredient: product_id == product_ingredient.product_id),
             product_ingredients,
         )
         return list(product_ingredients_of_product)

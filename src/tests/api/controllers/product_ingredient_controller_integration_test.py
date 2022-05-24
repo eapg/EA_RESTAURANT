@@ -118,7 +118,7 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
         product_1 = build_product(product_id=1, name="test product")
         product_ingredient_1 = build_product_ingredient(
-            ingredient=ingredient_1, product=product_1
+            ingredient_id=ingredient_1.id, product_id=product_1.id
         )
         product_ingredient_2 = build_product_ingredient()
 
@@ -127,9 +127,9 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
 
         product_ingredients_returned = (
             self.product_ingredient_controller.get_by_product_id(
-                product_1
+                product_1.id
             )
         )
         self.product_ingredient_repository.get_by_product_id.assert_called_with(
-            product_1
+            product_1.id
         )

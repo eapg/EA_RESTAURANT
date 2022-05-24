@@ -124,7 +124,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient=ingredient_1, ingredient_quantity=10
+            ingredient_id=ingredient_1.id, ingredient_quantity=10
         )
         inventory_ingredient_2 = build_inventory_ingredient()
 
@@ -132,7 +132,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_repository.add(inventory_ingredient_2)
 
         inventory_ingredient_returned = (
-            inventory_ingredient_repository.get_by_ingredient_id(ingredient_1)
+            inventory_ingredient_repository.get_by_ingredient_id(ingredient_1.id)
         )
         self.assertEqual(inventory_ingredient_returned[0], inventory_ingredient_1)
 
@@ -142,7 +142,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
 
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient=ingredient_1, inventory=inventory_1, ingredient_quantity=10
+            ingredient_id=ingredient_1.id, inventory_id=inventory_1.id, ingredient_quantity=10
         )
         inventory_ingredient_repository.add(inventory_ingredient_1)
         self.assertTrue(
