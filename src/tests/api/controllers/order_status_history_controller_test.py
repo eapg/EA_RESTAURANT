@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-
+from src.constants.order_status import OrderStatus
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
@@ -81,3 +81,12 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
             order_1.id
         )
 
+    def test_set_next_status_history_by_order_id_successfully(self):
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+
+        self.order_status_history_controller.set_next_status_history_by_order_id(
+            order_1.id, OrderStatus.NEW_ORDER
+        )
+        self.order_status_history_repository.set_next_status_history_by_order_id.assert_called_with(
+            order_1.id, OrderStatus.NEW_ORDER
+        )
