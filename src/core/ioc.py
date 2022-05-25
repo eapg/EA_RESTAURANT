@@ -13,12 +13,10 @@ from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
 )
 from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.lib.repositories.impl.order_detail_product_repository_impl import (
-    OrderDetailProductRepositoryImpl,
-)
 from src.lib.repositories.impl.order_detail_repository_impl import (
     OrderDetailRepositoryImpl,
 )
+
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
@@ -33,10 +31,9 @@ from src.api.controllers.inventory_ingredient_controller import (
 )
 from src.api.controllers.inventory_controller import InventoryController
 from src.api.controllers.order_controller import OrderController
-from src.api.controllers.order_detail_product_controller import (
-    OrderDetailProductController,
+from src.api.controllers.order_detail_controller import (
+    OrderDetailController,
 )
-from src.api.controllers.order_detail_controller import OrderDetailController
 from src.api.controllers.chef_controller import ChefController
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
@@ -64,9 +61,6 @@ class Ioc:
         ] = InventoryIngredientRepositoryImpl()
         self._instance_ioc["inventory_repository"] = InventoryRepositoryImpl()
         self._instance_ioc["order_repository"] = OrderRepositoryImpl()
-        self._instance_ioc[
-            "order_detail_product_repository"
-        ] = OrderDetailProductRepositoryImpl()
         self._instance_ioc["order_detail_repository"] = OrderDetailRepositoryImpl()
         self._instance_ioc["chef_repository"] = ChefRepositoryImpl()
 
@@ -96,11 +90,6 @@ class Ioc:
         )
         self._instance_ioc["order_controller"] = OrderController(
             self._instance_ioc["order_repository"]
-        )
-        self._instance_ioc[
-            "order_detail_product_controller"
-        ] = OrderDetailProductController(
-            self._instance_ioc["order_detail_product_repository"]
         )
         self._instance_ioc["order_detail_controller"] = OrderDetailController(
             self._instance_ioc["order_detail_repository"]

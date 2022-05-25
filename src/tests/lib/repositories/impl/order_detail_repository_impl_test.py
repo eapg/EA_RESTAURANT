@@ -88,7 +88,8 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
         order_details = order_detail_repository.get_all()
 
         self.assertEqual(
-            order_details, [order_details_to_insert[0], order_details_to_insert[2]]
+            order_details,
+            [order_details_to_insert[0], order_details_to_insert[2]],
         )
 
     def test_delete_throws_key_error_when_there_are_no_order_details(self):
@@ -104,10 +105,7 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
         order_detail_repository.add(order_details_to_insert[0])
         order_detail_repository.add(order_details_to_insert[1])
 
-        order_product_list = [build_product()]
-        order_detail_to_update = build_order_detail(
-            order_product_map=order_product_list
-        )
+        order_detail_to_update = build_order_detail(quantity=5)
 
         order_detail_repository.update_by_id(2, order_detail_to_update)
         updated_order_detail = order_detail_repository.get_by_id(2)
@@ -115,6 +113,27 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(order_details), 2)
         self.assertEqual(
-            updated_order_detail.order_product_map,
-            order_detail_to_update.order_product_map,
+            updated_order_detail.quantity,
+            order_detail_to_update.quantity,
+        )
+
+    def test_get_by_order_id(self):
+        order_1 = build_order_detail(order_id=1)
+        product_1 = build_product(product_id=1, name="test product 1")
+        product_2 = build_product(product_id=2, name="test product 2")
+        order_detail_1 = build_order_detail(
+            order_id=order_1.id, product_id=product_1.id, quantity=2
+        )
+        order_detail_2 = build_order_detail(
+            order_id=order_1.id, product_id=product_2.id, quantity=3
+        )
+        order_detail_repository = OrderDetailRepositoryImpl()
+        order_detail_repository.add(order_detail_1)
+        order_detail_repository.add(order_detail_2)
+
+        order_details_by_order_id = order_detail_repository.get_by_order_id(order_1.id)
+        self.assertEqual(len(order_details_by_order_id), 2)
+        self.assertEqual(
+            order_details_by_order_id,
+            [order_detail_1, order_detail_2],
         )

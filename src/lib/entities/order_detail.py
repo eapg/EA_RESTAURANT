@@ -1,11 +1,12 @@
-# class for the order details
 from src.utils.utils import equals
 
 
 class OrderDetail:
     def __init__(self):
-
         self.id = None  # integer
+        self.order_id = None  # integer
+        self.product_id = None  # integer
+        self.quantity = None  # integer
         self.entity_status = None  # enum
         self.create_date = None  # date
         self.update_date = None  # date
