@@ -43,3 +43,13 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
             product_ingredients,
         )
         return list(product_ingredients_of_product)
+
+    def get_product_ingredients_by_product_ids(self, product_ids):
+
+        product_ingredients = self.get_all()
+        filtered_product_ingredients = filter(
+            (lambda product_ingredient: product_ingredient.product_id in product_ids),
+            product_ingredients,
+        )
+
+        return list(filtered_product_ingredients)
