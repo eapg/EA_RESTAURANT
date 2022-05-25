@@ -5,7 +5,7 @@ from src.utils.utils import equals
 class OrderStatusHistory:
     def __init__(self):
         self.id = None # integer
-        self.order_id = None  # obj
+        self.order_id = None  # integer
         self.from_time = None  # time
         self.to_time = None  # time
         self.from_status = None  # Enum

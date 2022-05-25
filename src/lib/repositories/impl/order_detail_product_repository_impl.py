@@ -27,8 +27,8 @@ class OrderDetailProductRepositoryImpl(OrderDetailProductRepository):
     def update_by_id(self, order_detail_product_id, order_detail_product):
         current_order_detail_product = self.get_by_id(order_detail_product_id)
         current_order_detail_product.order_detail_id = (
-            order_detail_product.order_detail
-            or current_order_detail_product.order_detail
+            order_detail_product.order_detail_id
+            or current_order_detail_product.order_detail_id
         )
         current_order_detail_product.product = (
             order_detail_product.product or current_order_detail_product.product
@@ -37,12 +37,12 @@ class OrderDetailProductRepositoryImpl(OrderDetailProductRepository):
             order_detail_product.quantity or current_order_detail_product.quantity
         )
 
-    def get_by_order_detail_id(self, order_detail):
+    def get_by_order_detail_id(self, order_detail_id):
         order_detail_products = self.get_all()
         order_detail_products_by_order_detail = filter(
             (
-                lambda order_detail_product: order_detail_product.order_detail.id
-                == order_detail.id
+                lambda order_detail_product: order_detail_product.order_detail_id
+                == order_detail_id
             ),
             order_detail_products,
         )

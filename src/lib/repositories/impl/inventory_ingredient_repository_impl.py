@@ -27,20 +27,25 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
 
     def update_by_id(self, inventory_ingredient_id, inventory_ingredient):
         current_inventory_ingredient = self.get_by_id(inventory_ingredient_id)
-        current_inventory_ingredient.ingredient = (
-            inventory_ingredient.ingredient or current_inventory_ingredient.ingredient
+        current_inventory_ingredient.inventory_id = (
+            inventory_ingredient.inventory_id
+            or current_inventory_ingredient.inventory_id
+        )
+        current_inventory_ingredient.ingredient_id = (
+            inventory_ingredient.ingredient_id
+            or current_inventory_ingredient.ingredient_id
         )
         current_inventory_ingredient.ingredient_quantity = (
             inventory_ingredient.ingredient_quantity
             or current_inventory_ingredient.ingredient_quantity
         )
 
-    def get_by_ingredient_id(self, ingredient):
+    def get_by_ingredient_id(self, ingredient_id):
         inventory_ingredients = self.get_all()
         inventory_ingredient_by_ingredient_id = filter(
             (
-                lambda inventory_ingredient: inventory_ingredient.ingredient.id
-                == ingredient.id
+                lambda inventory_ingredient: inventory_ingredient.ingredient_id
+                == ingredient_id
             ),
             inventory_ingredients,
         )
@@ -54,9 +59,9 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         ingredient_to_validate = list(
             filter(
                 (
-                    lambda inventory_ingredient: inventory_ingredient.ingredient.id
+                    lambda inventory_ingredient: inventory_ingredient.ingredient_id
                     == ingredient_id
-                    and inventory_ingredient.inventory.id == inventory_id
+                    and inventory_ingredient.inventory_id == inventory_id
                 ),
                 inventory_ingredients,
             )

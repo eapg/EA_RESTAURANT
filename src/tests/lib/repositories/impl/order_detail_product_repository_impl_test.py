@@ -123,20 +123,20 @@ class OrderDetailProductRepositoryImplTestCase(unittest.TestCase):
         product_1 = build_product(product_id=1, name="test product 1")
         product_2 = build_product(product_id=2, name="test product 2")
         order_detail_product_1 = build_order_detail_product(
-            order_detail=order_detail_1, product=product_1, quantity=2
+            order_detail_id=order_detail_1.id, product=product_1, quantity=2
         )
         order_detail_product_2 = build_order_detail_product(
-            order_detail=order_detail_1, product=product_2, quantity=3
+            order_detail_id=order_detail_1.id, product=product_2, quantity=3
         )
         order_detail_product_repository = OrderDetailProductRepositoryImpl()
         order_detail_product_repository.add(order_detail_product_1)
         order_detail_product_repository.add(order_detail_product_2)
 
-        order_detail_products_by_order_detail = (
-            order_detail_product_repository.get_by_order_detail_id(order_detail_1)
+        order_detail_products_by_order_detail_id = (
+            order_detail_product_repository.get_by_order_detail_id(order_detail_1.id)
         )
-        self.assertEqual(len(order_detail_products_by_order_detail), 2)
+        self.assertEqual(len(order_detail_products_by_order_detail_id), 2)
         self.assertEqual(
-            order_detail_products_by_order_detail,
+            order_detail_products_by_order_detail_id,
             [order_detail_product_1, order_detail_product_2],
         )

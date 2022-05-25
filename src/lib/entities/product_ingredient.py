@@ -5,8 +5,8 @@ from src.utils.utils import equals
 class ProductIngredient:
     def __init__(self):
         self.id = None  # integer
-        self.product = None  # object
-        self.ingredient = None  # object
+        self.product_id = None  # integer
+        self.ingredient_id = None  # integer
         self.quantity = None  # integer
         self.entity_status = None  # enum
         self.create_date = None  # date

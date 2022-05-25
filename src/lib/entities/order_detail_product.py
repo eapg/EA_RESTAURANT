@@ -4,8 +4,8 @@ from src.utils.utils import equals
 class OrderDetailProduct:
     def __init__(self):
         self.id = None  # integer
-        self.order_detail = None  # object
-        self.product = None  # object
+        self.order_detail_id = None  # integer
+        self.product_id = None  # integer
         self.quantity = None  # integer
         self.entity_status = None  # enum
         self.create_date = None  # date
