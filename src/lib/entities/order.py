@@ -8,7 +8,7 @@ class Order:
         self.id = None  # integer
         self.order_detail_id = None  # integer
         self.status = None  # enum
-        self.assigned_chef = None  # object
+        self.assigned_chef_id = None  # object
         self.entity_status = None  # enum
         self.create_date = None  # date
         self.update_date = None  # date

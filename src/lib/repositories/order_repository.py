@@ -10,5 +10,9 @@ class OrderRepository(GenericRepository, metaclass=ABCMeta):
         pass
 
     @staticmethod
+    def get_chefs_with_assigned_orders(chef_ids):
+        pass
+
+    @staticmethod
     def get_order_ingredients_by_order_id(self, order_id):
         pass

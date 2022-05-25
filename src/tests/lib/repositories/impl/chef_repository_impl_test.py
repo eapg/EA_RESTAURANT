@@ -1,7 +1,10 @@
 import unittest
+from unittest import mock
 
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
+from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
+from src.tests.utils.fixtures.order_fixture import build_order
 
 
 class ChefRepositoryImplTestCase(unittest.TestCase):
@@ -104,3 +107,29 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(chefs), 2)
         self.assertEqual(updated_chef.chef_skills, chef_to_update.chef_skills)
+
+    def test_get_available_chefs(self):
+
+        chef_principal = build_chef(chef_id=1, name="Elido p", chef_skills=5)
+        chef_intermediate = build_chef(chef_id=2, name="Andres p", chef_skills=3)
+        chef_basic = build_chef(chef_id=3, name="Juan p", chef_skills=1)
+
+        order_1 = build_order(assigned_chef_id=chef_intermediate.id)
+        order_2 = build_order(assigned_chef_id=None)
+        order_3 = build_order(assigned_chef_id=None)
+
+        order_repository = mock.Mock(wraps=OrderRepositoryImpl())
+        order_repository.add(order_1)
+        order_repository.add(order_2)
+        order_repository.add(order_3)
+
+        chef_repository = ChefRepositoryImpl(order_repository)
+        chef_repository.add(chef_principal)
+        chef_repository.add(chef_intermediate)
+        chef_repository.add(chef_basic)
+
+        available_chefs = chef_repository.get_available_chefs()
+        order_repository.get_chefs_with_assigned_orders.assert_called_with(
+            [chef_principal.id, chef_intermediate.id, chef_basic.id]
+        )
+        self.assertEqual(available_chefs, [chef_principal.id, chef_basic.id])
