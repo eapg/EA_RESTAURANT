@@ -7,6 +7,5 @@ __all__ = [
     "order_detail_controller",
     "chef_controller",
     "product_ingredient_controller",
-    "order_detail_product_controller",
     "order_status_history_controller"
 ]

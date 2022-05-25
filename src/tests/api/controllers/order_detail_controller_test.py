@@ -1,7 +1,9 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.order_detail_controller import OrderDetailController
+from src.api.controllers.order_detail_controller import (
+    OrderDetailController,
+)
 from src.tests.utils.fixtures.order_detail_fixture import (
     build_order_detail,
     build_order_details,
@@ -20,22 +22,32 @@ class OrderDetailRepositoryControllerTestCase(unittest.TestCase):
 
         self.order_detail_controller.add(order_detail)
 
-        self.order_detail_repository.add.assert_called_with(order_detail)
+        self.order_detail_repository.add.assert_called_with(
+            order_detail
+        )
 
     def test_get_order_detail_successfully(self):
         order_detail = build_order_detail()
 
-        self.order_detail_repository.get_by_id.return_value = order_detail
+        self.order_detail_repository.get_by_id.return_value = (
+            order_detail
+        )
 
-        expected_order_detail = self.order_detail_controller.get_by_id(order_detail.id)
+        expected_order_detail = self.order_detail_controller.get_by_id(
+            order_detail.id
+        )
 
-        self.order_detail_repository.get_by_id.assert_called_with(order_detail.id)
+        self.order_detail_repository.get_by_id.assert_called_with(
+            order_detail.id
+        )
         self.assertEqual(expected_order_detail.id, order_detail.id)
 
     def test_get_all_order_details_successfully(self):
         order_details = build_order_details(count=3)
 
-        self.order_detail_repository.get_all.return_value = order_details
+        self.order_detail_repository.get_all.return_value = (
+            order_details
+        )
 
         expected_order_details = self.order_detail_controller.get_all()
 
@@ -53,4 +65,20 @@ class OrderDetailRepositoryControllerTestCase(unittest.TestCase):
 
         self.order_detail_controller.update_by_id(1, order_detail)
 
-        self.order_detail_repository.update_by_id.assert_called_with(1, order_detail)
+        self.order_detail_repository.update_by_id.assert_called_with(
+            1, order_detail
+        )
+
+    def test_get_by_order_detail_id_successfully(self):
+        order_detail = build_order_detail()
+        order_detail_1 = build_order_detail()
+
+        self.order_detail_controller.add(order_detail)
+        order_details_returned = (
+            self.order_detail_controller.get_by_order_id(
+                order_detail_1
+            )
+        )
+        self.order_detail_repository.get_by_order_id.assert_called_with(
+            order_detail_1
+        )
