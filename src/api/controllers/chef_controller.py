@@ -16,3 +16,6 @@ class ChefController:
 
     def update_by_id(self, chef_id, chef):
         self._chef_repository.update_by_id(chef_id, chef)
+
+    def get_available_chefs(self):
+        return self._chef_repository.get_available_chefs()

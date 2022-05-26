@@ -49,3 +49,12 @@ class ChefRepositoryControllerTestCase(unittest.TestCase):
         self.chef_controller.update_by_id(1, chef)
 
         self.chef_repository.update_by_id.assert_called_with(1, chef)
+
+    def test_get_available_chefs_successfully(self):
+        available_chefs = build_chefs(3)
+
+        self.chef_repository.get_available_chefs.return_value = available_chefs
+
+        expected_available_chefs = self.chef_controller.get_available_chefs()
+        self.chef_repository.get_available_chefs.assert_called()
+        self.assertEqual(available_chefs, expected_available_chefs)
