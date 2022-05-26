@@ -3,6 +3,9 @@ from unittest import mock
 
 from src.api.controllers.order_controller import OrderController
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
+from src.tests.utils.fixtures.product_ingredient_fixture import (
+    build_product_ingredients,
+)
 
 
 class OrderRepositoryControllerTestCase(unittest.TestCase):
@@ -54,3 +57,18 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
 
         orders_to_process = self.order_controller.get_orders_to_process()
         self.order_repository.get_orders_to_process.assert_called()
+
+    def test_get_order_ingredients_by_order_id_successfully(self):
+        order = build_order(order_id=1)
+        ingredients = build_product_ingredients(5)
+        self.order_repository.get_order_ingredients_by_order_id.return_value = (
+            ingredients
+        )
+        expected_ingredients = self.order_controller.get_order_ingredients_by_order_id(
+            order.id
+        )
+        self.order_repository.get_order_ingredients_by_order_id.assert_called_with(
+            order.id
+        )
+
+        self.assertEqual(ingredients, expected_ingredients)
