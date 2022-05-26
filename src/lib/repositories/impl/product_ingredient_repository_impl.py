@@ -43,3 +43,11 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
             product_ingredients,
         )
         return list(product_ingredients_of_product)
+
+    def get_product_ingredients_by_products_id(self, products_id):
+        product_ingredients = []
+
+        for product_id in products_id:
+            product_ingredients.extend(self.get_by_product_id(product_id))
+
+        return product_ingredients

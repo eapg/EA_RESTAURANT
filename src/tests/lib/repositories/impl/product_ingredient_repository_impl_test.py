@@ -128,7 +128,40 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
         product_ingredient_repository.add(product_ingredient_1)
         product_ingredient_repository.add(product_ingredient_2)
 
-        product_ingredient_returned = (
-            product_ingredient_repository.get_by_product_id(product_1.id)
+        product_ingredient_returned = product_ingredient_repository.get_by_product_id(
+            product_1.id
         )
         self.assertEqual(product_ingredient_1, product_ingredient_returned[0])
+
+    def test_get_product_ingredients_by_products_id(self):
+        product_ingredient_repository = ProductIngredientRepositoryImpl()
+
+        product_1 = build_product(product_id=1, name="product_1")
+        product_2 = build_product(product_id=2, name="product_2")
+
+        ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient 1")
+        ingredient_2 = build_ingredient(ingredient_id=2, name="test ingredient 2")
+
+        product_ingredient_1 = build_product_ingredient(
+            id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=5
+        )
+        product_ingredient_2 = build_product_ingredient(
+            id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
+        )
+        product_ingredient_3 = build_product_ingredient(
+            id=3, product_id=product_2.id, ingredient_id=ingredient_1.id, quantity=1
+        )
+
+        product_ingredient_repository.add(product_ingredient_1)
+        product_ingredient_repository.add(product_ingredient_2)
+        product_ingredient_repository.add(product_ingredient_3)
+
+        products_ingredient = (
+            product_ingredient_repository.get_product_ingredients_by_products_id(
+                [product_1.id, product_2.id]
+            )
+        )
+        self.assertEqual(
+            products_ingredient,
+            [product_ingredient_1, product_ingredient_2, product_ingredient_3],
+        )

@@ -9,3 +9,7 @@ class ProductIngredientRepository(GenericRepository, metaclass=ABCMeta):
     @abstractmethod
     def get_by_product_id(self, product_id):
         pass
+
+    @abstractmethod
+    def get_product_ingredients_by_products_id(self, products_id):
+        pass
