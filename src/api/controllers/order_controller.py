@@ -19,3 +19,6 @@ class OrderController:
 
     def get_orders_to_process(self):
         return self._order_repository.get_orders_to_process()
+
+    def get_order_ingredients_by_order_id(self, order_id):
+        return self._order_repository.get_order_ingredients_by_order_id(order_id)
