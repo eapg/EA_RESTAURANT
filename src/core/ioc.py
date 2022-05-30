@@ -66,6 +66,9 @@ class Ioc:
         ])
 
         self._instance_ioc["chef_repository"] = ChefRepositoryImpl()
+        self._instance_ioc["chef_repository"] = ChefRepositoryImpl(
+            self._instance_ioc["order_repository"]
+        )
 
         self._instance_ioc[
             "order_status_history_repository"

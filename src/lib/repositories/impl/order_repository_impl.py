@@ -1,7 +1,9 @@
 # This file has the order repository
+from functools import reduce
 
 from src.lib.repositories.order_repository import OrderRepository
 from src.constants.order_status import OrderStatus
+from src.utils.order_util import array_chef_to_chef_assigned_orders_map_reducer
 
 
 class OrderRepositoryImpl(OrderRepository):
@@ -38,6 +40,19 @@ class OrderRepositoryImpl(OrderRepository):
             lambda order: order.status == OrderStatus.NEW_ORDER, orders
         )
         return list(orders_to_process)
+
+    def get_chefs_with_assigned_orders(self, chef_ids):
+
+        orders = self.get_all()
+        chefs_with_assigned_orders_map = reduce(
+            lambda assigned_chef_result, chef_id: array_chef_to_chef_assigned_orders_map_reducer(
+                assigned_chef_result, chef_id, orders
+            ),
+            chef_ids,
+            {},
+        )
+
+        return chefs_with_assigned_orders_map
 
     def get_order_ingredients_by_order_id(self, order_id):
 
