@@ -12,7 +12,6 @@ from src.tests.utils.fixtures import (
     order_detail_fixture,
     order_fixture,
     product_ingredient_fixture,
-    order_detail_product_fixture,
 )
 
 
@@ -27,9 +26,6 @@ inventory_ingredient_controller = instance_ioc.get_instance(
 inventory_controller = instance_ioc.get_instance("inventory_controller")
 product_controller = instance_ioc.get_instance("product_controller")
 chef_controller = instance_ioc.get_instance("chef_controller")
-order_detail_product_controller = instance_ioc.get_instance(
-    "order_detail_product_controller"
-)
 order_detail_controller = instance_ioc.get_instance("order_detail_controller")
 order_controller = instance_ioc.get_instance("order_controller")
 order_status_history_controller = instance_ioc.get_instance(
@@ -72,7 +68,9 @@ def create_inventory_ingredients():
     cheese = ingredient_controller.get_by_id(1)
     inventory_ingredient_cheese = (
         inventory_ingredient_fixture.build_inventory_ingredient(
-            ingredient=cheese, ingredient_quantity=100, inventory=inventory_1
+            ingredient_id=cheese.id,
+            ingredient_quantity=100,
+            inventory_id=inventory_1.id,
         )
     )
     inventory_ingredient_controller.add(inventory_ingredient_cheese)
@@ -80,7 +78,7 @@ def create_inventory_ingredients():
     bread = ingredient_controller.get_by_id(2)
     inventory_ingredient_bread = (
         inventory_ingredient_fixture.build_inventory_ingredient(
-            ingredient=bread, ingredient_quantity=100, inventory=inventory_1
+            ingredient_id=bread.id, ingredient_quantity=100, inventory_id=inventory_1.id
         )
     )
     inventory_ingredient_controller.add(inventory_ingredient_bread)
@@ -88,21 +86,23 @@ def create_inventory_ingredients():
     tomato = ingredient_controller.get_by_id(3)
     inventory_ingredient_tomato = (
         inventory_ingredient_fixture.build_inventory_ingredient(
-            ingredient=tomato, ingredient_quantity=100, inventory=inventory_1
+            ingredient_id=tomato.id,
+            ingredient_quantity=100,
+            inventory_id=inventory_1.id,
         )
     )
     inventory_ingredient_controller.add(inventory_ingredient_tomato)
 
     meat = ingredient_controller.get_by_id(4)
     inventory_ingredient_meat = inventory_ingredient_fixture.build_inventory_ingredient(
-        ingredient=meat, ingredient_quantity=100, inventory=inventory_1
+        ingredient_id=meat.id, ingredient_quantity=100, inventory_id=inventory_1.id
     )
     inventory_ingredient_controller.add(inventory_ingredient_meat)
 
     bacon = ingredient_controller.get_by_id(5)
     inventory_ingredient_bacon = (
         inventory_ingredient_fixture.build_inventory_ingredient(
-            ingredient=bacon, ingredient_quantity=100, inventory=inventory_1
+            ingredient_id=bacon.id, ingredient_quantity=100, inventory_id=inventory_1.id
         )
     )
     inventory_ingredient_controller.add(inventory_ingredient_bacon)
@@ -126,52 +126,46 @@ def create_product_ingredients():
     bacon = ingredient_controller.get_by_id(5)
 
     product_ingredient_cheese = product_ingredient_fixture.build_product_ingredient(
-        product=product_1, ingredient=cheese, quantity=2
+        product_id=product_1.id, ingredient_id=cheese.id, quantity=2
     )
     product_ingredient_controller.add(product_ingredient_cheese)
 
     product_ingredient_bread = product_ingredient_fixture.build_product_ingredient(
-        product=product_1, ingredient=bread, quantity=2
+        product_id=product_1.id, ingredient_id=bread.id, quantity=2
     )
     product_ingredient_controller.add(product_ingredient_bread)
 
     product_ingredient_tomato = product_ingredient_fixture.build_product_ingredient(
-        product=product_1, ingredient=tomato, quantity=2
+        product_id=product_1.id, ingredient_id=tomato.id, quantity=2
     )
     product_ingredient_controller.add(product_ingredient_tomato)
 
     product_ingredient_meat = product_ingredient_fixture.build_product_ingredient(
-        product=product_1, ingredient=meat, quantity=1
+        product_id=product_1.id, ingredient_id=meat.id, quantity=1
     )
     product_ingredient_controller.add(product_ingredient_meat)
 
     product_ingredient_bacon = product_ingredient_fixture.build_product_ingredient(
-        product=product_1, ingredient=bacon, quantity=2
+        product_id=product_1.id, ingredient_id=bacon.id, quantity=2
     )
     product_ingredient_controller.add(product_ingredient_bacon)
 
 
+def create_order():
+    order_1 = order_fixture.build_order(status=OrderStatus.NEW_ORDER)
+    order_controller.add(order_1)
+
+
 def create_order_details():
-    order_detail_1 = order_detail_fixture.build_order_detail()
-    order_detail_controller.add(order_detail_1)
-
-
-def create_order_detail_product():
 
     product_1 = product_controller.get_by_id(1)
-    order_detail_1 = order_detail_controller.get_by_id(1)
-    order_detail_product = order_detail_product_fixture.build_order_detail_product(
-        order_detail=order_detail_1, product=product_1, quantity=2
+    order_1 = order_controller.get_by_id(1)
+    order_detail = order_detail_fixture.build_order_detail(
+        order_id=order_1.id, product_id=product_1.id, quantity=2
     )
-    order_detail_product_controller.add(order_detail_product)
-
-
-def create_order():
-    order_detail_1 = order_detail_controller.get_by_id(1)
-    order_1 = order_fixture.build_order(
-        order_details=order_detail_1, status=OrderStatus.NEW_ORDER
-    )
-    order_controller.add(order_1)
+    order_detail_controller.add(order_detail)
+    order_1.order_detail_id = order_detail.id
+    order_controller.update_by_id(1, order_1)
 
 
 def create_chefs():
@@ -190,9 +184,8 @@ def run_initial_data():
     create_inventory_ingredients()
     create_product()
     create_product_ingredients()
-    create_order_details()
-    create_order_detail_product()
     create_order()
+    create_order_details()
     create_chefs()
 
 
