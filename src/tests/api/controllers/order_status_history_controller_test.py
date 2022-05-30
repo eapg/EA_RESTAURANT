@@ -73,13 +73,16 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
     def test_get_by_order_id_successfully(self):
         order_status_history = build_order_status_history()
         order_1 = build_order()
-        self.order_status_history_controller.add(order_status_history)
-        order_status_histories_returned = (
+        self.order_status_history_repository.get_by_order_id.return_value = (
+            order_status_history
+        )
+        expected_order_status_histories = (
             self.order_status_history_controller.get_by_order_id(order_1.id)
         )
         self.order_status_history_repository.get_by_order_id.assert_called_with(
             order_1.id
         )
+        self.assertEqual(expected_order_status_histories, order_status_history)
 
     def test_set_next_status_history_by_order_id_successfully(self):
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)

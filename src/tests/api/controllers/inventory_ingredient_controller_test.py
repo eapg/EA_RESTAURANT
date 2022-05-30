@@ -72,20 +72,35 @@ class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_get_by_ingredient_id(self):
-        ingredient = build_ingredient()
+        ingredient = build_ingredient(ingredient_id=1)
+        inventory_ingredient = build_inventory_ingredient(ingredient_id=ingredient.id)
 
-        self.inventory_ingredient_controller.get_by_ingredient_id(ingredient)
+        self.inventory_ingredient_repository.get_by_ingredient_id.return_value = (
+            inventory_ingredient
+        )
+
+        expected_inventory_ingredient = (
+            self.inventory_ingredient_controller.get_by_ingredient_id(ingredient)
+        )
         self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
             ingredient
         )
+
+        self.assertEqual(inventory_ingredient, expected_inventory_ingredient)
 
     def test_validate_ingredient_availability_successfully(self):
         ingredient = build_ingredient()
         inventory = build_inventory()
         quantity_to_use = 10
-        self.inventory_ingredient_controller.validate_ingredient_availability(
-            inventory.id, ingredient.id, quantity_to_use
+        self.inventory_ingredient_repository.validate_ingrdient_availability.return_value = (
+            True
+        )
+        expected_validation = (
+            self.inventory_ingredient_controller.validate_ingredient_availability(
+                inventory.id, ingredient.id, quantity_to_use
+            )
         )
         self.inventory_ingredient_repository.validate_ingredient_availability.assert_called_with(
             inventory.id, ingredient.id, quantity_to_use
         )
+        self.assertTrue(expected_validation)

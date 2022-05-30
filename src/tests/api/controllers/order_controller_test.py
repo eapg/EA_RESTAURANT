@@ -54,8 +54,12 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
         self.order_repository.update_by_id.assert_called_with(1, order)
 
     def test_get_orders_to_process_successfully(self):
+        new_orders = build_orders(3)
 
-        orders_to_process = self.order_controller.get_orders_to_process()
+        self.order_repository.get_orders_to_process.return_value = new_orders
+
+        expected_orders_to_process = self.order_controller.get_orders_to_process()
+        self.assertEqual(new_orders, expected_orders_to_process)
         self.order_repository.get_orders_to_process.assert_called()
 
     def test_get_order_ingredients_by_order_id_successfully(self):
