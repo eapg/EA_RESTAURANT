@@ -149,7 +149,7 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
         order_1 = build_order(order_id=1)
         order_detail_1 = build_order_detail(
-            order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
+            order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=2
         )
         order_detail_repository.add(order_detail_1)
         order_repository = OrderRepositoryImpl(
@@ -159,7 +159,7 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
             order_1.id
         )
         product_ingredient_repository.get_product_ingredients_by_product_ids.assert_called_with(
-            [product_1.id]
+            [product_1.id, product_1.id]
         )
         order_detail_repository.get_by_order_id.assert_called_with(order_1.id)
 

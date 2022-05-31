@@ -1,6 +1,5 @@
 # This file has the order repository
 from functools import reduce
-
 from src.lib.repositories.order_repository import OrderRepository
 from src.constants.order_status import OrderStatus
 from src.utils.order_util import array_chef_to_chef_assigned_orders_map_reducer
@@ -57,7 +56,13 @@ class OrderRepositoryImpl(OrderRepository):
     def get_order_ingredients_by_order_id(self, order_id):
 
         order_details = self.order_detail_repository.get_by_order_id(order_id)
-        product_ids = [order_detail.product_id for order_detail in order_details]
+
+        product_ids = [
+            order_detail.product_id
+            for order_detail in order_details
+            for _ in range(order_detail.quantity)
+        ]
+
         filtered_product_ingredients = (
             self.product_ingredient_repository.get_product_ingredients_by_product_ids(
                 product_ids
