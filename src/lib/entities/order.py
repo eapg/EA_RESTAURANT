@@ -6,7 +6,6 @@ class Order:
     def __init__(self):
 
         self.id = None  # integer
-        self.order_detail_id = None  # integer
         self.status = None  # enum
         self.assigned_chef_id = None  # object
         self.entity_status = None  # enum

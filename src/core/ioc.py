@@ -66,6 +66,7 @@ class Ioc:
         self._instance_ioc["order_repository"] = OrderRepositoryImpl(
             self._instance_ioc["order_detail_repository"],
             self._instance_ioc["product_ingredient_repository"],
+            self._instance_ioc["inventory_ingredient_repository"],
         )
 
         self._instance_ioc["chef_repository"] = ChefRepositoryImpl()

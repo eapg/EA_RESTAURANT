@@ -3,17 +3,24 @@ from functools import reduce
 
 from src.lib.repositories.order_repository import OrderRepository
 from src.constants.order_status import OrderStatus
-from src.utils.order_util import array_chef_to_chef_assigned_orders_map_reducer
+from src.utils.order_util import (
+    array_chef_to_chef_assigned_orders_map_reducer,
+    setup_validated_orders_map,
+)
 
 
 class OrderRepositoryImpl(OrderRepository):
     def __init__(
-        self, order_detail_repository=None, product_ingredient_repository=None
+        self,
+        order_detail_repository=None,
+        product_ingredient_repository=None,
+        inventory_ingredient_repository=None,
     ):
         self._orders = {}
         self._current_id = 1
         self.order_detail_repository = order_detail_repository
         self.product_ingredient_repository = product_ingredient_repository
+        self.inventory_ingredient_repository = inventory_ingredient_repository
 
     def add(self, order):
         order.id = self._current_id
@@ -31,7 +38,9 @@ class OrderRepositoryImpl(OrderRepository):
 
     def update_by_id(self, order_id, order):
         current_order = self.get_by_id(order_id)
-        current_order.order_details = order.order_details or current_order.order_details
+        current_order.assigned_chef_id = (
+            order.assigned_chef_id or current_order.assigned_chef_id
+        )
 
     def get_orders_to_process(self):
         orders = self.get_all()
@@ -64,3 +73,11 @@ class OrderRepositoryImpl(OrderRepository):
             )
         )
         return filtered_product_ingredients
+
+    def get_validated_orders_map(self, orders_to_process):
+        reduce_validated_orders_map = setup_validated_orders_map(
+            self.inventory_ingredient_repository.get_final_product_qty_by_product_ids,
+            self.order_detail_repository.get_by_order_id,
+        )
+        validated_orders_map = reduce_validated_orders_map(orders_to_process)
+        return validated_orders_map
