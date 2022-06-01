@@ -10,6 +10,11 @@ class InventoryIngredientRepository(GenericRepository, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def validate_ingredient_availability(self, inventory_id, ingredient_id, quantity_to_use):
+    def validate_ingredient_availability(
+        self, inventory_id, ingredient_id, quantity_to_use
+    ):
         pass
 
+    @abstractmethod
+    def get_final_product_qty_by_product_ids(self, product_ids):
+        pass
