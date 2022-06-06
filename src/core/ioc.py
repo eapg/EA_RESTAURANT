@@ -58,12 +58,15 @@ class Ioc:
         self._instance_ioc["ingredient_repository"] = IngredientRepositoryImpl()
         self._instance_ioc[
             "inventory_ingredient_repository"
-        ] = InventoryIngredientRepositoryImpl()
+        ] = InventoryIngredientRepositoryImpl(
+            self._instance_ioc["product_ingredient_repository"]
+        )
         self._instance_ioc["order_detail_repository"] = OrderDetailRepositoryImpl()
         self._instance_ioc["inventory_repository"] = InventoryRepositoryImpl()
-        self._instance_ioc["order_repository"] = OrderRepositoryImpl(self._instance_ioc["order_detail_repository"],self._instance_ioc[
-            "product_ingredient_repository"
-        ])
+        self._instance_ioc["order_repository"] = OrderRepositoryImpl(
+            self._instance_ioc["order_detail_repository"],
+            self._instance_ioc["product_ingredient_repository"],
+        )
 
         self._instance_ioc["chef_repository"] = ChefRepositoryImpl()
         self._instance_ioc["chef_repository"] = ChefRepositoryImpl(

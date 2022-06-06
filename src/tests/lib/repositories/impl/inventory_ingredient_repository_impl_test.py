@@ -1,7 +1,11 @@
 import unittest
+from unittest import mock
 
 from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
     InventoryIngredientRepositoryImpl,
+)
+from src.lib.repositories.impl.product_ingredient_repository_impl import (
+    ProductIngredientRepositoryImpl,
 )
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredient,
@@ -9,6 +13,9 @@ from src.tests.utils.fixtures.inventory_ingredient_fixture import (
 )
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import build_inventory
+from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
+from src.tests.utils.fixtures.product_fixture import build_product
+from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
 
 
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
@@ -142,7 +149,9 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
 
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient_id=ingredient_1.id, inventory_id=inventory_1.id, ingredient_quantity=10
+            ingredient_id=ingredient_1.id,
+            inventory_id=inventory_1.id,
+            ingredient_quantity=10,
         )
         inventory_ingredient_repository.add(inventory_ingredient_1)
         self.assertTrue(
@@ -154,4 +163,42 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
             inventory_ingredient_repository.validate_ingredient_availability(
                 inventory_1.id, ingredient_1.id, 15
             )
+        )
+
+    def test_get_quantity_of_product_that_can_be_made_by_product_ids(self):
+
+        product_ingredient_repository = mock.Mock(
+            wraps=ProductIngredientRepositoryImpl()
+        )
+        ingredient_1 = build_ingredient(ingredient_id=1, name="test_ingredient")
+        inventory_ingredient_1 = build_inventory_ingredient(
+            inventory_ingredient_id=1,
+            ingredient_id=ingredient_1.id,
+            ingredient_quantity=20,
+        )
+        product_1 = build_product(product_id=1)
+        product_ingredient_1 = build_product_ingredient(
+            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+        )
+        order_detail_1 = build_order_detail(
+            order_detail_id=1, product_id=product_1.id, quantity=1
+        )
+        product_ingredient_repository.add(product_ingredient_1)
+        inventory_ingredient_repository = InventoryIngredientRepositoryImpl(
+            product_ingredient_repository
+        )
+        inventory_ingredient_repository.get_by_ingredient_id = mock.Mock(
+            wraps=inventory_ingredient_repository.get_by_ingredient_id
+        )
+        inventory_ingredient_repository.add(inventory_ingredient_1)
+        product_quantity = (
+            inventory_ingredient_repository.get_final_product_qty_by_product_ids(
+                [order_detail_1.product_id]
+            )
+        )
+
+        self.assertEqual(product_quantity[order_detail_1.product_id], 10)
+        product_ingredient_repository.get_by_product_id.assert_called_with(product_1.id)
+        inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
+            product_ingredient_1.ingredient_id
         )
