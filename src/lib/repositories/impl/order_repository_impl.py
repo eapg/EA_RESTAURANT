@@ -42,13 +42,12 @@ class OrderRepositoryImpl(OrderRepository):
             order.assigned_chef_id or current_order.assigned_chef_id
         )
 
-    def get_orders_to_process(self):
+    def get_orders_to_process(self, order_limit=None):
         orders = self.get_all()
-
         orders_to_process = filter(
             lambda order: order.status == OrderStatus.NEW_ORDER, orders
         )
-        return list(orders_to_process)
+        return (list(orders_to_process))[0:order_limit]
 
     def get_chefs_with_assigned_orders(self, chef_ids):
 
