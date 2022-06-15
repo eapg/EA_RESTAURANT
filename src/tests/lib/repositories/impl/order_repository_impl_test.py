@@ -14,6 +14,7 @@ from src.lib.repositories.impl.product_ingredient_repository_impl import (
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
     build_inventory_ingredient,
 )
+
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient

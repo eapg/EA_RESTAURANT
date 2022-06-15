@@ -4,6 +4,7 @@ from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.ioc import get_ioc_instance
 from src.core.order_manager import OrderManager
 from src.constants.order_status import OrderStatus
+from src.utils.order_util import compute_order_estimated_time
 
 
 class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
@@ -51,9 +52,14 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             else:
                 self._order_send_to_cancel(order_to_be_assigned[0])
 
-    def _assign_to_chef_and_send_to_in_process(self, order_to_be_assign, available_chef):
+    def _assign_to_chef_and_send_to_in_process(
+        self, order_to_be_assign, available_chef
+    ):
         order_to_be_assign.assigned_chef_id = available_chef
         order_to_be_assign.status = OrderStatus.IN_PROCESS
+        order_to_be_assign.estimated_time = compute_order_estimated_time(
+            self.order_controller.get_order_ingredients_by_order_id, available_chef
+        )
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
