@@ -21,6 +21,7 @@ from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
 from src.tests.utils.fixtures.product_fixture import build_product
 from src.constants.order_status import OrderStatus
+from src.constants.cooking_type import CookingType
 
 
 class OrderRepositoryImplTestCase(unittest.TestCase):
@@ -222,3 +223,49 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_repository.get_final_product_qty_by_product_ids.assert_called_with(
             [product_1.id]
         )
+
+    def test_reduce_order_ingredients_from_inventory_successfully(self):
+        ingredient_1 = build_ingredient(ingredient_id=1, name="potato")
+        inventory_ingredient_1 = build_inventory_ingredient(
+            inventory_ingredient_id=1,
+            ingredient_id=ingredient_1.id,
+            ingredient_quantity=20,
+        )
+        mocked_inventory_ingredient_repository = mock.Mock(
+            wraps=InventoryIngredientRepositoryImpl()
+        )
+        mocked_inventory_ingredient_repository.add(inventory_ingredient_1)
+
+        order_1 = build_order(order_id=1)
+        product_1 = build_product(product_id=1, name="fries potatoes")
+        ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
+        product_ingredient_1 = build_product_ingredient(
+            id=1,
+            product_id=product_1.id,
+            ingredient_id=ingredient_1.id,
+            ingredient_type=CookingType.FRYING,
+            quantity=10,
+        )
+        order_detail_1 = build_order_detail(
+            product_id=product_1.id, order_id=order_1.id
+        )
+
+        order_detail_repository = OrderDetailRepositoryImpl()
+        order_detail_repository.add(order_detail_1)
+        product_ingredient_repository = ProductIngredientRepositoryImpl()
+        product_ingredient_repository.add(product_ingredient_1)
+        order_repository = OrderRepositoryImpl(
+            order_detail_repository=order_detail_repository,
+            product_ingredient_repository=product_ingredient_repository,
+            inventory_ingredient_repository=mocked_inventory_ingredient_repository,
+        )
+        order_repository.add(order_1)
+        order_repository.reduce_order_ingredients_from_inventory(order_1.id)
+        mocked_inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
+            ingredient_1.id
+        )
+        inventory_ingredient_after_reduce = (
+            mocked_inventory_ingredient_repository.get_by_id(inventory_ingredient_1.id)
+        )
+        self.assertEqual(inventory_ingredient_after_reduce.ingredient_quantity, 10)
+
