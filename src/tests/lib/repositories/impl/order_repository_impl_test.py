@@ -1,12 +1,18 @@
 import unittest
 from unittest import mock
 
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
+    InventoryIngredientRepositoryImpl,
+)
 from src.lib.repositories.impl.order_detail_repository_impl import (
     OrderDetailRepositoryImpl,
 )
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.lib.repositories.impl.product_ingredient_repository_impl import (
     ProductIngredientRepositoryImpl,
+)
+from src.tests.utils.fixtures.inventory_ingredient_fixture import (
+    build_inventory_ingredient,
 )
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
@@ -108,14 +114,16 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         order_repository.add(orders_to_insert[0])
         order_repository.add(orders_to_insert[1])
 
-        order_to_update = build_order(order_details=build_order_detail())
+        order_to_update = build_order(assigned_chef_id=1)
 
         order_repository.update_by_id(2, order_to_update)
         updated_order = order_repository.get_by_id(2)
         orders = order_repository.get_all()
 
         self.assertEqual(len(orders), 2)
-        self.assertEqual(updated_order.order_details, order_to_update.order_details)
+        self.assertEqual(
+            updated_order.assigned_chef_id, order_to_update.assigned_chef_id
+        )
 
     def test_get_orders_to_process(self):
         order_1 = build_order()
@@ -165,4 +173,51 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(
             order_ingredients, [product_ingredient_1, product_ingredient_2]
+        )
+
+    def test_get_validated_orders_map(self):
+
+        product_ingredient_repository = mock.Mock(
+            wraps=ProductIngredientRepositoryImpl()
+        )
+        ingredient_1 = build_ingredient(ingredient_id=1, name="test_ingredient")
+        inventory_ingredient_1 = build_inventory_ingredient(
+            inventory_ingredient_id=1,
+            ingredient_id=ingredient_1.id,
+            ingredient_quantity=20,
+        )
+        product_1 = build_product(product_id=1)
+        product_ingredient_1 = build_product_ingredient(
+            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+        )
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_detail_1 = build_order_detail(
+            order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
+        )
+        order_detail_repository = mock.Mock(wraps=OrderDetailRepositoryImpl())
+        order_detail_repository.add(order_detail_1)
+        product_ingredient_repository.add(product_ingredient_1)
+        inventory_ingredient_repository = mock.Mock(
+            wraps=InventoryIngredientRepositoryImpl(product_ingredient_repository)
+        )
+        inventory_ingredient_repository.add(inventory_ingredient_1)
+
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+
+        order_repository = OrderRepositoryImpl(
+            inventory_ingredient_repository=inventory_ingredient_repository,
+            order_detail_repository=order_detail_repository,
+        )
+        order_repository.add(order_1)
+        order_1.order_detail_id = order_detail_1.id
+        order_repository.update_by_id(order_1.id, order_1)
+
+        orders_to_process = order_repository.get_orders_to_process()
+        order_validation_map = order_repository.get_validated_orders_map(
+            orders_to_process
+        )
+        self.assertTrue(order_validation_map[order_1.id])
+        order_detail_repository.get_by_order_id.assert_called_with(order_1.id)
+        inventory_ingredient_repository.get_final_product_qty_by_product_ids.assert_called_with(
+            [product_1.id]
         )

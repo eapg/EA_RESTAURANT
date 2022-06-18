@@ -16,3 +16,7 @@ class OrderRepository(GenericRepository, metaclass=ABCMeta):
     @staticmethod
     def get_order_ingredients_by_order_id(self, order_id):
         pass
+
+    @staticmethod
+    def get_validated_orders_map(self, orders_to_process):
+        pass
