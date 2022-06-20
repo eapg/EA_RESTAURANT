@@ -80,3 +80,22 @@ class OrderRepositoryImpl(OrderRepository):
         )
         validated_orders_map = reduce_validated_orders_map(orders_to_process)
         return validated_orders_map
+
+    def reduce_order_ingredients_from_inventory(self, order_id):
+
+        order_product_ingredients = self.get_order_ingredients_by_order_id(order_id)
+
+        for product_ingredient in order_product_ingredients:
+
+            inventory_ingredient = (
+                self.inventory_ingredient_repository.get_by_ingredient_id(
+                    product_ingredient.ingredient_id
+                )
+            )
+            inventory_ingredient[0].ingredient_quantity = (
+                inventory_ingredient[0].ingredient_quantity - product_ingredient.quantity
+            )
+            self.inventory_ingredient_repository.update_by_id(
+                inventory_ingredient[0].id, inventory_ingredient[0]
+            )
+
