@@ -82,3 +82,15 @@ def setup_validated_orders_map(
         )
 
     return reduce_validated_orders_map
+
+
+def compute_order_estimated_time(order_ingredient_list, chef):
+
+    order_estimated_time = reduce(
+        lambda estimated_time_result, product_ingredient: estimated_time_result
+        + (product_ingredient.ingredient_type.value * product_ingredient.quantity),
+        order_ingredient_list,
+        0,
+    )
+
+    return order_estimated_time / chef.chef_skills

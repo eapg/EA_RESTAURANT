@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import Mock
+from src.constants.cooking_type import CookingType
 from src.tests.utils.fixtures.chef_fixture import build_chef
+from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order
 from src.utils.order_util import (
@@ -8,6 +10,7 @@ from src.utils.order_util import (
     order_products_validation_reducer,
     validated_orders_reducer,
     setup_validated_orders_map,
+    compute_order_estimated_time,
 )
 
 
@@ -84,3 +87,17 @@ class TestOrderUtil(unittest.TestCase):
         self.assertTrue(validated_orders_map[order_1.id])
         mocked_get_final_product_qty_by_product_ids_mock.assert_called_with([1])
         mocked_get_order_detail_by_order_id_mock.assert_called_with(1)
+
+    def test_computed_order_estimated_time(self):
+
+        chef_1 = build_chef(chef_id=1, chef_skills=2)
+        order_ingredients_list = [
+            build_product_ingredient(
+                id=1, ingredient_type=CookingType.FRYING, quantity=2
+            ),
+            build_product_ingredient(
+                id=2, ingredient_type=CookingType.BAKING, quantity=2
+            ),
+        ]
+        preparation_time = compute_order_estimated_time(order_ingredients_list, chef_1)
+        self.assertEqual(preparation_time, 15)

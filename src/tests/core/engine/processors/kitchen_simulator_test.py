@@ -4,6 +4,8 @@ from src.tests.utils.fixtures.app_processor_config_fixture import (
 )
 from src.tests.utils.fixtures.chef_fixture import build_chef
 from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
+from src.constants.cooking_type import CookingType
 from src.constants.order_status import OrderStatus
 from unittest import mock
 import unittest
@@ -17,13 +19,23 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.chef_controller = mock.Mock()
         self.kitchen_simulator.order_controller = mock.Mock()
 
-    def test_assign_orders_to_available_chefs_when_order_is_valid(self):
+    @mock.patch(
+        "src.core.engine.processors.kitchen_simulator.compute_order_estimated_time"
+    )
+    def test_assign_orders_to_available_chefs_when_order_is_valid(
+        self, mocked_order_estimated_time
+    ):
 
         chef_1 = build_chef(chef_id=1)
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
 
         self.kitchen_simulator.order_controller.get_orders_to_process.return_value = [
             order_1
+        ]
+        self.kitchen_simulator.order_controller.get_order_ingredients_by_order_id.return_value = [
+            build_product_ingredient(
+                id=1, quantity=1, ingredient_type=CookingType.FRYING
+            )
         ]
         self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [
             chef_1
@@ -50,6 +62,14 @@ class KitchenSimulatorTest(unittest.TestCase):
             self.kitchen_simulator.order_manager._mock_mock_calls[1][1]
         )
         self.assertEqual(arg_with_method_was_called[0].status, OrderStatus.IN_PROCESS)
+        mocked_order_estimated_time.asser_called_with(
+            [
+                build_product_ingredient(
+                    id=1, quantity=1, ingredient_type=CookingType.FRYING
+                )
+            ],
+            chef_1,
+        )
 
     def test_assign_orders_to_available_chefs_when_order_is_not_valid(self):
         chef_1 = build_chef(chef_id=1)

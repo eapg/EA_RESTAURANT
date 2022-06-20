@@ -8,6 +8,7 @@ class ProductIngredient:
         self.product_id = None  # integer
         self.ingredient_id = None  # integer
         self.quantity = None  # integer
+        self.ingredient_type = None  # string
         self.entity_status = None  # enum
         self.create_date = None  # date
         self.update_date = None  # date

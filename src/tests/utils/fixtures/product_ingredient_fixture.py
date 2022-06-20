@@ -1,12 +1,13 @@
 from src.lib.entities.product_ingredient import ProductIngredient
 
 
-def build_product_ingredient(id=None, product_id=None, ingredient_id=None, quantity=None):
+def build_product_ingredient(id=None, product_id=None, ingredient_id=None, quantity=None, ingredient_type=None):
     product_ingredient = ProductIngredient()
     product_ingredient.id = id
     product_ingredient.product_id = product_id
     product_ingredient.ingredient_id = ingredient_id
     product_ingredient.quantity = quantity
+    product_ingredient.ingredient_type = ingredient_type
     return product_ingredient
 
 
