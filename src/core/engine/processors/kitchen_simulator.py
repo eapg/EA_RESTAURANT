@@ -60,6 +60,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         order_to_be_assign.estimated_time = compute_order_estimated_time(
             self.order_controller.get_order_ingredients_by_order_id, available_chef
         )
+        self.order_controller.reduce_order_ingredients_from_inventory(order_to_be_assign.id)
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
