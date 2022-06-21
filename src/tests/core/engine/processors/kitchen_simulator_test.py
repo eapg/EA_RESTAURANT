@@ -43,6 +43,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_controller.get_validated_orders_map.return_value = {
             1: True
         }
+        self.kitchen_simulator.order_manager.get_queue_size.return_value = 2
         self.kitchen_simulator.order_manager.get_queue_from_status.return_value = (
             order_1.id
         )

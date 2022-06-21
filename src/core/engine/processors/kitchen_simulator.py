@@ -2,7 +2,7 @@ from abc import ABCMeta
 
 from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.ioc import get_ioc_instance
-from src.core.order_manager import OrderManager
+from src.core.order_manager import OrderManager, ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
 from src.constants.order_status import OrderStatus
 from src.utils.order_util import compute_order_estimated_time
 
@@ -28,7 +28,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def assign_orders_to_available_chefs(self):
 
         orders_to_process = self.order_controller.get_orders_to_process(
-            order_limit=1000
+            order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
         )
         orders_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process
@@ -40,27 +40,37 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             order_in_turn_id = self.order_manager.get_queue_from_status(
                 OrderStatus.NEW_ORDER
             )
-            order_to_be_assigned = list(
-                filter((lambda order: order.id == order_in_turn_id), orders_to_process)
-            )
 
-            if orders_validation_map[order_to_be_assigned[0].id]:
-                self._assign_to_chef_and_send_to_in_process(
-                    order_to_be_assigned[0], available_chef_ids[0]
+            if order_in_turn_id:
+                order_to_be_assigned = list(
+                    filter(
+                        (lambda order: order.id == order_in_turn_id), orders_to_process
+                    )
                 )
 
-            else:
-                self._order_send_to_cancel(order_to_be_assigned[0])
+                if orders_validation_map[order_to_be_assigned[0].id]:
+                    self._assign_to_chef_and_send_to_in_process(
+                        order_to_be_assigned[0], available_chef_ids[0]
+                    )
+
+                else:
+                    self._order_send_to_cancel(order_to_be_assigned[0])
 
     def _assign_to_chef_and_send_to_in_process(
-        self, order_to_be_assign, available_chef
+        self, order_to_be_assign, available_chef_id
     ):
-        order_to_be_assign.assigned_chef_id = available_chef
+        available_chef = self.chef_controller.get_by_id(available_chef_id)
+        order_to_be_assign.assigned_chef_id = available_chef_id
         order_to_be_assign.status = OrderStatus.IN_PROCESS
         order_to_be_assign.estimated_time = compute_order_estimated_time(
-            self.order_controller.get_order_ingredients_by_order_id, available_chef
+            self.order_controller.get_order_ingredients_by_order_id(
+                order_to_be_assign.id
+            ),
+            available_chef,
         )
-        self.order_controller.reduce_order_ingredients_from_inventory(order_to_be_assign.id)
+        self.order_controller.reduce_order_ingredients_from_inventory(
+            order_to_be_assign.id
+        )
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
