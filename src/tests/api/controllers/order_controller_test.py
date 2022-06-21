@@ -1,6 +1,5 @@
 import unittest
 from unittest import mock
-
 from src.api.controllers.order_controller import OrderController
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 from src.tests.utils.fixtures.product_ingredient_fixture import (
@@ -76,3 +75,19 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
         )
 
         self.assertEqual(ingredients, expected_ingredients)
+
+    def test_get_validated_orders_map_successfully(self):
+        order = build_order(order_id=1)
+        self.order_repository.get_validated_orders_map.return_value = {1: True}
+        expected_validated_orders_map = self.order_controller.get_validated_orders_map(
+            [order]
+        )
+        self.order_repository.get_validated_orders_map.assert_called_with([order])
+        self.assertEqual(expected_validated_orders_map, {1: True})
+
+    def test_reduce_order_ingredients_from_inventory_successfully(self):
+        order = build_order(order_id=1)
+        self.order_controller.reduce_order_ingredients_from_inventory(order.id)
+        self.order_repository.reduce_order_ingredients_from_inventory.assert_called_with(
+            order.id
+        )

@@ -26,3 +26,6 @@ class OrderController:
     def get_validated_orders_map(self, orders_to_process):
         return self._order_repository.get_validated_orders_map(orders_to_process)
 
+    def reduce_order_ingredients_from_inventory(self, order_id):
+        self._order_repository.reduce_order_ingredients_from_inventory(order_id)
+
