@@ -70,6 +70,9 @@ class KitchenSimulatorTest(unittest.TestCase):
             ],
             chef_1,
         )
+        self.kitchen_simulator.order_controller.reduce_order_ingredients_from_inventory.assert_called_with(
+            order_1.id
+        )
 
     def test_assign_orders_to_available_chefs_when_order_is_not_valid(self):
         chef_1 = build_chef(chef_id=1)
