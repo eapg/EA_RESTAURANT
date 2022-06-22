@@ -145,7 +145,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
             updated_order.assigned_chef_id, order_to_update.assigned_chef_id
         )
 
-    def test_get_orders_to_process_successfully(self):
+    def test_get_orders_by_status_successfully(self):
 
         order_1 = build_order()
         order_2 = build_order()
@@ -155,9 +155,13 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.order_controller.add(order_2)
         self.order_controller.add(order_3)
 
-        orders_to_process = self.order_controller.get_orders_to_process()
-        self.order_repository.get_orders_to_process.assert_called()
-        self.assertEqual(orders_to_process, [order_1, order_2])
+        orders_by_status = self.order_controller.get_orders_by_status(
+            OrderStatus.NEW_ORDER, 10
+        )
+        self.order_repository.get_orders_by_status.assert_called_with(
+            OrderStatus.NEW_ORDER, 10
+        )
+        self.assertEqual(orders_by_status, [order_1, order_2])
 
     def test_get_order_ingredients_by_order_id_from_repository_using_controller(self):
 
@@ -222,7 +226,9 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         order_1.order_detail_id = order_detail_1.id
         self.order_controller.update_by_id(order_1.id, order_1)
 
-        orders_to_process = self.order_controller.get_orders_to_process()
+        orders_to_process = self.order_controller.get_orders_by_status(
+            OrderStatus.NEW_ORDER, 10
+        )
         order_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process
         )

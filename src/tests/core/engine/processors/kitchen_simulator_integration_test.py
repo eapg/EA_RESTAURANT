@@ -118,23 +118,22 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.assertEqual(order_with_assigned_chef.assigned_chef_id, chef_1.id)
         self.assertEqual(order_with_assigned_chef.estimated_time, 15.0)
-        self.kitchen_simulator.order_controller.get_orders_to_process.assert_called_with(
-            order_limit=1000
-        )
         self.kitchen_simulator.order_controller.get_validated_orders_map.assert_has_calls(
             [mock.call([order_1, order_2]), mock.call([order_2])]
         )
-        self.kitchen_simulator.order_controller.get_orders_to_process.assert_has_calls(
+        self.kitchen_simulator.order_controller.get_orders_by_status.assert_has_calls(
             [
                 mock.call(
+                    OrderStatus.NEW_ORDER,
                     order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
                         OrderStatus.NEW_ORDER
-                    ]
+                    ],
                 ),
                 mock.call(
+                    OrderStatus.NEW_ORDER,
                     order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
                         OrderStatus.NEW_ORDER
-                    ]
+                    ],
                 ),
             ]
         )

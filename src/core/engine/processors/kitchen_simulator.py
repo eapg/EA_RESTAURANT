@@ -27,8 +27,9 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
 
     def assign_orders_to_available_chefs(self):
 
-        orders_to_process = self.order_controller.get_orders_to_process(
-            order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
+        orders_to_process = self.order_controller.get_orders_by_status(
+            OrderStatus.NEW_ORDER,
+            order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER],
         )
         orders_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process

@@ -42,12 +42,10 @@ class OrderRepositoryImpl(OrderRepository):
             order.assigned_chef_id or current_order.assigned_chef_id
         )
 
-    def get_orders_to_process(self, order_limit=None):
+    def get_orders_by_status(self, order_status, order_limit=None):
         orders = self.get_all()
-        orders_to_process = filter(
-            lambda order: order.status == OrderStatus.NEW_ORDER, orders
-        )
-        return (list(orders_to_process))[0:order_limit]
+        orders_by_status = filter(lambda order: order.status == order_status, orders)
+        return (list(orders_by_status))[0:order_limit]
 
     def get_chefs_with_assigned_orders(self, chef_ids):
 
@@ -93,9 +91,9 @@ class OrderRepositoryImpl(OrderRepository):
                 )
             )
             inventory_ingredient[0].ingredient_quantity = (
-                inventory_ingredient[0].ingredient_quantity - product_ingredient.quantity
+                inventory_ingredient[0].ingredient_quantity
+                - product_ingredient.quantity
             )
             self.inventory_ingredient_repository.update_by_id(
                 inventory_ingredient[0].id, inventory_ingredient[0]
             )
-
