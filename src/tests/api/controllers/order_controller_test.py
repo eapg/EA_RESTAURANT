@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+from src.constants.order_status import OrderStatus
 from src.api.controllers.order_controller import OrderController
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 from src.tests.utils.fixtures.product_ingredient_fixture import (
@@ -52,14 +53,18 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
 
         self.order_repository.update_by_id.assert_called_with(1, order)
 
-    def test_get_orders_to_process_successfully(self):
+    def test_get_orders_by_status_successfully(self):
         new_orders = build_orders(3)
 
-        self.order_repository.get_orders_to_process.return_value = new_orders
+        self.order_repository.get_orders_by_status.return_value = new_orders
 
-        expected_orders_to_process = self.order_controller.get_orders_to_process()
-        self.assertEqual(new_orders, expected_orders_to_process)
-        self.order_repository.get_orders_to_process.assert_called()
+        expected_orders_by_status = self.order_controller.get_orders_by_status(
+            OrderStatus.NEW_ORDER, 10
+        )
+        self.assertEqual(new_orders, expected_orders_by_status)
+        self.order_repository.get_orders_by_status.assert_called_with(
+            OrderStatus.NEW_ORDER, 10
+        )
 
     def test_get_order_ingredients_by_order_id_successfully(self):
         order = build_order(order_id=1)

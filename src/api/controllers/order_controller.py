@@ -17,8 +17,8 @@ class OrderController:
     def update_by_id(self, order_id, order):
         self._order_repository.update_by_id(order_id, order)
 
-    def get_orders_to_process(self,order_limit=None):
-        return self._order_repository.get_orders_to_process(order_limit)
+    def get_orders_by_status(self, order_status, order_limit=None):
+        return self._order_repository.get_orders_by_status(order_status, order_limit)
 
     def get_order_ingredients_by_order_id(self, order_id):
         return self._order_repository.get_order_ingredients_by_order_id(order_id)

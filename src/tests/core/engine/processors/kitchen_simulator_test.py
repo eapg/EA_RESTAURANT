@@ -29,7 +29,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         chef_1 = build_chef(chef_id=1)
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
 
-        self.kitchen_simulator.order_controller.get_orders_to_process.return_value = [
+        self.kitchen_simulator.order_controller.get_orders_by_status.return_value = [
             order_1
         ]
         self.kitchen_simulator.order_controller.get_order_ingredients_by_order_id.return_value = [
@@ -48,8 +48,8 @@ class KitchenSimulatorTest(unittest.TestCase):
             order_1.id
         )
         self.kitchen_simulator.assign_orders_to_available_chefs()
-        self.kitchen_simulator.order_controller.get_orders_to_process.assert_called_with(
-            order_limit=1000
+        self.kitchen_simulator.order_controller.get_orders_by_status.assert_called_with(
+            OrderStatus.NEW_ORDER, order_limit=1000
         )
         self.kitchen_simulator.order_controller.get_validated_orders_map.assert_called_with(
             [order_1]
