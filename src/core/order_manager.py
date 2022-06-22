@@ -1,16 +1,31 @@
 # order manager mechanism
-
+import queue
 from queue import Queue
 from src.constants.order_status import OrderStatus
+
+ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP = {
+    OrderStatus.NEW_ORDER: 1000,
+    OrderStatus.CANCELLED: 1000,
+    OrderStatus.IN_PROCESS: 1000,
+    OrderStatus.COMPLETED: 1000,
+}
 
 
 class OrderManager:
     def __init__(self):
         self._order_status_to_order_queue_map = {
-            OrderStatus.NEW_ORDER: Queue(maxsize=1000),
-            OrderStatus.IN_PROCESS: Queue(maxsize=1000),
-            OrderStatus.CANCELLED: Queue(maxsize=1000),
-            OrderStatus.COMPLETED: Queue(maxsize=1000),
+            OrderStatus.NEW_ORDER: Queue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
+            ),
+            OrderStatus.IN_PROCESS: Queue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.IN_PROCESS]
+            ),
+            OrderStatus.CANCELLED: Queue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.CANCELLED]
+            ),
+            OrderStatus.COMPLETED: Queue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.COMPLETED]
+            ),
         }
 
     def add_to_queue(self, order):
@@ -19,7 +34,10 @@ class OrderManager:
         self._order_status_to_order_queue_map[order.status].put(order.id)
 
     def get_queue_from_status(self, order_status):
-        return self._order_status_to_order_queue_map[order_status].get()
+        try:
+            return self._order_status_to_order_queue_map[order_status].get_nowait()
+        except queue.Empty:
+            return None
 
     def get_queue_size(self, order_status):
         return self._order_status_to_order_queue_map[order_status].qsize()
