@@ -47,6 +47,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
 
     def test_assign_orders_to_available_chefs(self):
+        self.kitchen_simulator.check_for_order_completed = mock.Mock()
         ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
@@ -117,7 +118,6 @@ class KitchenSimulatorIntegrationTest(TestCase):
             order_1.id
         )
         self.assertEqual(order_with_assigned_chef.assigned_chef_id, chef_1.id)
-        self.assertEqual(order_with_assigned_chef.estimated_time, 15.0)
         self.kitchen_simulator.order_controller.get_validated_orders_map.assert_has_calls(
             [mock.call([order_1, order_2]), mock.call([order_2])]
         )
@@ -139,4 +139,81 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.kitchen_simulator.order_controller.reduce_order_ingredients_from_inventory.assert_called_with(
             order_1.id
+        )
+
+    def test_check_for_order_complete(self):
+
+        ingredient_2 = build_ingredient(ingredient_id=2, name="potatoes")
+        inventory_ingredient_2 = build_inventory_ingredient(
+            inventory_ingredient_id=2,
+            ingredient_id=ingredient_2.id,
+            ingredient_quantity=10,
+        )
+        product_2 = build_product(product_id=2, name="fries potatoes")
+        product_ingredient_2 = build_product_ingredient(
+            id=2,
+            ingredient_id=ingredient_2.id,
+            product_id=product_2.id,
+            quantity=1,
+            ingredient_type=CookingType.FRYING,
+        )
+
+        order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
+        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+            order_3.id, order_3.status
+        )
+        self.kitchen_simulator.order_controller.add(order_3)
+        self.kitchen_simulator.order_manager.add_to_queue(order_3)
+        order_detail_1 = build_order_detail(
+            order_detail_id=1, order_id=order_3.id, product_id=product_2.id, quantity=1
+        )
+        self.order_detail_controller.add(order_detail_1)
+        order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
+        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+            order_4.id, order_4.status
+        )
+        self.kitchen_simulator.order_controller.add(order_4)
+        self.kitchen_simulator.order_manager.add_to_queue(order_4)
+        order_detail_2 = build_order_detail(
+            order_detail_id=1, order_id=order_4.id, product_id=product_2.id, quantity=1
+        )
+        self.order_detail_controller.add(order_detail_2)
+        self.product_ingredient_controller.add(product_ingredient_2)
+        self.inventory_ingredient_controller.add(inventory_ingredient_2)
+
+        chef_3 = build_chef(chef_id=3, chef_skills=10)
+        self.kitchen_simulator.chef_controller.add(chef_3)
+        chef_4 = build_chef(chef_id=4, chef_skills=10)
+        self.kitchen_simulator.chef_controller.add(chef_4)
+
+        def after_execute(_app_processor_config, _app_context):
+            global ITERATIONS
+            ITERATIONS += 1
+            if ITERATIONS == 500:
+                self.kitchen_simulator.destroyed = True
+
+        self.kitchen_simulator.app_processor_config.after_execute = after_execute
+
+        self.kitchen_simulator.start()
+        self.kitchen_simulator.join()
+
+        self.assertEqual(
+            self.kitchen_simulator.order_manager.get_queue_from_status(
+                OrderStatus.COMPLETED
+            ),
+            order_3.id,
+        )
+
+        self.assertEqual(
+            self.kitchen_simulator.order_manager.get_queue_from_status(
+                OrderStatus.COMPLETED
+            ),
+            order_4.id,
+        )
+        order_3_complete = self.kitchen_simulator.order_controller.get_by_id(order_3.id)
+        self.assertIsNone(order_3_complete.assigned_chef_id)
+        order_4_complete = self.kitchen_simulator.order_controller.get_by_id(order_4.id)
+        self.assertIsNone(order_4_complete.assigned_chef_id)
+        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
+            [mock.call(order_3.id), mock.call(order_4.id)]
         )
