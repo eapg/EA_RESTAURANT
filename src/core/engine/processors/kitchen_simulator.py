@@ -2,7 +2,7 @@ from abc import ABCMeta
 
 from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.ioc import get_ioc_instance
-from src.core.order_manager import OrderManager, ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
+from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
 from src.constants.order_status import OrderStatus
 from src.utils.order_util import compute_order_estimated_time
 from src.utils.time_util import get_unix_time_stamp_milliseconds
@@ -25,10 +25,10 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
 
     def process(self, delta_time):
 
-        self.assign_orders_to_available_chefs()
-        self.check_for_order_completed()
+        self.process_new_orders()
+        self.process_orders_in_process()
 
-    def assign_orders_to_available_chefs(self):
+    def process_new_orders(self):
 
         orders_to_process = self.order_controller.get_orders_by_status(
             OrderStatus.NEW_ORDER,
@@ -60,7 +60,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
                 else:
                     self._order_send_to_cancel(order_to_be_assigned[0])
 
-    def check_for_order_completed(self):
+    def process_orders_in_process(self):
 
         order_id_to_be_checked = self.order_manager.get_queue_from_status(
             OrderStatus.IN_PROCESS
