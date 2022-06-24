@@ -1,12 +1,14 @@
 from src.lib.entities.product import Product
+from src.constants.audit import Status
 
 
-def build_product(product_id=None, name=None, description=None):
+def build_product(product_id=None, name=None, description=None, entity_status=None):
 
     product = Product()
     product.id = product_id
     product.name = name or "testing-product"
     product.description = description or "product-description"
+    product.entity_status = entity_status or Status.ACTIVE
 
     return product
 

@@ -11,8 +11,8 @@ class ProductController:
     def get_all(self):
         return self._product_repository.get_all()
 
-    def delete_by_id(self, product_id):
-        self._product_repository.delete_by_id(product_id)
+    def delete_by_id(self, product_id, product):
+        self._product_repository.delete_by_id(product_id, product)
 
     def update_by_id(self, product_id, product):
         self._product_repository.update_by_id(product_id, product)

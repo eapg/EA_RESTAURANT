@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-
+from src.constants.audit import Status
 from src.api.controllers.product_controller import ProductController
 from src.lib.repositories.impl.product_repository_impl import ProductRepositoryImpl
 from src.tests.utils.fixtures.product_fixture import build_product, build_products
@@ -69,16 +69,18 @@ class ProductRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_delete_an_product_from_repository_using_controller(self):
         products_to_insert = build_products(count=4)
-
+        product_to_delete = build_product(entity_status=Status.DELETED)
         self.product_controller.add(products_to_insert[0])
         self.product_controller.add(products_to_insert[1])
         self.product_controller.add(products_to_insert[2])
         self.product_controller.add(products_to_insert[3])
 
-        self.product_controller.delete_by_id(3)
+        self.product_controller.delete_by_id(3, product_to_delete)
         products = self.product_controller.get_all()
 
-        self.product_repository.delete_by_id.assert_called_once_with(3)
+        self.product_repository.delete_by_id.assert_called_once_with(
+            3, product_to_delete
+        )
 
         self.assertEqual(
             products,
@@ -90,8 +92,11 @@ class ProductRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_products(self):
-        self.assertRaises(KeyError, self.product_controller.delete_by_id, 3)
-        self.product_repository.delete_by_id.assert_called_with(3)
+        product_to_delete = build_product(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, self.product_controller.delete_by_id, 3, product_to_delete
+        )
+        self.product_repository.delete_by_id.assert_called_with(3, product_to_delete)
 
     def test_update_product_from_repository_using_controller(self):
         products_to_insert = build_products(count=2)
