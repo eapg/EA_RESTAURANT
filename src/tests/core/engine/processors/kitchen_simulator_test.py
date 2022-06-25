@@ -52,7 +52,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_manager.get_queue_from_status.return_value = (
             order_1.id
         )
-        self.kitchen_simulator.assign_orders_to_available_chefs()
+        self.kitchen_simulator.process_new_orders()
         self.kitchen_simulator.order_controller.get_orders_by_status.assert_called_with(
             OrderStatus.NEW_ORDER, order_limit=1000
         )
@@ -96,7 +96,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_manager.get_queue_from_status.return_value = (
             order_1.id
         )
-        self.kitchen_simulator.assign_orders_to_available_chefs()
+        self.kitchen_simulator.process_new_orders()
         self.kitchen_simulator.order_controller.get_orders_by_status.assert_called_with(
             OrderStatus.NEW_ORDER, order_limit=1000
         )
@@ -141,7 +141,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.return_value = (
             order_status_history
         )
-        self.kitchen_simulator.check_for_order_completed()
+        self.kitchen_simulator.process_orders_in_process()
         self.kitchen_simulator.order_manager.get_queue_from_status.assert_called_with(
             OrderStatus.IN_PROCESS
         )
