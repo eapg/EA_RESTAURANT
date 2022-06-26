@@ -1,5 +1,6 @@
 import unittest
 
+from src.constants.audit import Status
 from src.lib.repositories.impl.order_detail_repository_impl import (
     OrderDetailRepositoryImpl,
 )
@@ -76,14 +77,14 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_order_detail_successfully(self):
         order_details_to_insert = build_order_details(count=3)
-
+        order_detail_to_delete = build_order_detail(entity_status=Status.ACTIVE)
         order_detail_repository = OrderDetailRepositoryImpl()
 
         order_detail_repository.add(order_details_to_insert[0])
         order_detail_repository.add(order_details_to_insert[1])
         order_detail_repository.add(order_details_to_insert[2])
 
-        order_detail_repository.delete_by_id(2)
+        order_detail_repository.delete_by_id(2, order_detail_to_delete)
 
         order_details = order_detail_repository.get_all()
 
@@ -94,8 +95,10 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_order_details(self):
         order_detail_repository = OrderDetailRepositoryImpl()
-
-        self.assertRaises(KeyError, order_detail_repository.delete_by_id, 2)
+        order_detail_to_delete = build_order_detail(entity_status=Status.ACTIVE)
+        self.assertRaises(
+            KeyError, order_detail_repository.delete_by_id, 2, order_detail_to_delete
+        )
 
     def test_update_order_detail_successfully(self):
         order_details_to_insert = build_order_details(count=2)
