@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-
+from src.constants.audit import Status
 from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
     InventoryIngredientRepositoryImpl,
 )
@@ -84,14 +84,16 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_inventory_ingredient_successfully(self):
         inventory_ingredients_to_insert = build_inventory_ingredients(count=3)
-
+        inventory_ingredient_to_delete = build_inventory_ingredient(
+            entity_status=Status.DELETED
+        )
         inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
 
         inventory_ingredient_repository.add(inventory_ingredients_to_insert[0])
         inventory_ingredient_repository.add(inventory_ingredients_to_insert[1])
         inventory_ingredient_repository.add(inventory_ingredients_to_insert[2])
 
-        inventory_ingredient_repository.delete_by_id(2)
+        inventory_ingredient_repository.delete_by_id(2, inventory_ingredient_to_delete)
 
         inventory_ingredients = inventory_ingredient_repository.get_all()
 
@@ -102,8 +104,15 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_inventory_ingredients(self):
         inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
-
-        self.assertRaises(KeyError, inventory_ingredient_repository.delete_by_id, 2)
+        inventory_ingredient_to_delete = build_inventory_ingredient(
+            entity_status=Status.DELETED
+        )
+        self.assertRaises(
+            KeyError,
+            inventory_ingredient_repository.delete_by_id,
+            2,
+            inventory_ingredient_to_delete,
+        )
 
     def test_update_inventory_ingredient_successfully(self):
         inventory_ingredients_to_insert = build_inventory_ingredients(count=2)
