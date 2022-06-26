@@ -17,7 +17,7 @@ class GenericRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_by_id(self, obj_id):
+    def delete_by_id(self, obj_id, obj):
         pass
 
     @abstractmethod
