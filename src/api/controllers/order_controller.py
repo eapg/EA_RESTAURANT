@@ -11,8 +11,8 @@ class OrderController:
     def get_all(self):
         return self._order_repository.get_all()
 
-    def delete_by_id(self, order_id):
-        self._order_repository.delete_by_id(order_id)
+    def delete_by_id(self, order_id, order):
+        self._order_repository.delete_by_id(order_id, order)
 
     def update_by_id(self, order_id, order):
         self._order_repository.update_by_id(order_id, order)
@@ -28,4 +28,3 @@ class OrderController:
 
     def reduce_order_ingredients_from_inventory(self, order_id):
         self._order_repository.reduce_order_ingredients_from_inventory(order_id)
-

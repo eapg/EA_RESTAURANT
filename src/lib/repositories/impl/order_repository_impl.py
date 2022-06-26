@@ -1,8 +1,9 @@
 # This file has the order repository
 from functools import reduce
+from datetime import datetime
 
+from src.constants.audit import Status
 from src.lib.repositories.order_repository import OrderRepository
-from src.constants.order_status import OrderStatus
 from src.utils.order_util import (
     array_chef_to_chef_assigned_orders_map_reducer,
     setup_validated_orders_map,
@@ -24,23 +25,48 @@ class OrderRepositoryImpl(OrderRepository):
 
     def add(self, order):
         order.id = self._current_id
+        order.create_date = datetime.now()
+        order.update_by = order.create_by
+        order.update_date = order.create_date
         self._orders[order.id] = order
         self._current_id += 1
 
     def get_by_id(self, order_id):
-        return self._orders[order_id]
+        order_to_return = self._orders[order_id]
+        order_filtered = list(
+            filter(
+                lambda order: order.entity_status == Status.ACTIVE,
+                [order_to_return],
+            )
+        )
+        return order_filtered[0]
 
     def get_all(self):
-        return list(self._orders.values())
+        orders = list(self._orders.values())
+        orders_filtered = filter(
+            lambda order: order.entity_status == Status.ACTIVE, orders
+        )
+        return list(orders_filtered)
 
-    def delete_by_id(self, order_id):
-        self._orders.pop(order_id)
+    def delete_by_id(self, order_id, order):
+        order_to_be_delete = self.get_by_id(order_id)
+        order_to_be_delete.entity_status = Status.DELETED
+        order_to_be_delete.update_date = datetime.now()
+        order_to_be_delete.update_by = order.update_by
+        self._update_by_id(order_id, order_to_be_delete, use_merge_with_existing=False)
 
     def update_by_id(self, order_id, order):
-        current_order = self.get_by_id(order_id)
+        self._update_by_id(order_id, order)
+
+    def _update_by_id(self, order_id, order, use_merge_with_existing=True):
+        current_order = self.get_by_id(order_id) if use_merge_with_existing else order
+        current_order.status = order.status or current_order.status
         current_order.assigned_chef_id = (
             order.assigned_chef_id or current_order.assigned_chef_id
         )
+        current_order.update_date = datetime.now()
+        current_order.update_by = order.update_by or current_order.update_by
+        current_order.entity_status = order.entity_status or current_order.entity_status
 
     def get_orders_by_status(self, order_status, order_limit=None):
         orders = self.get_all()

@@ -1,5 +1,7 @@
 import unittest
 from unittest import mock
+
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.api.controllers.order_controller import OrderController
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
@@ -42,9 +44,10 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_orders), 3)
 
     def test_delete_an_order_successfully(self):
-        self.order_controller.delete_by_id(2)
+        order_to_delete = build_order(entity_status=Status.DELETED)
+        self.order_controller.delete_by_id(2, order_to_delete)
 
-        self.order_repository.delete_by_id.assert_called_with(2)
+        self.order_repository.delete_by_id.assert_called_with(2, order_to_delete)
 
     def test_update_an_order_successfully(self):
         order = build_order()
