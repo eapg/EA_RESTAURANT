@@ -11,8 +11,8 @@ class InventoryController:
     def get_all(self):
         return self._inventory_repository.get_all()
 
-    def delete_by_id(self, inventory_id):
-        self._inventory_repository.delete_by_id(inventory_id)
+    def delete_by_id(self, inventory_id, inventory):
+        self._inventory_repository.delete_by_id(inventory_id, inventory)
 
     def update_by_id(self, inventory_id, inventory):
         self._inventory_repository.update_by_id(inventory_id, inventory)
