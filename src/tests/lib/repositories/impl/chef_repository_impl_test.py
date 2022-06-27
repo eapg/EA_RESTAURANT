@@ -1,6 +1,6 @@
 import unittest
 from unittest import mock
-
+from src.constants.audit import Status
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
@@ -73,14 +73,14 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_chef_successfully(self):
         chefs_to_insert = build_chefs(count=3)
-
+        chef_to_delete = build_chef(entity_status=Status.DELETED)
         chef_repository = ChefRepositoryImpl()
 
         chef_repository.add(chefs_to_insert[0])
         chef_repository.add(chefs_to_insert[1])
         chef_repository.add(chefs_to_insert[2])
 
-        chef_repository.delete_by_id(2)
+        chef_repository.delete_by_id(2, chef_to_delete)
 
         chefs = chef_repository.get_all()
 
@@ -88,8 +88,8 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_chefs(self):
         chef_repository = ChefRepositoryImpl()
-
-        self.assertRaises(KeyError, chef_repository.delete_by_id, 2)
+        chef_to_delete = build_chef(entity_status=Status.DELETED)
+        self.assertRaises(KeyError, chef_repository.delete_by_id, 2, chef_to_delete)
 
     def test_update_chef_successfully(self):
         chefs_to_insert = build_chefs(count=2)

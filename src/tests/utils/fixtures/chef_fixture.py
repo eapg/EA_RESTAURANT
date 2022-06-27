@@ -1,12 +1,14 @@
+from src.constants.audit import Status
 from src.lib.entities.chef import Chef
 
 
-def build_chef(chef_id=None, name=None, chef_skills=None):
+def build_chef(chef_id=None, name=None, chef_skills=None, entity_status=None):
 
     chef = Chef()
     chef.id = chef_id
     chef.name = name or "testing-chef"
     chef.chef_skills = chef_skills or "basic"
+    chef.entity_status = entity_status or Status.ACTIVE
 
     return chef
 

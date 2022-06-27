@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.chef_controller import ChefController
+from src.constants.audit import Status
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
@@ -75,16 +76,16 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_delete_an_chef_from_repository_using_controller(self):
         chefs_to_insert = build_chefs(count=4)
-
+        chef_to_delete = build_chef(entity_status=Status.DELETED)
         self.chef_controller.add(chefs_to_insert[0])
         self.chef_controller.add(chefs_to_insert[1])
         self.chef_controller.add(chefs_to_insert[2])
         self.chef_controller.add(chefs_to_insert[3])
 
-        self.chef_controller.delete_by_id(3)
+        self.chef_controller.delete_by_id(3, chef_to_delete)
         chefs = self.chef_controller.get_all()
 
-        self.chef_repository.delete_by_id.assert_called_once_with(3)
+        self.chef_repository.delete_by_id.assert_called_once_with(3, chef_to_delete)
 
         self.assertEqual(
             chefs,
@@ -96,8 +97,11 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_chefs(self):
-        self.assertRaises(KeyError, self.chef_controller.delete_by_id, 3)
-        self.chef_repository.delete_by_id.assert_called_with(3)
+        chef_to_delete = build_chef(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, self.chef_controller.delete_by_id, 3, chef_to_delete
+        )
+        self.chef_repository.delete_by_id.assert_called_with(3, chef_to_delete)
 
     def test_update_chef_from_repository_using_controller(self):
         chefs_to_insert = build_chefs(count=2)

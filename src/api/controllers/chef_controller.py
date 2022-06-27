@@ -11,8 +11,8 @@ class ChefController:
     def get_all(self):
         return self._chef_repository.get_all()
 
-    def delete_by_id(self, chef_id):
-        self._chef_repository.delete_by_id(chef_id)
+    def delete_by_id(self, chef_id, chef):
+        self._chef_repository.delete_by_id(chef_id, chef)
 
     def update_by_id(self, chef_id, chef):
         self._chef_repository.update_by_id(chef_id, chef)
