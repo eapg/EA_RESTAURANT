@@ -4,6 +4,7 @@ from unittest import mock
 from src.api.controllers.inventory_ingredient_controller import (
     InventoryIngredientController,
 )
+from src.constants.audit import Status
 from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
     InventoryIngredientRepositoryImpl,
 )
@@ -86,16 +87,22 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
     def test_delete_an_inventory_ingredient_from_repository_using_controller(self):
         inventory_ingredients_to_insert = build_inventory_ingredients(count=4)
-
+        inventory_ingredient_to_delete = build_inventory_ingredient(
+            entity_status=Status.DELETED
+        )
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[0])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[1])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[2])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[3])
 
-        self.inventory_ingredient_controller.delete_by_id(3)
+        self.inventory_ingredient_controller.delete_by_id(
+            3, inventory_ingredient_to_delete
+        )
         inventory_ingredients = self.inventory_ingredient_controller.get_all()
 
-        self.inventory_ingredient_repository.delete_by_id.assert_called_once_with(3)
+        self.inventory_ingredient_repository.delete_by_id.assert_called_once_with(
+            3, inventory_ingredient_to_delete
+        )
 
         self.assertEqual(
             inventory_ingredients,
@@ -107,10 +114,18 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         )
 
     def test_delete_throws_key_error_when_there_are_no_inventory_ingredients(self):
-        self.assertRaises(
-            KeyError, self.inventory_ingredient_controller.delete_by_id, 3
+        inventory_ingredient_to_delete = build_inventory_ingredient(
+            entity_status=Status.DELETED
         )
-        self.inventory_ingredient_repository.delete_by_id.assert_called_with(3)
+        self.assertRaises(
+            KeyError,
+            self.inventory_ingredient_controller.delete_by_id,
+            3,
+            inventory_ingredient_to_delete,
+        )
+        self.inventory_ingredient_repository.delete_by_id.assert_called_with(
+            3, inventory_ingredient_to_delete
+        )
 
     def test_update_inventory_ingredient_from_repository_using_controller(self):
         inventory_ingredients_to_insert = build_inventory_ingredients(count=2)
