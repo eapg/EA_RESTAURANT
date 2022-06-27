@@ -1,5 +1,7 @@
 import unittest
 from unittest import mock
+
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
@@ -77,14 +79,16 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_order_status_history_successfully(self):
         order_status_histories_to_insert = build_order_status_histories(count=3)
-
+        order_status_history_to_delete = build_order_status_history(
+            entity_status=Status.DELETED
+        )
         order_status_history_repository = OrderStatusHistoryRepositoryImpl()
 
         order_status_history_repository.add(order_status_histories_to_insert[0])
         order_status_history_repository.add(order_status_histories_to_insert[1])
         order_status_history_repository.add(order_status_histories_to_insert[2])
 
-        order_status_history_repository.delete_by_id(2)
+        order_status_history_repository.delete_by_id(2, order_status_history_to_delete)
 
         order_status_histories = order_status_history_repository.get_all()
 
@@ -95,8 +99,15 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_order_status_histories(self):
         order_status_history_repository = OrderStatusHistoryRepositoryImpl()
-
-        self.assertRaises(KeyError, order_status_history_repository.delete_by_id, 2)
+        order_status_history_to_delete = build_order_status_history(
+            entity_status=Status.DELETED
+        )
+        self.assertRaises(
+            KeyError,
+            order_status_history_repository.delete_by_id,
+            2,
+            order_status_history_to_delete,
+        )
 
     def test_update_order_status_history_successfully(self):
         order_status_histories_to_insert = build_order_status_histories(count=2)
@@ -148,6 +159,7 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
             order_1.id
         )
         order_status_histories = order_status_history_repository.get_all()
+
         self.assertEqual(
             order_status_histories[0].to_time, order_status_histories[1].from_time
         )

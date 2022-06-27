@@ -1,6 +1,6 @@
 # This file has the order_status_history repository
 from datetime import datetime
-
+from src.constants.audit import Status
 from src.lib.entities.order_status_history import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
@@ -14,20 +14,59 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def add(self, order_status_history):
         order_status_history.id = self._current_id
+        order_status_history.create_date = datetime.now()
+        order_status_history.update_by = order_status_history.create_by
+        order_status_history.update_date = order_status_history.create_date
         self._order_status_histories[order_status_history.id] = order_status_history
         self._current_id += 1
 
     def get_by_id(self, order_status_history_id):
-        return self._order_status_histories[order_status_history_id]
+        order_status_history_to_return = self._order_status_histories[
+            order_status_history_id
+        ]
+        order_status_history_filtered = list(
+            filter(
+                lambda order_status_history: order_status_history.entity_status
+                == Status.ACTIVE,
+                [order_status_history_to_return],
+            )
+        )
+        return order_status_history_filtered[0]
 
     def get_all(self):
-        return list(self._order_status_histories.values())
+        order_status_histories = list(self._order_status_histories.values())
+        order_status_histories_filtered = filter(
+            lambda order_status_history: order_status_history.entity_status
+            == Status.ACTIVE,
+            order_status_histories,
+        )
+        return list(order_status_histories_filtered)
 
-    def delete_by_id(self, order_status_history_id):
-        self._order_status_histories.pop(order_status_history_id)
+    def delete_by_id(self, order_status_history_id, order_status_history):
+        order_status_history_to_be_delete = self.get_by_id(order_status_history_id)
+        order_status_history_to_be_delete.entity_status = Status.DELETED
+        order_status_history_to_be_delete.update_date = datetime.now()
+        order_status_history_to_be_delete.update_by = order_status_history.update_by
+        self._update_by_id(
+            order_status_history_id,
+            order_status_history_to_be_delete,
+            use_merge_with_existing=False,
+        )
 
     def update_by_id(self, order_status_history_id, order_status_history):
-        current_order_status_history = self.get_by_id(order_status_history_id)
+        self._update_by_id(order_status_history_id, order_status_history)
+
+    def _update_by_id(
+        self,
+        order_status_history_id,
+        order_status_history,
+        use_merge_with_existing=True,
+    ):
+        current_order_status_history = (
+            self.get_by_id(order_status_history_id)
+            if use_merge_with_existing
+            else order_status_history
+        )
         current_order_status_history.order_id = (
             order_status_history.order_id or current_order_status_history.order_id
         )
@@ -42,6 +81,14 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         )
         current_order_status_history.to_status = (
             order_status_history.to_status or current_order_status_history.to_status
+        )
+        current_order_status_history.update_date = datetime.now()
+        current_order_status_history.update_by = (
+            order_status_history.update_by or current_order_status_history.update_by
+        )
+        current_order_status_history.entity_status = (
+            order_status_history.entity_status
+            or current_order_status_history.entity_status
         )
 
     def get_by_order_id(self, order_id):
@@ -75,5 +122,6 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         new_status_history = OrderStatusHistory()
         new_status_history.from_status = new_status
         new_status_history.from_time = datetime.now()
+        new_status_history.entity_status = Status.ACTIVE
         new_status_history.order_id = order_id
         self.add(new_status_history)

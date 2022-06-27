@@ -13,8 +13,10 @@ class OrderStatusHistoryController:
     def get_all(self):
         return self._order_status_history_repository.get_all()
 
-    def delete_by_id(self, order_status_history_id):
-        self._order_status_history_repository.delete_by_id(order_status_history_id)
+    def delete_by_id(self, order_status_history_id, order_status_history):
+        self._order_status_history_repository.delete_by_id(
+            order_status_history_id, order_status_history
+        )
 
     def update_by_id(self, order_status_history_id, order_status_history):
         self._order_status_history_repository.update_by_id(

@@ -4,6 +4,7 @@ from unittest import mock
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
@@ -92,16 +93,22 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
 
     def test_delete_an_order_status_history_from_repository_using_controller(self):
         order_status_histories_to_insert = build_order_status_histories(count=4)
-
+        order_status_history_to_delete = build_order_status_history(
+            entity_status=Status.DELETED
+        )
         self.order_status_history_controller.add(order_status_histories_to_insert[0])
         self.order_status_history_controller.add(order_status_histories_to_insert[1])
         self.order_status_history_controller.add(order_status_histories_to_insert[2])
         self.order_status_history_controller.add(order_status_histories_to_insert[3])
 
-        self.order_status_history_controller.delete_by_id(3)
+        self.order_status_history_controller.delete_by_id(
+            3, order_status_history_to_delete
+        )
         order_status_histories = self.order_status_history_controller.get_all()
 
-        self.order_status_history_repository.delete_by_id.assert_called_once_with(3)
+        self.order_status_history_repository.delete_by_id.assert_called_once_with(
+            3, order_status_history_to_delete
+        )
 
         self.assertEqual(
             order_status_histories,
@@ -113,10 +120,18 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
         )
 
     def test_delete_throws_key_error_when_there_are_no_order_status_histories(self):
-        self.assertRaises(
-            KeyError, self.order_status_history_controller.delete_by_id, 3
+        order_status_history_to_delete = build_order_status_history(
+            entity_status=Status.DELETED
         )
-        self.order_status_history_repository.delete_by_id.assert_called_with(3)
+        self.assertRaises(
+            KeyError,
+            self.order_status_history_controller.delete_by_id,
+            3,
+            order_status_history_to_delete,
+        )
+        self.order_status_history_repository.delete_by_id.assert_called_with(
+            3, order_status_history_to_delete
+        )
 
     def test_update_order_status_history_from_repository_using_controller(self):
         order_status_histories_to_insert = build_order_status_histories(count=2)
