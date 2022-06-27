@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.inventory_controller import InventoryController
+from src.constants.audit import Status
 from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
 from src.tests.utils.fixtures.inventory_fixture import (
     build_inventories,
@@ -74,16 +75,18 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
     def test_delete_an_inventory_from_repository_using_controller(self):
         inventories_to_insert = build_inventories(count=4)
-
+        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
         self.inventory_controller.add(inventories_to_insert[0])
         self.inventory_controller.add(inventories_to_insert[1])
         self.inventory_controller.add(inventories_to_insert[2])
         self.inventory_controller.add(inventories_to_insert[3])
 
-        self.inventory_controller.delete_by_id(3)
+        self.inventory_controller.delete_by_id(3, inventory_to_delete)
         inventories = self.inventory_controller.get_all()
 
-        self.inventory_repository.delete_by_id.assert_called_once_with(3)
+        self.inventory_repository.delete_by_id.assert_called_once_with(
+            3, inventory_to_delete
+        )
 
         self.assertEqual(
             inventories,
@@ -95,8 +98,13 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         )
 
     def test_delete_throws_key_error_when_there_are_no_inventories(self):
-        self.assertRaises(KeyError, self.inventory_controller.delete_by_id, 3)
-        self.inventory_repository.delete_by_id.assert_called_with(3)
+        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, self.inventory_controller.delete_by_id, 3, inventory_to_delete
+        )
+        self.inventory_repository.delete_by_id.assert_called_with(
+            3, inventory_to_delete
+        )
 
     def test_update_inventory_from_repository_using_controller(self):
         inventories_to_insert = build_inventories(count=2)
@@ -106,7 +114,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
         inventory_list = [build_inventory()]
 
-        inventory_to_update = build_inventory(inventory_ingredients=inventory_list)
+        inventory_to_update = build_inventory(update_by="test")
         self.inventory_controller.update_by_id(2, inventory_to_update)
         updated_inventory = self.inventory_controller.get_by_id(2)
         inventories = self.inventory_controller.get_all()
@@ -117,6 +125,6 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
         self.assertEqual(len(inventories), 2)
         self.assertEqual(
-            updated_inventory.inventory_ingredients,
-            inventory_to_update.inventory_ingredients,
+            updated_inventory.update_by,
+            inventory_to_update.update_by,
         )

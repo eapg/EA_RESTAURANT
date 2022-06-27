@@ -1,5 +1,5 @@
 import unittest
-
+from src.constants.audit import Status
 from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
 from src.tests.utils.fixtures.inventory_fixture import (
     build_inventories,
@@ -76,14 +76,14 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_inventory_successfully(self):
         inventories_to_insert = build_inventories(count=3)
-
+        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
         inventory_repository = InventoryRepositoryImpl()
 
         inventory_repository.add(inventories_to_insert[0])
         inventory_repository.add(inventories_to_insert[1])
         inventory_repository.add(inventories_to_insert[2])
 
-        inventory_repository.delete_by_id(2)
+        inventory_repository.delete_by_id(2, inventory_to_delete)
 
         inventories = inventory_repository.get_all()
 
@@ -94,8 +94,10 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_inventories(self):
         inventory_repository = InventoryRepositoryImpl()
-
-        self.assertRaises(KeyError, inventory_repository.delete_by_id, 2)
+        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, inventory_repository.delete_by_id, 2, inventory_to_delete
+        )
 
     def test_update_inventory_successfully(self):
         inventories_to_insert = build_inventories(count=2)
@@ -105,11 +107,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_repository.add(inventories_to_insert[0])
         inventory_repository.add(inventories_to_insert[1])
 
-        inventory_ingredient_list = [build_inventory_ingredient()]
-
-        inventory_to_update = build_inventory(
-            inventory_ingredients=inventory_ingredient_list
-        )
+        inventory_to_update = build_inventory(update_by="test")
 
         inventory_repository.update_by_id(2, inventory_to_update)
         updated_inventory = inventory_repository.get_by_id(2)
@@ -117,6 +115,6 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(inventories), 2)
         self.assertEqual(
-            updated_inventory.inventory_ingredients,
-            inventory_to_update.inventory_ingredients,
+            updated_inventory.update_by,
+            inventory_to_update.update_by,
         )
