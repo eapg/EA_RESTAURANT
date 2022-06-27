@@ -1,5 +1,7 @@
 import unittest
 from unittest import mock
+
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
@@ -57,9 +59,16 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_order_status_histories), 3)
 
     def test_delete_an_order_status_history_successfully(self):
-        self.order_status_history_controller.delete_by_id(2)
+        order_status_history_to_delete = build_order_status_history(
+            entity_status=Status.DELETED
+        )
+        self.order_status_history_controller.delete_by_id(
+            2, order_status_history_to_delete
+        )
 
-        self.order_status_history_repository.delete_by_id.assert_called_with(2)
+        self.order_status_history_repository.delete_by_id.assert_called_with(
+            2, order_status_history_to_delete
+        )
 
     def test_update_an_order_status_history_successfully(self):
         order_status_history = build_order_status_history()
