@@ -1,5 +1,7 @@
 import unittest
 from unittest import mock
+
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.constants.cooking_type import CookingType
 from src.api.controllers.order_controller import OrderController
@@ -102,16 +104,16 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_delete_an_order_from_repository_using_controller(self):
         orders_to_insert = build_orders(count=4)
-
+        order_to_delete = build_order(entity_status=Status.DELETED)
         self.order_controller.add(orders_to_insert[0])
         self.order_controller.add(orders_to_insert[1])
         self.order_controller.add(orders_to_insert[2])
         self.order_controller.add(orders_to_insert[3])
 
-        self.order_controller.delete_by_id(3)
+        self.order_controller.delete_by_id(3, order_to_delete)
         orders = self.order_controller.get_all()
 
-        self.order_repository.delete_by_id.assert_called_once_with(3)
+        self.order_repository.delete_by_id.assert_called_once_with(3, order_to_delete)
 
         self.assertEqual(
             orders,
@@ -123,8 +125,11 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_orders(self):
-        self.assertRaises(KeyError, self.order_controller.delete_by_id, 3)
-        self.order_repository.delete_by_id.assert_called_with(3)
+        order_to_delete = build_order(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, self.order_controller.delete_by_id, 3, order_to_delete
+        )
+        self.order_repository.delete_by_id.assert_called_with(3, order_to_delete)
 
     def test_update_order_from_repository_using_controller(self):
         orders_to_insert = build_orders(count=2)

@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 
+from src.constants.audit import Status
 from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
     InventoryIngredientRepositoryImpl,
 )
@@ -90,14 +91,14 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_order_successfully(self):
         orders_to_insert = build_orders(count=3)
-
+        order_to_delete = build_order(entity_status=Status.DELETED)
         order_repository = OrderRepositoryImpl()
 
         order_repository.add(orders_to_insert[0])
         order_repository.add(orders_to_insert[1])
         order_repository.add(orders_to_insert[2])
 
-        order_repository.delete_by_id(2)
+        order_repository.delete_by_id(2, order_to_delete)
 
         orders = order_repository.get_all()
 
@@ -105,8 +106,8 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_orders(self):
         order_repository = OrderRepositoryImpl()
-
-        self.assertRaises(KeyError, order_repository.delete_by_id, 2)
+        order_to_delete = build_order(entity_status=Status.DELETED)
+        self.assertRaises(KeyError, order_repository.delete_by_id, 2, order_to_delete)
 
     def test_update_order_successfully(self):
         orders_to_insert = build_orders(count=2)
@@ -137,7 +138,9 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         order_repository.add(order_2)
         order_repository.add(order_3)
 
-        self.assertEqual(len(order_repository.get_orders_by_status(OrderStatus.NEW_ORDER, 10)), 2)
+        self.assertEqual(
+            len(order_repository.get_orders_by_status(OrderStatus.NEW_ORDER, 10)), 2
+        )
 
     def test_get_order_ingredients_by_order_id(self):
         product_ingredient_repository = mock.Mock(
@@ -214,7 +217,9 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         order_1.order_detail_id = order_detail_1.id
         order_repository.update_by_id(order_1.id, order_1)
 
-        orders_to_process = order_repository.get_orders_by_status(OrderStatus.NEW_ORDER, 10)
+        orders_to_process = order_repository.get_orders_by_status(
+            OrderStatus.NEW_ORDER, 10
+        )
         order_validation_map = order_repository.get_validated_orders_map(
             orders_to_process
         )
@@ -268,4 +273,3 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
             mocked_inventory_ingredient_repository.get_by_id(inventory_ingredient_1.id)
         )
         self.assertEqual(inventory_ingredient_after_reduce.ingredient_quantity, 10)
-
