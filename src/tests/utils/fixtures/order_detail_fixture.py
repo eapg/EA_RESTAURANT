@@ -1,17 +1,23 @@
+from src.constants.audit import Status
 from src.lib.entities.order_detail import OrderDetail
 
 
 def build_order_detail(
-    order_detail_id=None, order_id=None, product_id=None, quantity=None
+    order_detail_id=None,
+    order_id=None,
+    product_id=None,
+    quantity=None,
+    entity_status=None,
 ):
 
-    order_detail_product = OrderDetail()
-    order_detail_product.id = order_detail_id
-    order_detail_product.order_id = order_id
-    order_detail_product.product_id = product_id
-    order_detail_product.quantity = quantity
+    order_detail = OrderDetail()
+    order_detail.id = order_detail_id
+    order_detail.order_id = order_id
+    order_detail.product_id = product_id
+    order_detail.quantity = quantity
+    order_detail.entity_status = entity_status or Status.ACTIVE
 
-    return order_detail_product
+    return order_detail
 
 
 def build_order_details(count=1):

@@ -4,6 +4,7 @@ from unittest import mock
 from src.api.controllers.order_detail_controller import (
     OrderDetailController,
 )
+from src.constants.audit import Status
 from src.tests.utils.fixtures.order_detail_fixture import (
     build_order_detail,
     build_order_details,
@@ -46,9 +47,12 @@ class OrderDetailRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_order_details), 3)
 
     def test_delete_an_order_detail_successfully(self):
-        self.order_detail_controller.delete_by_id(2)
+        order_detail_to_delete = build_order_detail(entity_status=Status.ACTIVE)
+        self.order_detail_controller.delete_by_id(2, order_detail_to_delete)
 
-        self.order_detail_repository.delete_by_id.assert_called_with(2)
+        self.order_detail_repository.delete_by_id.assert_called_with(
+            2, order_detail_to_delete
+        )
 
     def test_update_an_order_detail_successfully(self):
         order_detail = build_order_detail()
