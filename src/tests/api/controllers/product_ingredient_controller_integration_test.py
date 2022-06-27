@@ -1,17 +1,29 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.product_ingredient_controller import ProductIngredientController
-from src.lib.repositories.impl.product_ingredient_repository_impl import ProductIngredientRepositoryImpl
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient, build_product_ingredients
+from src.api.controllers.product_ingredient_controller import (
+    ProductIngredientController,
+)
+from src.constants.audit import Status
+from src.lib.repositories.impl.product_ingredient_repository_impl import (
+    ProductIngredientRepositoryImpl,
+)
+from src.tests.utils.fixtures.product_ingredient_fixture import (
+    build_product_ingredient,
+    build_product_ingredients,
+)
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.product_fixture import build_product
 
 
 class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def setUp(self):
-        self.product_ingredient_repository = mock.Mock(wraps=ProductIngredientRepositoryImpl())
-        self.product_ingredient_controller = ProductIngredientController(self.product_ingredient_repository)
+        self.product_ingredient_repository = mock.Mock(
+            wraps=ProductIngredientRepositoryImpl()
+        )
+        self.product_ingredient_controller = ProductIngredientController(
+            self.product_ingredient_repository
+        )
 
     def test_add_product_ingredient_to_repository_using_controller(self):
         product_ingredient = build_product_ingredient()
@@ -71,16 +83,20 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
 
     def test_delete_an_product_ingredient_from_repository_using_controller(self):
         product_ingredients_to_insert = build_product_ingredients(count=4)
-
+        product_ingredient_to_delete = build_product_ingredient(
+            entity_status=Status.DELETED
+        )
         self.product_ingredient_controller.add(product_ingredients_to_insert[0])
         self.product_ingredient_controller.add(product_ingredients_to_insert[1])
         self.product_ingredient_controller.add(product_ingredients_to_insert[2])
         self.product_ingredient_controller.add(product_ingredients_to_insert[3])
 
-        self.product_ingredient_controller.delete_by_id(3)
+        self.product_ingredient_controller.delete_by_id(3, product_ingredient_to_delete)
         product_ingredients = self.product_ingredient_controller.get_all()
 
-        self.product_ingredient_repository.delete_by_id.assert_called_once_with(3)
+        self.product_ingredient_repository.delete_by_id.assert_called_once_with(
+            3, product_ingredient_to_delete
+        )
 
         self.assertEqual(
             product_ingredients,
@@ -92,8 +108,18 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         )
 
     def test_delete_throws_key_error_when_there_are_no_product_ingredients(self):
-        self.assertRaises(KeyError, self.product_ingredient_controller.delete_by_id, 3)
-        self.product_ingredient_repository.delete_by_id.assert_called_with(3)
+        product_ingredient_to_delete = build_product_ingredient(
+            entity_status=Status.DELETED
+        )
+        self.assertRaises(
+            KeyError,
+            self.product_ingredient_controller.delete_by_id,
+            3,
+            product_ingredient_to_delete,
+        )
+        self.product_ingredient_repository.delete_by_id.assert_called_with(
+            3, product_ingredient_to_delete
+        )
 
     def test_update_product_ingredient_from_repository_using_controller(self):
         product_ingredients_to_insert = build_product_ingredients(count=2)
@@ -112,7 +138,9 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         )
 
         self.assertEqual(len(product_ingredients), 2)
-        self.assertEqual(updated_product_ingredient.quantity, product_ingredient_to_update.quantity)
+        self.assertEqual(
+            updated_product_ingredient.quantity, product_ingredient_to_update.quantity
+        )
 
     def test_get_by_product_id_from_repository_using_controller(self):
         ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
@@ -126,9 +154,7 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         self.product_ingredient_controller.add(product_ingredient_2)
 
         product_ingredients_returned = (
-            self.product_ingredient_controller.get_by_product_id(
-                product_1.id
-            )
+            self.product_ingredient_controller.get_by_product_id(product_1.id)
         )
         self.product_ingredient_repository.get_by_product_id.assert_called_with(
             product_1.id

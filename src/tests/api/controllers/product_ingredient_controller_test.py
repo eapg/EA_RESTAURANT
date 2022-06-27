@@ -4,6 +4,7 @@ from unittest import mock
 from src.api.controllers.product_ingredient_controller import (
     ProductIngredientController,
 )
+from src.constants.audit import Status
 from src.tests.utils.fixtures.product_ingredient_fixture import (
     build_product_ingredient,
     build_product_ingredients,
@@ -51,9 +52,14 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_product_ingredients), 3)
 
     def test_delete_an_product_ingredient_successfully(self):
-        self.product_ingredient_controller.delete_by_id(2)
+        product_ingredient_to_delete = build_product_ingredient(
+            entity_status=Status.DELETED
+        )
+        self.product_ingredient_controller.delete_by_id(2, product_ingredient_to_delete)
 
-        self.product_ingredient_repository.delete_by_id.assert_called_with(2)
+        self.product_ingredient_repository.delete_by_id.assert_called_with(
+            2, product_ingredient_to_delete
+        )
 
     def test_update_an_product_ingredient_successfully(self):
         product_ingredient = build_product_ingredient()

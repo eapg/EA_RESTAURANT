@@ -1,5 +1,6 @@
 import unittest
 
+from src.constants.audit import Status
 from src.lib.repositories.impl.product_ingredient_repository_impl import (
     ProductIngredientRepositoryImpl,
 )
@@ -77,14 +78,16 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_product_ingredient_successfully(self):
         product_ingredients_to_insert = build_product_ingredients(count=3)
-
+        product_ingredient_to_delete = build_product_ingredient(
+            entity_status=Status.DELETED
+        )
         product_ingredient_repository = ProductIngredientRepositoryImpl()
 
         product_ingredient_repository.add(product_ingredients_to_insert[0])
         product_ingredient_repository.add(product_ingredients_to_insert[1])
         product_ingredient_repository.add(product_ingredients_to_insert[2])
 
-        product_ingredient_repository.delete_by_id(2)
+        product_ingredient_repository.delete_by_id(2, product_ingredient_to_delete)
 
         product_ingredients = product_ingredient_repository.get_all()
 
@@ -95,8 +98,13 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_product_ingredients(self):
         product_ingredient_repository = ProductIngredientRepositoryImpl()
-
-        self.assertRaises(KeyError, product_ingredient_repository.delete_by_id, 2)
+        product_ingredient_to_delete = build_product(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError,
+            product_ingredient_repository.delete_by_id,
+            2,
+            product_ingredient_to_delete,
+        )
 
     def test_update_product_ingredient_successfully(self):
         product_ingredients_to_insert = build_product_ingredients(count=2)
@@ -128,7 +136,7 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
         product_ingredient_repository.add(product_ingredient_1)
         product_ingredient_repository.add(product_ingredient_2)
 
-        product_ingredient_returned = (
-            product_ingredient_repository.get_by_product_id(product_1.id)
+        product_ingredient_returned = product_ingredient_repository.get_by_product_id(
+            product_1.id
         )
         self.assertEqual(product_ingredient_1, product_ingredient_returned[0])
