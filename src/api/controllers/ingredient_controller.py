@@ -11,8 +11,8 @@ class IngredientController:
     def get_all(self):
         return self._ingredient_repository.get_all()
 
-    def delete_by_id(self, ingredient_id):
-        self._ingredient_repository.delete_by_id(ingredient_id)
+    def delete_by_id(self, ingredient_id, ingredient):
+        self._ingredient_repository.delete_by_id(ingredient_id, ingredient)
 
     def update_by_id(self, ingredient_id, ingredient):
         self._ingredient_repository.update_by_id(ingredient_id, ingredient)

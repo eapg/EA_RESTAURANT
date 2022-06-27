@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.ingredient_controller import IngredientController
+from src.constants.audit import Status
 from src.lib.repositories.impl.ingredient_repository_impl import (
     IngredientRepositoryImpl,
 )
@@ -74,16 +75,18 @@ class IngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_delete_an_ingredient_from_repository_using_controller(self):
         ingredients_to_insert = build_ingredients(count=4)
-
+        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
         self.ingredient_controller.add(ingredients_to_insert[0])
         self.ingredient_controller.add(ingredients_to_insert[1])
         self.ingredient_controller.add(ingredients_to_insert[2])
         self.ingredient_controller.add(ingredients_to_insert[3])
 
-        self.ingredient_controller.delete_by_id(3)
+        self.ingredient_controller.delete_by_id(3, ingredient_to_delete)
         ingredients = self.ingredient_controller.get_all()
 
-        self.ingredient_repository.delete_by_id.assert_called_once_with(3)
+        self.ingredient_repository.delete_by_id.assert_called_once_with(
+            3, ingredient_to_delete
+        )
 
         self.assertEqual(
             ingredients,
@@ -95,8 +98,13 @@ class IngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_ingredients(self):
-        self.assertRaises(KeyError, self.ingredient_controller.delete_by_id, 3)
-        self.ingredient_repository.delete_by_id.assert_called_with(3)
+        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, self.ingredient_controller.delete_by_id, 3, ingredient_to_delete
+        )
+        self.ingredient_repository.delete_by_id.assert_called_with(
+            3, ingredient_to_delete
+        )
 
     def test_update_ingredient_from_repository_using_controller(self):
         ingredients_to_insert = build_ingredients(count=2)

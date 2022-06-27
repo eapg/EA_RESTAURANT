@@ -1,5 +1,5 @@
 import unittest
-
+from src.constants.audit import Status
 from src.lib.repositories.impl.ingredient_repository_impl import (
     IngredientRepositoryImpl,
 )
@@ -75,14 +75,14 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_an_ingredient_successfully(self):
         ingredients_to_insert = build_ingredients(count=3)
-
+        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
         ingredient_repository = IngredientRepositoryImpl()
 
         ingredient_repository.add(ingredients_to_insert[0])
         ingredient_repository.add(ingredients_to_insert[1])
         ingredient_repository.add(ingredients_to_insert[2])
 
-        ingredient_repository.delete_by_id(2)
+        ingredient_repository.delete_by_id(2, ingredient_to_delete)
 
         ingredients = ingredient_repository.get_all()
 
@@ -92,8 +92,10 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
 
     def test_delete_throws_key_error_when_there_are_no_ingredients(self):
         ingredient_repository = IngredientRepositoryImpl()
-
-        self.assertRaises(KeyError, ingredient_repository.delete_by_id, 2)
+        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
+        self.assertRaises(
+            KeyError, ingredient_repository.delete_by_id, 2, ingredient_to_delete
+        )
 
     def test_update_ingredient_successfully(self):
         ingredients_to_insert = build_ingredients(count=2)
