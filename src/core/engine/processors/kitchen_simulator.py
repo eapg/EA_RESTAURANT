@@ -22,11 +22,14 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         )
         self.chef_controller = ioc.get_instance("chef_controller")
         self.order_manager = ioc.get_instance("order_manager")
+        self._process_clean_queues_timeout = 60  # seconds
+        self._process_clean_queues_delta_time_sum = 0  # float
 
     def process(self, delta_time):
 
         self.process_new_orders()
         self.process_orders_in_process()
+        self.process_clean_queues(delta_time)
 
     def process_new_orders(self):
 
@@ -93,6 +96,16 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
                 self._order_send_to_complete(order_to_be_checked)
             else:
                 self.order_manager.add_to_queue(order_to_be_checked)
+
+    def process_clean_queues(self, delta_time):
+        self._process_clean_queues_delta_time_sum += delta_time
+
+        if (
+            self._process_clean_queues_delta_time_sum
+            > self._process_clean_queues_timeout
+        ):
+            self.order_manager.clean_queues_with_full_storage()
+            self._process_clean_queues_delta_time_sum = 0
 
     def _assign_to_chef_and_send_to_in_process(
         self, order_to_be_assign, available_chef_id
