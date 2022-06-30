@@ -56,7 +56,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         product_1 = build_product(product_id=1, name="fries potatoes")
         product_ingredient_1 = build_product_ingredient(
-            id=1,
+            product_ingredient_id=1,
             ingredient_id=ingredient_1.id,
             product_id=product_1.id,
             quantity=6,
@@ -151,7 +151,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         product_2 = build_product(product_id=2, name="fries potatoes")
         product_ingredient_2 = build_product_ingredient(
-            id=2,
+            product_ingredient_id=2,
             ingredient_id=ingredient_2.id,
             product_id=product_2.id,
             quantity=1,
