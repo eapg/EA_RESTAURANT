@@ -7,7 +7,7 @@ from src.core.engine.processors.kitchen_simulator import KitchenSimulator
 
 class AppEngineProcessor:
     def __init__(self):
-        kitchen_simulator_config = AppProcessorConfig("kitchen_simulator_test", 10)
+        kitchen_simulator_config = AppProcessorConfig("kitchen_simulator_test", 0.2)
         kitchen_simulator = KitchenSimulator(kitchen_simulator_config)
         self.app_context = AppEngineProcessorContext(processors=[kitchen_simulator])
 
