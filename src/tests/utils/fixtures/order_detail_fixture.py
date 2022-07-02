@@ -8,6 +8,7 @@ def build_order_detail(
     product_id=None,
     quantity=None,
     entity_status=None,
+    create_by=None
 ):
 
     order_detail = OrderDetail()
@@ -16,6 +17,7 @@ def build_order_detail(
     order_detail.product_id = product_id
     order_detail.quantity = quantity
     order_detail.entity_status = entity_status or Status.ACTIVE
+    order_detail.create_by = create_by
 
     return order_detail
 

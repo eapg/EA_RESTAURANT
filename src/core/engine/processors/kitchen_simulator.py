@@ -1,5 +1,5 @@
 from abc import ABCMeta
-
+from src.seed.initial_data import run_initial_data
 from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.ioc import get_ioc_instance
 from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
@@ -7,6 +7,7 @@ from src.constants.order_status import OrderStatus
 from src.utils.order_util import compute_order_estimated_time
 from src.utils.time_util import get_unix_time_stamp_milliseconds
 from datetime import datetime, timedelta
+from src.constants.audit import InternalUsers
 
 
 class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
@@ -24,6 +25,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self.order_manager = ioc.get_instance("order_manager")
         self._process_clean_queues_timeout = 60  # seconds
         self._process_clean_queues_delta_time_sum = 0  # float
+        run_initial_data()
 
     def process(self, delta_time):
 
@@ -111,10 +113,12 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self, order_to_be_assign, available_chef_id
     ):
         order_to_be_assign.assigned_chef_id = available_chef_id
+        print(f"chef {available_chef_id} assigned to order {order_to_be_assign.id}")
         order_to_be_assign.status = OrderStatus.IN_PROCESS
         self.order_controller.reduce_order_ingredients_from_inventory(
             order_to_be_assign.id
         )
+        order_to_be_assign.update_by = InternalUsers.KITCHEN_SIMULATOR
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
