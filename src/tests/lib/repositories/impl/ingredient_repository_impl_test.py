@@ -14,8 +14,6 @@ class IngredientRepositoryImplTestCase(unittest.TestCase):
         ingredient = build_ingredient()
         ingredient_repository = IngredientRepositoryImpl()
 
-        self.assertIsNone(ingredient.id)
-
         ingredient_repository.add(ingredient)
 
         self.assertEqual(ingredient.id, 1)

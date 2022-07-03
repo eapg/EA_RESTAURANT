@@ -16,8 +16,6 @@ class OrderDetailRepositoryImplTestCase(unittest.TestCase):
         order_detail = build_order_detail()
         order_detail_repository = OrderDetailRepositoryImpl()
 
-        self.assertIsNone(order_detail.id)
-
         order_detail_repository.add(order_detail)
 
         self.assertEqual(order_detail.id, 1)

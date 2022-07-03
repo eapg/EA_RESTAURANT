@@ -17,8 +17,6 @@ class ProductIngredientRepositoryImplTestCase(unittest.TestCase):
         product_ingredient = build_product_ingredient()
         product_ingredient_repository = ProductIngredientRepositoryImpl()
 
-        self.assertIsNone(product_ingredient.id)
-
         product_ingredient_repository.add(product_ingredient)
 
         self.assertEqual(product_ingredient.id, 1)

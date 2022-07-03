@@ -28,12 +28,11 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
     def test_add_inventory_ingredient_to_repository_using_controller(self):
         inventory_ingredient = build_inventory_ingredient()
 
-        self.assertIsNone(inventory_ingredient.id)
-
         self.inventory_ingredient_controller.add(inventory_ingredient)
         self.inventory_ingredient_repository.add.assert_called_with(
             inventory_ingredient
         )
+        self.assertEqual(inventory_ingredient.id, 1)
 
     def test_get_inventory_ingredient_from_repository_using_controller(self):
         inventory_ingredients = build_inventory_ingredients(count=3)

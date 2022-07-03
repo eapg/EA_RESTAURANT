@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 from src.constants.audit import Status
+from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
 from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
@@ -11,8 +12,6 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
     def test_add_chef_successfully(self):
         chef = build_chef()
         chef_repository = ChefRepositoryImpl()
-
-        self.assertIsNone(chef.id)
 
         chef_repository.add(chef)
 
@@ -114,7 +113,9 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
         chef_intermediate = build_chef(chef_id=2, name="Andres p", chef_skills=3)
         chef_basic = build_chef(chef_id=3, name="Juan p", chef_skills=1)
 
-        order_1 = build_order(assigned_chef_id=chef_intermediate.id)
+        order_1 = build_order(
+            assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS
+        )
         order_2 = build_order(assigned_chef_id=None)
         order_3 = build_order(assigned_chef_id=None)
 
