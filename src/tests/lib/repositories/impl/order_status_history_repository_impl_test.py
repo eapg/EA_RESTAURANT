@@ -18,8 +18,6 @@ class OrderStatusHistoryRepositoryImplTestCase(unittest.TestCase):
         order_status_history = build_order_status_history()
         order_status_history_repository = OrderStatusHistoryRepositoryImpl()
 
-        self.assertIsNone(order_status_history.id)
-
         order_status_history_repository.add(order_status_history)
 
         self.assertEqual(order_status_history.id, 1)

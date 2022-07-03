@@ -1,5 +1,4 @@
 from abc import ABCMeta
-from src.seed.initial_data import run_initial_data
 from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.ioc import get_ioc_instance
 from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
@@ -25,7 +24,6 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self.order_manager = ioc.get_instance("order_manager")
         self._process_clean_queues_timeout = 60  # seconds
         self._process_clean_queues_delta_time_sum = 0  # float
-        run_initial_data()
 
     def process(self, delta_time):
 
@@ -137,7 +135,6 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
 
     def _order_send_to_complete(self, order_to_be_complete):
         order_to_be_complete.status = OrderStatus.COMPLETED
-        order_to_be_complete.assigned_chef_id = None
         self.order_controller.update_by_id(
             order_to_be_complete.id, order_to_be_complete
         )

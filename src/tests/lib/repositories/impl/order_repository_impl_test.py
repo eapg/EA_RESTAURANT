@@ -30,8 +30,6 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         order = build_order()
         order_repository = OrderRepositoryImpl()
 
-        self.assertIsNone(order.id)
-
         order_repository.add(order)
 
         self.assertEqual(order.id, 1)

@@ -14,10 +14,9 @@ class ProductRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def test_add_product_to_repository_using_controller(self):
         product = build_product()
 
-        self.assertIsNone(product.id)
-
         self.product_controller.add(product)
         self.product_repository.add.assert_called_with(product)
+        self.assertEqual(product.id, 1)
 
     def test_get_product_from_repository_using_controller(self):
         products = build_products(count=3)

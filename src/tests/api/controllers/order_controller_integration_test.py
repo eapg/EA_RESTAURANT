@@ -49,10 +49,9 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def test_add_order_to_repository_using_controller(self):
         order = build_order()
 
-        self.assertIsNone(order.id)
-
         self.order_controller.add(order)
         self.order_repository.add.assert_called_with(order)
+        self.assertEqual(order.id, 1)
 
     def test_get_order_from_repository_using_controller(self):
         orders = build_orders(count=3)
@@ -174,12 +173,12 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         ingredient_2 = build_ingredient(ingredient_id=2, name="ingredient_2")
         product_1 = build_product(product_id=1, name="product_1")
         product_ingredient_1 = build_product_ingredient(
-            id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=2
+            product_ingredient_id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=2
         )
         self.product_ingredient_repository.add(product_ingredient_1)
 
         product_ingredient_2 = build_product_ingredient(
-            id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
+            product_ingredient_id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
         )
         self.product_ingredient_repository.add(product_ingredient_2)
 
@@ -214,7 +213,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
-            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+            product_ingredient_id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
         )
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
         order_detail_1 = build_order_detail(
@@ -258,7 +257,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         product_1 = build_product(product_id=1, name="fries potatoes")
         ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
         product_ingredient_1 = build_product_ingredient(
-            id=1,
+            product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
             ingredient_type=CookingType.FRYING,

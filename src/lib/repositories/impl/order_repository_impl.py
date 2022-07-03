@@ -3,6 +3,7 @@ from functools import reduce
 from datetime import datetime
 
 from src.constants.audit import Status
+from src.constants.order_status import OrderStatus
 from src.lib.repositories.order_repository import OrderRepository
 from src.utils.order_util import (
     array_chef_to_chef_assigned_orders_map_reducer,
@@ -75,7 +76,7 @@ class OrderRepositoryImpl(OrderRepository):
 
     def get_chefs_with_assigned_orders(self, chef_ids):
 
-        orders = self.get_all()
+        orders = self.get_orders_by_status(OrderStatus.IN_PROCESS)
         chefs_with_assigned_orders_map = reduce(
             lambda assigned_chef_result, chef_id: array_chef_to_chef_assigned_orders_map_reducer(
                 assigned_chef_result, chef_id, orders

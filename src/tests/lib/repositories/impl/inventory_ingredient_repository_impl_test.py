@@ -23,8 +23,6 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient = build_inventory_ingredient()
         inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
 
-        self.assertIsNone(inventory_ingredient.id)
-
         inventory_ingredient_repository.add(inventory_ingredient)
 
         self.assertEqual(inventory_ingredient.id, 1)

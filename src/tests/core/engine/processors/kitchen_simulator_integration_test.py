@@ -211,9 +211,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
             order_4.id,
         )
         order_3_complete = self.kitchen_simulator.order_controller.get_by_id(order_3.id)
-        self.assertIsNone(order_3_complete.assigned_chef_id)
         order_4_complete = self.kitchen_simulator.order_controller.get_by_id(order_4.id)
-        self.assertIsNone(order_4_complete.assigned_chef_id)
         self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
             [mock.call(order_3.id), mock.call(order_4.id)]
         )

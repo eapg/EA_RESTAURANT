@@ -26,10 +26,9 @@ class OrderDetailRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def test_add_order_detail_to_repository_using_controller(self):
         order_detail = build_order_detail()
 
-        self.assertIsNone(order_detail.id)
-
         self.order_detail_controller.add(order_detail)
         self.order_detail_repository.add.assert_called_with(order_detail)
+        self.assertEqual(order_detail.id, 1)
 
     def test_get_order_detail_from_repository_using_controller(self):
         order_details = build_order_details(count=3)

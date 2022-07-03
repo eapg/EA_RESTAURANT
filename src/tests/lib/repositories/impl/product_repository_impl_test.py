@@ -9,8 +9,6 @@ class ProductRepositoryImplTestCase(unittest.TestCase):
         product = build_product()
         product_repository = ProductRepositoryImpl()
 
-        self.assertIsNone(product.id)
-
         product_repository.add(product)
 
         self.assertEqual(product.id, 1)

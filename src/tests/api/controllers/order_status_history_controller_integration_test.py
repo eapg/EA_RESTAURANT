@@ -34,12 +34,11 @@ class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCas
     def test_add_order_status_history_to_repository_using_controller(self):
         order_status_history = build_order_status_history()
 
-        self.assertIsNone(order_status_history.id)
-
         self.order_status_history_controller.add(order_status_history)
         self.order_status_history_repository.add.assert_called_with(
             order_status_history
         )
+        self.assertEqual(order_status_history.id, 1)
 
     def test_get_order_status_history_from_repository_using_controller(self):
         order_status_histories = build_order_status_histories(count=3)

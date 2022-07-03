@@ -28,10 +28,9 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
     def test_add_product_ingredient_to_repository_using_controller(self):
         product_ingredient = build_product_ingredient()
 
-        self.assertIsNone(product_ingredient.id)
-
         self.product_ingredient_controller.add(product_ingredient)
         self.product_ingredient_repository.add.assert_called_with(product_ingredient)
+        self.assertEqual(product_ingredient.id, 1)
 
     def test_get_product_ingredient_from_repository_using_controller(self):
         product_ingredients = build_product_ingredients(count=3)

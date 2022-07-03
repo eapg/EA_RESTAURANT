@@ -20,10 +20,9 @@ class IngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def test_add_ingredient_to_repository_using_controller(self):
         ingredient = build_ingredient()
 
-        self.assertIsNone(ingredient.id)
-
         self.ingredient_controller.add(ingredient)
         self.ingredient_repository.add.assert_called_with(ingredient)
+        self.assertEqual(ingredient.id, 1)
 
     def test_get_ingredient_from_repository_using_controller(self):
         ingredients = build_ingredients(count=3)
