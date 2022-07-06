@@ -22,3 +22,26 @@ CREATE TABLE products(
     update_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
+
+-- Enum : user_type_enum
+DROP TYPE IF EXISTS user_type_enum CASCADE;
+
+CREATE TYPE user_type_enum AS ENUM ('INTERNAL','EXTERNAL');
+
+-- Table : users
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+             id BIGSERIAL NOT NULL,
+           name VARCHAR(50) NOT NULL,
+      last_name VARCHAR(50) NOT NULL,
+       username VARCHAR(50) NOT NULL,
+       password VARCHAR(500) NOT NULL,
+           type user_type_enum NOT NULL,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+ );
