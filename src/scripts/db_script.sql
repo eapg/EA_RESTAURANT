@@ -150,3 +150,21 @@ CREATE TABLE order_details(
         PRIMARY KEY (id)
 );
 
+-- Table : order_status_histories 
+DROP TABLE IF EXISTS order_status_histories;
+
+CREATE TABLE order_status_histories(
+             id BIGSERIAL NOT NULL,
+       order_id BIGINT NOT NULL,
+      from_time TIMESTAMP WITHOUT TIME ZONE,
+        to_time TIMESTAMP WITHOUT TIME ZONE,
+    from_status order_status_enum,
+      to_status order_status_enum,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
+
