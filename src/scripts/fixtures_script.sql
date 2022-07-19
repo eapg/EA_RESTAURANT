@@ -359,3 +359,39 @@ BEGIN
 END;
 $$;
 
+-- PROCEDURE : chef_fixture
+DROP PROCEDURE IF EXISTS insert_chef_with_defaults;
+
+CREATE PROCEDURE insert_chef_with_defaults(
+        chef_user_id BIGINT DEFAULT 3,
+          chef_skill INTEGER DEFAULT 1,
+  chef_entity_status status_enum DEFAULT 'ACTIVE',
+      chef_create_by BIGINT DEFAULT 1,
+    chef_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      chef_update_by BIGINT DEFAULT 1,
+    chef_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO chefs
+              (
+                user_id,
+                skill,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                chef_user_id,
+                chef_skill
+                chef_entity_status,
+                chef_create_by,
+                chef_create_date,
+                chef_update_by,
+                chef_update_date                
+              );
+END;
+$$;
