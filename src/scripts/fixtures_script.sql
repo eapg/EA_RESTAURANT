@@ -202,6 +202,38 @@ BEGIN
 END;
 $$;
 
+-- PROCEDURE : inventory_fixture
+DROP PROCEDURE IF EXISTS insert_inventory_with_defaults;
 
+CREATE PROCEDURE insert_inventory_with_defaults(
+           inventory_name VARCHAR(50) DEFAULT 'test_inventory',
+  inventory_entity_status status_enum DEFAULT 'ACTIVE',
+      inventory_create_by BIGINT DEFAULT 1,
+    inventory_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      inventory_update_by BIGINT DEFAULT 1,
+    inventory_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO inventories
+              (
+                name,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                inventory_name,
+                inventory_entity_status,
+                inventory_create_by,
+                inventory_create_date,
+                inventory_update_by,
+                inventory_update_date
+              );
+END;
+$$;
 
 
