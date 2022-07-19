@@ -81,3 +81,46 @@ BEGIN
               );
 END;
 $$;
+
+-- PROCEDURE : product_ingredient_fixture
+DROP PROCEDURE IF EXISTS insert_product_ingredient_with_defaults;
+
+CREATE PROCEDURE insert_product_ingredient_with_defaults(
+     product_ingredient_product_id BIGINT DEFAULT 1,
+  product_ingredient_ingredient_id BIGINT DEFAULT 1,
+       product_ingredient_quantity INTEGER DEFAULT 1,
+   product_ingredient_cooking_type cooking_type_enum DEFAULT 'ADDING',
+  product_ingredient_entity_status status_enum DEFAULT 'ACTIVE',
+      product_ingredient_create_by BIGINT DEFAULT 1,
+    product_ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      product_ingredient_update_by BIGINT DEFAULT 1,
+    product_ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO products
+              (
+                product_id,
+                ingredient_id,
+                quantity,
+                cooking_type,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                product_ingredient_product_id,
+                product_ingredient_ingredient_id,
+                product_ingredient_quantity,
+                product_ingredient_cooking_type,
+                product_ingredient_entity_status,
+                product_ingredient_create_by,
+                product_ingredient_create_date,
+                product_ingredient_update_by,
+                product_ingredient_update_date
+              );
+END;
+$$;

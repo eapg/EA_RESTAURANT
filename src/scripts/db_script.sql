@@ -45,3 +45,25 @@ CREATE TABLE users(
     update_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
  );
+
+-- Enum : cooking_type_enum
+DROP TYPE IF EXISTS cooking_type_enum CASCADE;
+
+CREATE TYPE cooking_type_enum AS ENUM ('ADDING', 'ROASTING', 'BOILING', 'BAKING', 'FRYING', 'HEADING', 'PREPARING_DRINK');
+
+-- Table : product_ingredients
+DROP TABLE IF EXISTS product_ingredients
+
+CREATE TABLE product_ingredients(
+             id BIGSERIAL NOT NULL,
+     product_id BIGINT NOT NULL,
+  ingredient_id BIGINT NOT NULL,
+       quantity INTEGER NOT NULL,
+   cooking_type cooking_type_enum NOT NULL,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
