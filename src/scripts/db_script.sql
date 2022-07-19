@@ -114,6 +114,25 @@ CREATE TABLE inventories(
         PRIMARY KEY (id)
 );
 
+-- Enum : order_status_enum
+DROP TYPE IF EXISTS order_status_enum CASCADE;
+
+CREATE TYPE order_status_enum AS ENUM ('NEW_ORDER', 'IN_PROCESS', 'COMPLETED', 'CANCELLED');
+
+-- Table : Orders 
+DROP TABLE IF EXISTS orders:
+
+CREATE TABLE orders(
+                id BIGSERIAL NOT NULL,
+            status order_status_enum NOT NULL,
+  assigned_chef_id BIGINT NOT NULL,
+     entity_status status_enum NOT NULL,
+         create_by BIGINT NOT NULL,
+       create_date TIMESTAMP WITHOUT TIME ZONE,
+         update_by BIGINT NOT NULL,
+       update_date TIMESTAMP WITHOUT TIME ZONE,
+           PRIMARY KEY (id)
+);
 
 
 

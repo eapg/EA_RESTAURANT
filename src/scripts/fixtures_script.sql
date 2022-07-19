@@ -236,4 +236,40 @@ BEGIN
 END;
 $$;
 
+-- PROCEDURE : order_fixture
+DROP PROCEDURE IF EXISTS insert_order_with_defaults;
+
+CREATE PROCEDURE insert_order_with_defaults(
+            order_status order_status_enum defaul 'NEW_ORDER',
+  order_assigned_chef_id BIGINT DEFAULT 1,
+     order_entity_status status_enum DEFAULT 'ACTIVE',
+         order_create_by BIGINT DEFAULT 1,
+       order_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+         order_update_by BIGINT DEFAULT 1,
+       order_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO orders
+              (
+                status,
+                assigned_chef_id,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                order_status,
+                order_assigned_chef_id,
+                order_entity_status,
+                order_create_by,
+                order_create_date,
+                order_update_by,
+                order_update_date
+              );
+END;
+$$;
 
