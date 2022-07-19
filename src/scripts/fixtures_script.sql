@@ -124,3 +124,43 @@ BEGIN
               );
 END;
 $$;
+
+-- PROCEDURE : ingredient_fixture
+DROP PROCEDURE IF EXISTS insert_ingredient_with_defaults;
+
+CREATE PROCEDURE insert_ingredient_with_defaults(
+           ingredient_name VARCHAR(50) DEFAULT 'test_ingredient',
+    ingredient_description VARCHAR(100) DEFAULT 'test_description',
+  ingredient_entity_status status_enum DEFAULT 'ACTIVE',
+      ingredient_create_by BIGINT DEFAULT 1,
+    ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      ingredient_update_by BIGINT DEFAULT 1,
+    ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO products
+              (
+                name,
+                description,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                ingredient_name,
+                ingredient_description,
+                ingredient_entity_status,
+                ingredient_create_by,
+                ingredient_create_date,
+                ingredient_update_by,
+                ingredient_update_date
+              );
+END;
+$$;
+
+
+
