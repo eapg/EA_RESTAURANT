@@ -134,5 +134,19 @@ CREATE TABLE orders(
            PRIMARY KEY (id)
 );
 
+-- Table : order_details
+DROP TABLE IF EXISTS order_details;
 
+CREATE TABLE order_details(
+             id BIGSERIAL NOT NULL,
+       order_id BIGINT NOT NULL,
+     product_id BIGINT NOT NULL,
+       quantity INTEGER NOT NULL,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
 

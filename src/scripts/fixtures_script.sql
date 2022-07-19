@@ -273,3 +273,42 @@ BEGIN
 END;
 $$;
 
+-- PROCEDURE : order_detail_fixture
+DROP PROCEDURE IF EXISTS insert_order_detail_with_defaults;
+
+CREATE PROCEDURE insert_order_detail_with_defaults(
+       order_detail_order_id BIGINT DEFAULT 1,
+     order_detail_product_id BIGINT DEFAULT 1,
+       order_detail_quantity INTEGER DEFAULT 1,
+  order_detail_entity_status status_enum DEFAULT 'ACTIVE',
+      order_detail_create_by BIGINT DEFAULT 1,
+    order_detail_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      order_detail_update_by BIGINT DEFAULT 1,
+    order_detail_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO order_details
+              (
+                order_id,
+                product_id,
+                quantity,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                order_detail_order_id,
+                order_detail_product_id,
+                order_detail_quantity,
+                order_detail_entity_status,
+                order_detail_create_by,
+                order_detail_create_date,
+                order_detail_update_by,
+                order_detail_update_date
+              );
+END;
+$$;
