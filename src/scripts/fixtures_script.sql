@@ -44,6 +44,7 @@ CREATE PROCEDURE insert_user_with_defaults(
       user_last_name VARCHAR(50) DEFAULT 'pena'
       user_user_name VARCHAR(50) DEFAULT 'test_user',
        user_password VARCHAR(500) DEFAULT '1234',
+           user_role user_role_enum DEFAULT 'SEEDER'
            user_type user_type_enum DEFAULT 'INTERNAL',
   user_entity_status status_enum DEFAULT 'ACTIVE',
       user_create_by BIGINT DEFAULT 1,
@@ -54,12 +55,13 @@ CREATE PROCEDURE insert_user_with_defaults(
 LANGUAGE 'plpgsql' AS
 $$
 BEGIN
-  INSERT INTO products
+  INSERT INTO users
               (
                 name,
                 last_name,
                 user_name,
                 password,
+                role,
                 type,
                 entity_status,
                 create_by,
@@ -72,6 +74,7 @@ BEGIN
                 user_last_name,
                 user_user_name,
                 user_password,
+                user_role,
                 user_type,
                 user_entity_status,
                 user_create_by,
@@ -99,7 +102,7 @@ CREATE PROCEDURE insert_product_ingredient_with_defaults(
 LANGUAGE 'plpgsql' AS
 $$
 BEGIN
-  INSERT INTO products
+  INSERT INTO product_ingredients
               (
                 product_id,
                 ingredient_id,
@@ -140,7 +143,7 @@ CREATE PROCEDURE insert_ingredient_with_defaults(
 LANGUAGE 'plpgsql' AS
 $$
 BEGIN
-  INSERT INTO products
+  INSERT INTO ingredients 
               (
                 name,
                 description,
