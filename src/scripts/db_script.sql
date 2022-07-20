@@ -168,3 +168,18 @@ CREATE TABLE order_status_histories(
         PRIMARY KEY (id)
 );
 
+-- Table : chefs 
+DROP TABLE IF EXISTS chefs;
+
+CREATE TABLE chefs(
+              id BIGSERIAL NOT NULL,
+         user_id BIGINT NOT NULL,
+           skill INTEGER NOT NULL,
+   entity_status status_enum NOT NULL,
+       create_by BIGINT NOT NULL,
+     create_date TIMESTAMP WITHOUT TIME ZONE,
+       update_by BIGINT NOT NULL,
+     update_date TIMESTAMP WITHOUT TIME ZONE,
+         PRIMARY KEY (chef_id)
+);
+
