@@ -67,3 +67,18 @@ CREATE TABLE product_ingredients(
     update_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
+
+-- Table : ingredients
+DROP TABLE IF EXISTS ingredients
+
+CREATE TABLE ingredients(
+             id BIGSERIAL NOT NULL,
+           name VARCHAR(50) NOT NULL,
+    description VARCHAR(100) DEFAULT '',
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
