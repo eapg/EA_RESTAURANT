@@ -312,3 +312,50 @@ BEGIN
               );
 END;
 $$;
+
+-- PROCEDURE : order_status_history_fixture
+DROP PROCEDURE IF EXISTS insert_order_status_history_with_defaults;
+
+CREATE PROCEDURE insert_order_status_history_with_defaults(
+       order_status_history_order_id BIGINT DEFAULT 1,
+      order_status_history_from_time TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        order_status_history_to_time TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    order_status_history_from_status order_status_enum DEFAULT 'NEW_ORDER',
+      order_status_history_to_status order_status_enum DEFAULT 'IN_PROCESS',
+  order_status_history_entity_status status_enum DEFAULT 'ACTIVE',
+      order_status_history_create_by BIGINT DEFAULT 1,
+    order_status_history_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      order_status_history_update_by BIGINT DEFAULT 1,
+    order_status_history_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO order_status_histories
+              (
+                order_id,
+                from_time,
+                to_time,
+                from_status,
+                to_status
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                order_status_history_order_id
+                order_status_history_from_time,
+                order_status_history_to_time,
+                order_status_history_from_status,
+                order_status_history_to_status,
+                order_status_history_entity_status,
+                order_status_history_create_by,
+                order_status_history_create_date,
+                order_status_history_update_by,
+                order_status_history_update_date                
+              );
+END;
+$$;
+
