@@ -41,10 +41,10 @@ DROP PROCEDURE IF EXISTS insert_user_with_defaults;
 
 CREATE PROCEDURE insert_user_with_defaults(
            user_name VARCHAR(50) DEFAULT 'elido',
-      user_last_name VARCHAR(50) DEFAULT 'pena'
+      user_last_name VARCHAR(50) DEFAULT 'pena',
       user_user_name VARCHAR(50) DEFAULT 'test_user',
        user_password VARCHAR(500) DEFAULT '1234',
-           user_role user_role_enum DEFAULT 'SEEDER'
+           user_role user_role_enum DEFAULT 'SEEDER',
            user_type user_type_enum DEFAULT 'INTERNAL',
   user_entity_status status_enum DEFAULT 'ACTIVE',
       user_create_by BIGINT DEFAULT 1,
@@ -172,11 +172,11 @@ CREATE PROCEDURE insert_inventory_ingredient_with_defaults(
   inventory_ingredient_ingredient_id BIGINT DEFAULT 1,
    inventory_ingredient_inventory_id BIGINT DEFAULT 1,
        inventory_ingredient_quantity INTEGER DEFAULT 1,
-            ingredient_entity_status status_enum DEFAULT 'ACTIVE',
-                ingredient_create_by BIGINT DEFAULT 1,
-              ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                ingredient_update_by BIGINT DEFAULT 1,
-              ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  inventory_ingredient_entity_status status_enum DEFAULT 'ACTIVE',
+      inventory_ingredient_create_by BIGINT DEFAULT 1,
+    inventory_ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      inventory_ingredient_update_by BIGINT DEFAULT 1,
+    inventory_ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -348,7 +348,7 @@ BEGIN
                 update_date
               )
        VALUES (
-                order_status_history_order_id
+                order_status_history_order_id,
                 order_status_history_from_time,
                 order_status_history_to_time,
                 order_status_history_from_status,
@@ -389,7 +389,7 @@ BEGIN
               )
        VALUES (
                 chef_user_id,
-                chef_skill
+                chef_skill,
                 chef_entity_status,
                 chef_create_by,
                 chef_create_date,
