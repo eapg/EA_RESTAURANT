@@ -28,6 +28,11 @@ DROP TYPE IF EXISTS user_type_enum CASCADE;
 
 CREATE TYPE user_type_enum AS ENUM ('INTERNAL','EXTERNAL');
 
+-- Enum : user_role_enum
+DROP TYPE IF EXISTS user_role_enum
+
+CREATE TYPE user_role_enum AS ENUM ('CHEF', 'CLIENT', 'CASHIER', 'SEEDER', 'KITCHEN_SIMULATOR')
+
 -- Table : users
 DROP TABLE IF EXISTS users;
 
@@ -37,6 +42,7 @@ CREATE TABLE users(
       last_name VARCHAR(50) NOT NULL,
        username VARCHAR(50) NOT NULL,
        password VARCHAR(500) NOT NULL,
+           role user_role_enum NOT NULL,
            type user_type_enum NOT NULL,
   entity_status status_enum NOT NULL,
       create_by BIGINT NOT NULL,
