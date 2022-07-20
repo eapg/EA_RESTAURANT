@@ -82,3 +82,23 @@ CREATE TABLE ingredients(
     update_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
+
+-- Table : inventory_ingredients
+DROP TABLE IF EXISTS inventory_ingredient;
+
+CREATE TABLE inventory_ingredient(
+             id BIGSERIAL NOT NULL,
+  ingredient_id BIGINT NOT NULL,
+   inventory_id BIGINT NOT NULL,
+       quantity INTEGER NOT NULL,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
+
+
+
+

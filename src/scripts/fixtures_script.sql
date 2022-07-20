@@ -162,5 +162,46 @@ BEGIN
 END;
 $$;
 
+-- PROCEDURE : inventory_ingredient_fixture
+DROP PROCEDURE IF EXISTS insert_inventory_ingredient_with_defaults;
+
+CREATE PROCEDURE insert_inventory_ingredient_with_defaults(
+  inventory_ingredient_ingredient_id BIGINT DEFAULT 1,
+   inventory_ingredient_inventory_id BIGINT DEFAULT 1,
+       inventory_ingredient_quantity INTEGER DEFAULT 1,
+            ingredient_entity_status status_enum DEFAULT 'ACTIVE',
+                ingredient_create_by BIGINT DEFAULT 1,
+              ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                ingredient_update_by BIGINT DEFAULT 1,
+              ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+LANGUAGE 'plpgsql' AS
+$$
+BEGIN
+  INSERT INTO inventory_ingredients
+              (
+                ingredient_id,
+                inventory_id,
+                quantity,
+                entity_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+              )
+       VALUES (
+                inventory_ingredient_ingredient_id,
+                inventory_ingredient_inventory_id,
+                inventory_ingredient_quantity,
+                inventory_ingredient_entity_status,
+                inventory_ingredient_create_by,
+                inventory_ingredient_create_date,
+                inventory_ingredient_update_by,
+                inventory_ingredient_update_date
+              );
+END;
+$$;
+
+
 
 
