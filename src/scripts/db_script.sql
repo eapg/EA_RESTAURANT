@@ -99,6 +99,21 @@ CREATE TABLE inventory_ingredient(
         PRIMARY KEY (id)
 );
 
+-- Table : inventories
+DROP TABLE IF EXISTS inventories;
+
+
+CREATE TABLE inventories(
+             id BIGSERIAL NOT NULL,
+           name VARCHAR(50) NOT NULL,
+  entity_status status_enum NOT NULL,
+      create_by BIGINT NOT NULL,
+    create_date TIMESTAMP WITHOUT TIME ZONE,
+      update_by BIGINT NOT NULL,
+    update_date TIMESTAMP WITHOUT TIME ZONE,
+        PRIMARY KEY (id)
+);
+
 
 
 
