@@ -68,3 +68,19 @@ Commands:
 * Format: `black .`
 * Sort imports: `isort .`
 * Lint file: `pylint [path-to-file.py]`
+
+### Migrations
+
+This project is Using [Alembic](https://alembic.sqlalchemy.org/en/latest/) for migrations. To
+install alembic in your project just run `pip install alembic`
+
+Commands to use alembic:
+
+* Initialize: `alembic init alembic`
+* Migration Script: `alembic revision -m "migration scrip name"` This script contains some header
+  information, identifiers for the current version and import a basic alembic directives, and empty
+  `upgrade()` and `downgrade()` functions.
+* Upgrade: `alembic upgrade <target-revision>`
+* Downgrade: `alembic downgrade <target-revision>`
+
+
