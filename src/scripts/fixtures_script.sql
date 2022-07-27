@@ -1,4 +1,4 @@
--- FUNCTION : product_fixture
+
 DROP PROCEDURE IF EXISTS insert_product_with_defaults;
 
 CREATE PROCEDURE insert_product_with_defaults(
@@ -36,8 +36,7 @@ END;
 $$;
 
 
--- PROCEDURE : user_fixture
-DROP PROCEDURE IF EXISTS insert_user_with_defaults;
+DROP PROCEDURE IF EXISTS insert_user_with_default;
 
 CREATE PROCEDURE insert_user_with_defaults(
            user_name VARCHAR(50) DEFAULT 'elido',
@@ -85,7 +84,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : product_ingredient_fixture
+
 DROP PROCEDURE IF EXISTS insert_product_ingredient_with_defaults;
 
 CREATE PROCEDURE insert_product_ingredient_with_defaults(
@@ -128,7 +127,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : ingredient_fixture
+
 DROP PROCEDURE IF EXISTS insert_ingredient_with_defaults;
 
 CREATE PROCEDURE insert_ingredient_with_defaults(
@@ -165,7 +164,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : inventory_ingredient_fixture
+
 DROP PROCEDURE IF EXISTS insert_inventory_ingredient_with_defaults;
 
 CREATE PROCEDURE insert_inventory_ingredient_with_defaults(
@@ -205,7 +204,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : inventory_fixture
+
 DROP PROCEDURE IF EXISTS insert_inventory_with_defaults;
 
 CREATE PROCEDURE insert_inventory_with_defaults(
@@ -239,11 +238,11 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : order_fixture
+
 DROP PROCEDURE IF EXISTS insert_order_with_defaults;
 
 CREATE PROCEDURE insert_order_with_defaults(
-            order_status order_status_enum defaul 'NEW_ORDER',
+            order_status order_status_enum DEFAULT 'NEW_ORDER',
   order_assigned_chef_id BIGINT DEFAULT 1,
      order_entity_status status_enum DEFAULT 'ACTIVE',
          order_create_by BIGINT DEFAULT 1,
@@ -276,7 +275,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : order_detail_fixture
+
 DROP PROCEDURE IF EXISTS insert_order_detail_with_defaults;
 
 CREATE PROCEDURE insert_order_detail_with_defaults(
@@ -316,7 +315,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : order_status_history_fixture
+
 DROP PROCEDURE IF EXISTS insert_order_status_history_with_defaults;
 
 CREATE PROCEDURE insert_order_status_history_with_defaults(
@@ -340,7 +339,7 @@ BEGIN
                 from_time,
                 to_time,
                 from_status,
-                to_status
+                to_status,
                 entity_status,
                 create_by,
                 create_date,
@@ -362,7 +361,7 @@ BEGIN
 END;
 $$;
 
--- PROCEDURE : chef_fixture
+
 DROP PROCEDURE IF EXISTS insert_chef_with_defaults;
 
 CREATE PROCEDURE insert_chef_with_defaults(

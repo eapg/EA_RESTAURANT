@@ -1,11 +1,11 @@
--- -- PROCEDURE : seeder
+
 DROP PROCEDURE IF EXISTS seeder;
 
 CREATE PROCEDURE seeder()
 LANGUAGE 'plpgsql' AS
 $$
 BEGIN
-  -- create users
+
   CALL insert_user_with_defaults(
          user_name:='SEEDER',
     user_last_name:='SEEDER',
@@ -44,14 +44,29 @@ BEGIN
     user_user_name:='jp_1234', 
          user_role:='CHEF', 
          user_type:='INTERNAL');
+  
+  CALL insert_chef_with_defaults(
+    chef_user_id:=3, 
+      chef_skill:=1,chef_create_by:=1
+  ); 
+ 
+  CALL insert_chef_with_defaults(
+    chef_user_id:=4, 
+      chef_skill:=1,chef_create_by:=1
+  );
+ 
+  CALL insert_chef_with_defaults(
+    chef_user_id:=5, 
+      chef_skill:=1,chef_create_by:=1
+  );
 
-  -- creating inventory
+
   CALL insert_inventory_with_defaults(
         inventory_name :='ea restaurant inventory', 
     inventory_create_by:=1
    );
  
-  -- creating ingredients
+
   CALL insert_ingredient_with_defaults(
            ingredient_name:='cheese',
     ingredient_description:='cheddar cheese',
@@ -161,7 +176,7 @@ BEGIN
   );
  
 
-  -- creating inventory ingredients
+
   CALL insert_inventory_ingredient_with_defaults(
     inventory_ingredient_ingredient_id:=1,
      inventory_ingredient_inventory_id:=1, 
@@ -288,7 +303,7 @@ BEGIN
         inventory_ingredient_create_by:=1
   );
  
-  -- creating products
+
   CALL insert_product_with_defaults(
            product_name:='hamburger', 
     product_description:='bacon cheese burger', 
@@ -325,7 +340,7 @@ BEGIN
       product_create_by:=1
   );
  
-  -- creating product ingredients
+
   CALL insert_product_ingredient_with_defaults(
        product_ingredient_product_id:=1,
     product_ingredient_ingredient_id:=1,
@@ -534,7 +549,7 @@ BEGIN
         product_ingredient_create_by:=1
   );
   
-  -- creating orders
+ 
   CALL insert_order_with_defaults(
        order_status:='NEW_ORDER',
     order_create_by:=1
@@ -560,7 +575,7 @@ BEGIN
     order_create_by:=1
   );
  
-  -- creating order details
+
   CALL insert_order_detail_with_defaults(
       order_detail_order_id:=1,
     order_detail_product_id:=1,
@@ -630,25 +645,11 @@ BEGIN
       order_detail_quantity:=2,
      order_detail_create_by:=1
   );
- 
-  -- creating chefs
-  CALL insert_chef_with_defaults(
-    chef_user_id:=3, 
-      chef_skill:=1,chef_create_by:=1
-  ); 
- 
-  CALL insert_chef_with_defaults(
-    chef_user_id:=4, 
-      chef_skill:=1,chef_create_by:=1
-  );
- 
-  CALL insert_chef_with_defaults(
-    chef_user_id:=5, 
-      chef_skill:=1,chef_create_by:=1
-  );
+
 
 END;
 $$;
 
+CALL seeder()
 
 
