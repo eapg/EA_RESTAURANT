@@ -82,5 +82,11 @@ Commands to use alembic:
   `upgrade()` and `downgrade()` functions.
 * Upgrade: `alembic upgrade <target-revision>`
 * Downgrade: `alembic downgrade <target-revision>`
+* Upgrade to head: `alembic upgrade head` This command executes all migrations from the current point to the last.
 
+Examples:
 
+![img.png](img.png)
+
+Executing `alembic upgrade head` in a clean database will execute all migrations
+in the orders that migrations were created. Like example image.
