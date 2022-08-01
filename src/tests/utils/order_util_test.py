@@ -93,10 +93,10 @@ class TestOrderUtil(unittest.TestCase):
         chef_1 = build_chef(chef_id=1, chef_skills=2)
         order_ingredients_list = [
             build_product_ingredient(
-                id=1, ingredient_type=CookingType.FRYING, quantity=2
+                product_ingredient_id=1, ingredient_type=CookingType.FRYING, quantity=2
             ),
             build_product_ingredient(
-                id=2, ingredient_type=CookingType.BAKING, quantity=2
+                product_ingredient_id=2, ingredient_type=CookingType.BAKING, quantity=2
             ),
         ]
         preparation_time = compute_order_estimated_time(order_ingredients_list, chef_1)

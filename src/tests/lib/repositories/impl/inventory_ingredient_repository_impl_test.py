@@ -185,7 +185,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
-            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+            product_ingredient_id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
         )
         order_detail_1 = build_order_detail(
             order_detail_id=1, product_id=product_1.id, quantity=1

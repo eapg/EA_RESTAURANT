@@ -149,12 +149,12 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         ingredient_2 = build_ingredient(ingredient_id=2, name="ingredient_2")
         product_1 = build_product(product_id=1, name="product_1")
         product_ingredient_1 = build_product_ingredient(
-            id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=2
+            product_ingredient_id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=2
         )
         product_ingredient_repository.add(product_ingredient_1)
 
         product_ingredient_2 = build_product_ingredient(
-            id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
+            product_ingredient_id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
         )
         product_ingredient_repository.add(product_ingredient_2)
 
@@ -191,7 +191,7 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
-            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+            product_ingredient_id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
         )
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
         order_detail_1 = build_order_detail(
@@ -243,7 +243,7 @@ class OrderRepositoryImplTestCase(unittest.TestCase):
         product_1 = build_product(product_id=1, name="fries potatoes")
         ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
         product_ingredient_1 = build_product_ingredient(
-            id=1,
+            product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
             ingredient_type=CookingType.FRYING,
