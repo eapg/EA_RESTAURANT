@@ -1,10 +1,12 @@
 from unittest import TestCase, mock
 
 from src.core.engine.app_engine_processor import AppEngineProcessor
+from src.lib.entities.sqlalchemy_orm_mapping import UserEntity
 
 
 class AppEngineProcessorIntegrationTest(TestCase):
     def test_process_run(self):
+
         app_engine_processor = AppEngineProcessor()
         kitchen_simulator = app_engine_processor.app_context.processors[0]
 
