@@ -1,14 +1,12 @@
 # This file has the order repository
-from functools import reduce
 from datetime import datetime
+from functools import reduce
 
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.repositories.order_repository import OrderRepository
 from src.utils.order_util import (
-    array_chef_to_chef_assigned_orders_map_reducer,
-    setup_validated_orders_map,
-)
+    array_chef_to_chef_assigned_orders_map_reducer, setup_validated_orders_map)
 
 
 class OrderRepositoryImpl(OrderRepository):

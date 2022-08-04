@@ -1,10 +1,10 @@
 # This file has the order_status_history repository
 from datetime import datetime
+
 from src.constants.audit import Status
 from src.lib.entities.order_status_history import OrderStatusHistory
-from src.lib.repositories.order_status_history_repository import (
-    OrderStatusHistoryRepository,
-)
+from src.lib.repositories.order_status_history_repository import \
+    OrderStatusHistoryRepository
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):

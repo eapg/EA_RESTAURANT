@@ -1,9 +1,9 @@
 # This file has the product_ingredient repository
 from datetime import datetime
+
 from src.constants.audit import Status
-from src.lib.repositories.product_ingredient_repository import (
-    ProductIngredientRepository,
-)
+from src.lib.repositories.product_ingredient_repository import \
+    ProductIngredientRepository
 
 
 class ProductIngredientRepositoryImpl(ProductIngredientRepository):

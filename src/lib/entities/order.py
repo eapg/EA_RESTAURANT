@@ -1,6 +1,6 @@
 # class to process the clients orders
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class Order(AbstractEntity):
@@ -12,7 +12,3 @@ class Order(AbstractEntity):
 
     def __eq__(self, other):
         return equals(self, other)
-
-
-
-

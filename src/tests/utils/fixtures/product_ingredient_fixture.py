@@ -1,5 +1,5 @@
-from src.lib.entities.product_ingredient import ProductIngredient
 from src.constants.audit import Status
+from src.lib.entities.product_ingredient import ProductIngredient
 
 
 def build_product_ingredient(
@@ -9,7 +9,7 @@ def build_product_ingredient(
     quantity=None,
     ingredient_type=None,
     entity_status=None,
-    create_by=None
+    create_by=None,
 ):
     product_ingredient = ProductIngredient()
     product_ingredient.id = product_ingredient_id

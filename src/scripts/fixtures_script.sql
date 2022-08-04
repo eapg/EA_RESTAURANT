@@ -5,10 +5,10 @@ CREATE PROCEDURE insert_product_with_defaults(
            product_name VARCHAR(50) DEFAULT 'test_product',
     product_description VARCHAR(100) DEFAULT 'test_description',
   product_entity_status status_enum DEFAULT 'ACTIVE',
-      product_create_by BIGINT DEFAULT 1,
-    product_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      product_update_by BIGINT DEFAULT 1,
-    product_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      product_created_by BIGINT DEFAULT 1,
+    product_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      product_updated_by BIGINT DEFAULT 1,
+    product_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -18,19 +18,19 @@ BEGIN
                 name,
                 description,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 product_name,
                 product_description,
                 product_entity_status,
-                product_create_by,
-                product_create_date,
-                product_update_by,
-                product_update_date
+                product_created_by,
+                product_created_date,
+                product_updated_by,
+                product_updated_date
               );
 END;
 $$;
@@ -46,10 +46,10 @@ CREATE PROCEDURE insert_user_with_defaults(
            user_role user_role_enum DEFAULT 'SEEDER',
            user_type user_type_enum DEFAULT 'INTERNAL',
   user_entity_status status_enum DEFAULT 'ACTIVE',
-      user_create_by BIGINT DEFAULT 1,
-    user_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      user_update_by BIGINT DEFAULT 1,
-    user_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      user_created_by BIGINT DEFAULT 1,
+    user_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      user_updated_by BIGINT DEFAULT 1,
+    user_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -63,10 +63,10 @@ BEGIN
                 role,
                 type,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 user_name,
@@ -76,10 +76,10 @@ BEGIN
                 user_role,
                 user_type,
                 user_entity_status,
-                user_create_by,
-                user_create_date,
-                user_update_by,
-                user_update_date
+                user_created_by,
+                user_created_date,
+                user_updated_by,
+                user_updated_date
               );
 END;
 $$;
@@ -93,10 +93,10 @@ CREATE PROCEDURE insert_product_ingredient_with_defaults(
        product_ingredient_quantity INTEGER DEFAULT 1,
    product_ingredient_cooking_type cooking_type_enum DEFAULT 'ADDING',
   product_ingredient_entity_status status_enum DEFAULT 'ACTIVE',
-      product_ingredient_create_by BIGINT DEFAULT 1,
-    product_ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      product_ingredient_update_by BIGINT DEFAULT 1,
-    product_ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      product_ingredient_created_by BIGINT DEFAULT 1,
+    product_ingredient_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      product_ingredient_updated_by BIGINT DEFAULT 1,
+    product_ingredient_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -108,10 +108,10 @@ BEGIN
                 quantity,
                 cooking_type,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 product_ingredient_product_id,
@@ -119,10 +119,10 @@ BEGIN
                 product_ingredient_quantity,
                 product_ingredient_cooking_type,
                 product_ingredient_entity_status,
-                product_ingredient_create_by,
-                product_ingredient_create_date,
-                product_ingredient_update_by,
-                product_ingredient_update_date
+                product_ingredient_created_by,
+                product_ingredient_created_date,
+                product_ingredient_updated_by,
+                product_ingredient_updated_date
               );
 END;
 $$;
@@ -134,10 +134,10 @@ CREATE PROCEDURE insert_ingredient_with_defaults(
            ingredient_name VARCHAR(50) DEFAULT 'test_ingredient',
     ingredient_description VARCHAR(100) DEFAULT 'test_description',
   ingredient_entity_status status_enum DEFAULT 'ACTIVE',
-      ingredient_create_by BIGINT DEFAULT 1,
-    ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      ingredient_update_by BIGINT DEFAULT 1,
-    ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      ingredient_created_by BIGINT DEFAULT 1,
+    ingredient_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      ingredient_updated_by BIGINT DEFAULT 1,
+    ingredient_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -147,19 +147,19 @@ BEGIN
                 name,
                 description,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 ingredient_name,
                 ingredient_description,
                 ingredient_entity_status,
-                ingredient_create_by,
-                ingredient_create_date,
-                ingredient_update_by,
-                ingredient_update_date
+                ingredient_created_by,
+                ingredient_created_date,
+                ingredient_updated_by,
+                ingredient_updated_date
               );
 END;
 $$;
@@ -172,10 +172,10 @@ CREATE PROCEDURE insert_inventory_ingredient_with_defaults(
    inventory_ingredient_inventory_id BIGINT DEFAULT 1,
        inventory_ingredient_quantity INTEGER DEFAULT 1,
   inventory_ingredient_entity_status status_enum DEFAULT 'ACTIVE',
-      inventory_ingredient_create_by BIGINT DEFAULT 1,
-    inventory_ingredient_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      inventory_ingredient_update_by BIGINT DEFAULT 1,
-    inventory_ingredient_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      inventory_ingredient_created_by BIGINT DEFAULT 1,
+    inventory_ingredient_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      inventory_ingredient_updated_by BIGINT DEFAULT 1,
+    inventory_ingredient_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -186,20 +186,20 @@ BEGIN
                 inventory_id,
                 quantity,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 inventory_ingredient_ingredient_id,
                 inventory_ingredient_inventory_id,
                 inventory_ingredient_quantity,
                 inventory_ingredient_entity_status,
-                inventory_ingredient_create_by,
-                inventory_ingredient_create_date,
-                inventory_ingredient_update_by,
-                inventory_ingredient_update_date
+                inventory_ingredient_created_by,
+                inventory_ingredient_created_date,
+                inventory_ingredient_updated_by,
+                inventory_ingredient_updated_date
               );
 END;
 $$;
@@ -210,10 +210,10 @@ DROP PROCEDURE IF EXISTS insert_inventory_with_defaults;
 CREATE PROCEDURE insert_inventory_with_defaults(
            inventory_name VARCHAR(50) DEFAULT 'test_inventory',
   inventory_entity_status status_enum DEFAULT 'ACTIVE',
-      inventory_create_by BIGINT DEFAULT 1,
-    inventory_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      inventory_update_by BIGINT DEFAULT 1,
-    inventory_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      inventory_created_by BIGINT DEFAULT 1,
+    inventory_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      inventory_updated_by BIGINT DEFAULT 1,
+    inventory_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -222,18 +222,18 @@ BEGIN
               (
                 name,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 inventory_name,
                 inventory_entity_status,
-                inventory_create_by,
-                inventory_create_date,
-                inventory_update_by,
-                inventory_update_date
+                inventory_created_by,
+                inventory_created_date,
+                inventory_updated_by,
+                inventory_updated_date
               );
 END;
 $$;
@@ -245,10 +245,10 @@ CREATE PROCEDURE insert_order_with_defaults(
             order_status order_status_enum DEFAULT 'NEW_ORDER',
   order_assigned_chef_id BIGINT DEFAULT 1,
      order_entity_status status_enum DEFAULT 'ACTIVE',
-         order_create_by BIGINT DEFAULT 1,
-       order_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-         order_update_by BIGINT DEFAULT 1,
-       order_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+         order_created_by BIGINT DEFAULT 1,
+       order_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+         order_updated_by BIGINT DEFAULT 1,
+       order_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -258,19 +258,19 @@ BEGIN
                 status,
                 assigned_chef_id,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 order_status,
                 order_assigned_chef_id,
                 order_entity_status,
-                order_create_by,
-                order_create_date,
-                order_update_by,
-                order_update_date
+                order_created_by,
+                order_created_date,
+                order_updated_by,
+                order_updated_date
               );
 END;
 $$;
@@ -283,10 +283,10 @@ CREATE PROCEDURE insert_order_detail_with_defaults(
      order_detail_product_id BIGINT DEFAULT 1,
        order_detail_quantity INTEGER DEFAULT 1,
   order_detail_entity_status status_enum DEFAULT 'ACTIVE',
-      order_detail_create_by BIGINT DEFAULT 1,
-    order_detail_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      order_detail_update_by BIGINT DEFAULT 1,
-    order_detail_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      order_detail_created_by BIGINT DEFAULT 1,
+    order_detail_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      order_detail_updated_by BIGINT DEFAULT 1,
+    order_detail_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -297,20 +297,20 @@ BEGIN
                 product_id,
                 quantity,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 order_detail_order_id,
                 order_detail_product_id,
                 order_detail_quantity,
                 order_detail_entity_status,
-                order_detail_create_by,
-                order_detail_create_date,
-                order_detail_update_by,
-                order_detail_update_date
+                order_detail_created_by,
+                order_detail_created_date,
+                order_detail_updated_by,
+                order_detail_updated_date
               );
 END;
 $$;
@@ -325,10 +325,10 @@ CREATE PROCEDURE insert_order_status_history_with_defaults(
     order_status_history_from_status order_status_enum DEFAULT 'NEW_ORDER',
       order_status_history_to_status order_status_enum DEFAULT 'IN_PROCESS',
   order_status_history_entity_status status_enum DEFAULT 'ACTIVE',
-      order_status_history_create_by BIGINT DEFAULT 1,
-    order_status_history_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      order_status_history_update_by BIGINT DEFAULT 1,
-    order_status_history_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      order_status_history_created_by BIGINT DEFAULT 1,
+    order_status_history_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      order_status_history_updated_by BIGINT DEFAULT 1,
+    order_status_history_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -341,10 +341,10 @@ BEGIN
                 from_status,
                 to_status,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 order_status_history_order_id,
@@ -353,10 +353,10 @@ BEGIN
                 order_status_history_from_status,
                 order_status_history_to_status,
                 order_status_history_entity_status,
-                order_status_history_create_by,
-                order_status_history_create_date,
-                order_status_history_update_by,
-                order_status_history_update_date                
+                order_status_history_created_by,
+                order_status_history_created_date,
+                order_status_history_updated_by,
+                order_status_history_updated_date
               );
 END;
 $$;
@@ -368,10 +368,10 @@ CREATE PROCEDURE insert_chef_with_defaults(
         chef_user_id BIGINT DEFAULT 3,
           chef_skill INTEGER DEFAULT 1,
   chef_entity_status status_enum DEFAULT 'ACTIVE',
-      chef_create_by BIGINT DEFAULT 1,
-    chef_create_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-      chef_update_by BIGINT DEFAULT 1,
-    chef_update_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      chef_created_by BIGINT DEFAULT 1,
+    chef_created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      chef_updated_by BIGINT DEFAULT 1,
+    chef_updated_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 LANGUAGE 'plpgsql' AS
 $$
@@ -381,19 +381,19 @@ BEGIN
                 user_id,
                 skill,
                 entity_status,
-                create_by,
-                create_date,
-                update_by,
-                update_date
+                created_by,
+                created_date,
+                updated_by,
+                updated_date
               )
        VALUES (
                 chef_user_id,
                 chef_skill,
                 chef_entity_status,
-                chef_create_by,
-                chef_create_date,
-                chef_update_by,
-                chef_update_date                
+                chef_created_by,
+                chef_created_date,
+                chef_updated_by,
+                chef_updated_date
               );
 END;
 $$;

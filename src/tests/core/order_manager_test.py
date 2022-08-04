@@ -1,7 +1,8 @@
 import unittest
+
+from src.constants.order_status import OrderStatus
 from src.core.order_manager import OrderManager
 from src.tests.utils.fixtures.order_fixture import build_order
-from src.constants.order_status import OrderStatus
 
 
 class OrderManagerTestCase(unittest.TestCase):

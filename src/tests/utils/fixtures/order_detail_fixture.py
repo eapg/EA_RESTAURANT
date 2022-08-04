@@ -8,7 +8,7 @@ def build_order_detail(
     product_id=None,
     quantity=None,
     entity_status=None,
-    create_by=None
+    create_by=None,
 ):
 
     order_detail = OrderDetail()

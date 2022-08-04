@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+
 from src.lib.entities.abstract_entity import AbstractEntity
 from src.lib.entities.user import User
 from src.utils.utils import equals

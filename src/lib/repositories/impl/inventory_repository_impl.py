@@ -1,5 +1,6 @@
 # This file has the inventory repository
 from datetime import datetime
+
 from src.constants.audit import Status
 from src.lib.repositories.inventory_repository import InventoryRepository
 
@@ -57,4 +58,3 @@ class InventoryRepositoryImpl(InventoryRepository):
         current_inventory.entity_status = (
             inventory.entity_status or current_inventory.entity_status
         )
-

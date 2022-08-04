@@ -1,18 +1,18 @@
-from src.core.engine.processors.kitchen_simulator import KitchenSimulator
-from src.tests.utils.fixtures.app_processor_config_fixture import (
-    build_app_processor_config,
-)
-from src.tests.utils.fixtures.chef_fixture import build_chef
-from src.tests.utils.fixtures.order_fixture import build_order
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
-from src.tests.utils.fixtures.order_status_history_fixture import (
-    build_order_status_history,
-)
-from src.constants.cooking_type import CookingType
-from src.constants.order_status import OrderStatus
+import unittest
 from datetime import datetime
 from unittest import mock
-import unittest
+
+from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
+from src.core.engine.processors.kitchen_simulator import KitchenSimulator
+from src.tests.utils.fixtures.app_processor_config_fixture import \
+    build_app_processor_config
+from src.tests.utils.fixtures.chef_fixture import build_chef
+from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.utils.fixtures.order_status_history_fixture import \
+    build_order_status_history
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 
 class KitchenSimulatorTest(unittest.TestCase):

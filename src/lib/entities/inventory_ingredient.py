@@ -1,6 +1,6 @@
 # This entity will be used to store the Ingredient and its quantity
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class InventoryIngredient(AbstractEntity):

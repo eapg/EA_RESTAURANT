@@ -1,6 +1,6 @@
 # class for the products of the restaurant ;like pizzas, pasta,lasagna
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class Product(AbstractEntity):

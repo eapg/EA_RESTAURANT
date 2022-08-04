@@ -1,7 +1,7 @@
 # This file has the product repository
 from datetime import datetime
-from src.constants.audit import Status
 
+from src.constants.audit import Status
 from src.lib.repositories.product_repository import ProductRepository
 
 
@@ -50,11 +50,11 @@ class ProductRepositoryImpl(ProductRepository):
 
     def _update_by_id(self, product_id, product, use_merge_with_existing=True):
 
-        current_product = self.get_by_id(product_id) if use_merge_with_existing else product
-        current_product.name = product.name or current_product.name
-        current_product.description = (
-            product.description or current_product.description
+        current_product = (
+            self.get_by_id(product_id) if use_merge_with_existing else product
         )
+        current_product.name = product.name or current_product.name
+        current_product.description = product.description or current_product.description
         current_product.update_date = datetime.now()
         current_product.update_by = product.update_by or current_product.update_by
         current_product.entity_status = (

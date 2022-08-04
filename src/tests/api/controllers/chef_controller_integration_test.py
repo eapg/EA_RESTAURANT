@@ -126,7 +126,9 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
         chef_intermediate = build_chef(chef_id=2, name="Andres p", chef_skills=3)
         chef_basic = build_chef(chef_id=3, name="Juan p", chef_skills=1)
 
-        order_1 = build_order(assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS)
+        order_1 = build_order(
+            assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS
+        )
         order_2 = build_order(assigned_chef_id=None)
         order_3 = build_order(assigned_chef_id=None)
 

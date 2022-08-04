@@ -1,9 +1,8 @@
 # This file has the order_detail_order_detail repository
 from datetime import datetime
+
 from src.constants.audit import Status
-from src.lib.repositories.order_detail_repository import (
-    OrderDetailRepository,
-)
+from src.lib.repositories.order_detail_repository import OrderDetailRepository
 
 
 class OrderDetailRepositoryImpl(OrderDetailRepository):

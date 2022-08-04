@@ -3,11 +3,10 @@ from unittest import mock
 
 from src.api.controllers.inventory_controller import InventoryController
 from src.constants.audit import Status
-from src.lib.repositories.impl.inventory_repository_impl import InventoryRepositoryImpl
-from src.tests.utils.fixtures.inventory_fixture import (
-    build_inventories,
-    build_inventory,
-)
+from src.lib.repositories.impl.inventory_repository_impl import \
+    InventoryRepositoryImpl
+from src.tests.utils.fixtures.inventory_fixture import (build_inventories,
+                                                        build_inventory)
 
 
 class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):

@@ -1,9 +1,8 @@
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class User(AbstractEntity):
-
     def __init__(self):
 
         self.name = None

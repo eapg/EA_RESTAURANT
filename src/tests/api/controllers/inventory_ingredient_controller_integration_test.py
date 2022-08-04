@@ -1,19 +1,15 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.inventory_ingredient_controller import (
-    InventoryIngredientController,
-)
+from src.api.controllers.inventory_ingredient_controller import \
+    InventoryIngredientController
 from src.constants.audit import Status
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
+    InventoryIngredientRepositoryImpl
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import build_inventory
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-)
+    build_inventory_ingredient, build_inventory_ingredients)
 
 
 class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):

@@ -1,6 +1,7 @@
 # thread manager
 
-from src.core.engine.app_engine_processor_context import AppEngineProcessorContext
+from src.core.engine.app_engine_processor_context import \
+    AppEngineProcessorContext
 from src.core.engine.app_processor_config import AppProcessorConfig
 from src.core.engine.processors.kitchen_simulator import KitchenSimulator
 

@@ -1,18 +1,18 @@
 # initial data to test the kitchen simulator
-from src.constants.audit import Status, InternalUsers
-from src.constants.order_status import OrderStatus
+from src.constants.audit import InternalUsers, Status
 from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
+from src.core import ioc
+from src.tests.utils.fixtures.chef_fixture import build_chef
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import build_inventory
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-)
-from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
-from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.utils.fixtures.inventory_ingredient_fixture import \
+    build_inventory_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
-from src.tests.utils.fixtures.chef_fixture import build_chef
-from src.core import ioc
+from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.utils.fixtures.product_fixture import build_product
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 instance_ioc = ioc.get_ioc_instance()
 ingredient_controller = instance_ioc.get_instance("ingredient_controller")
@@ -764,13 +764,19 @@ def create_order_details():
 
     order_1 = order_controller.get_by_id(1)
     order_detail_hamburger = build_order_detail(
-        order_id=order_1.id, product_id=hamburger.id, quantity=2, entity_status=Status.ACTIVE,
+        order_id=order_1.id,
+        product_id=hamburger.id,
+        quantity=2,
+        entity_status=Status.ACTIVE,
         create_by=InternalUsers.SEEDER,
     )
     order_detail_controller.add(order_detail_hamburger)
 
     order_detail_orange_juice_1 = build_order_detail(
-        order_id=order_1.id, product_id=orange_juice.id, quantity=2, entity_status=Status.ACTIVE,
+        order_id=order_1.id,
+        product_id=orange_juice.id,
+        quantity=2,
+        entity_status=Status.ACTIVE,
         create_by=InternalUsers.SEEDER,
     )
     order_detail_controller.add(order_detail_orange_juice_1)

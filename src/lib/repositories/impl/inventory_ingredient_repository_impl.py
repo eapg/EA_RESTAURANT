@@ -1,13 +1,11 @@
 # This file has the inventory ingredient repository impl
 from datetime import datetime
-from src.constants.audit import Status
-from src.utils.inventory_ingredient_util import (
-    setup_products_qty_array_to_final_products_qty_map,
-)
 
-from src.lib.repositories.inventory_ingredient_repository import (
-    InventoryIngredientRepository,
-)
+from src.constants.audit import Status
+from src.lib.repositories.inventory_ingredient_repository import \
+    InventoryIngredientRepository
+from src.utils.inventory_ingredient_util import \
+    setup_products_qty_array_to_final_products_qty_map
 
 
 class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):

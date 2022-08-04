@@ -2,15 +2,14 @@ import unittest
 from unittest.mock import Mock, patch
 
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-)
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
+from src.tests.utils.fixtures.inventory_ingredient_fixture import \
+    build_inventory_ingredient
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 from src.utils.inventory_ingredient_util import (
-    products_qty_by_ingredients_qty_reducer,
     products_qty_array_to_final_products_qty_map_reducer,
-    setup_products_qty_array_to_final_products_qty_map,
-)
+    products_qty_by_ingredients_qty_reducer,
+    setup_products_qty_array_to_final_products_qty_map)
 
 
 def get_inventory_ingredient_by_ingredient_id_mock(ingredient_id):

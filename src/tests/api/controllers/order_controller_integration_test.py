@@ -1,28 +1,25 @@
 import unittest
 from unittest import mock
 
-from src.constants.audit import Status
-from src.constants.order_status import OrderStatus
-from src.constants.cooking_type import CookingType
 from src.api.controllers.order_controller import OrderController
-from src.lib.repositories.impl.order_detail_repository_impl import (
-    OrderDetailRepositoryImpl,
-)
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
+from src.constants.audit import Status
+from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
+    InventoryIngredientRepositoryImpl
+from src.lib.repositories.impl.order_detail_repository_impl import \
+    OrderDetailRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.lib.repositories.impl.product_ingredient_repository_impl import (
-    ProductIngredientRepositoryImpl,
-)
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-)
+from src.lib.repositories.impl.product_ingredient_repository_impl import \
+    ProductIngredientRepositoryImpl
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
+from src.tests.utils.fixtures.inventory_ingredient_fixture import \
+    build_inventory_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
 from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 
 class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
@@ -173,12 +170,18 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         ingredient_2 = build_ingredient(ingredient_id=2, name="ingredient_2")
         product_1 = build_product(product_id=1, name="product_1")
         product_ingredient_1 = build_product_ingredient(
-            product_ingredient_id=1, product_id=product_1.id, ingredient_id=ingredient_1.id, quantity=2
+            product_ingredient_id=1,
+            product_id=product_1.id,
+            ingredient_id=ingredient_1.id,
+            quantity=2,
         )
         self.product_ingredient_repository.add(product_ingredient_1)
 
         product_ingredient_2 = build_product_ingredient(
-            product_ingredient_id=2, product_id=product_1.id, ingredient_id=ingredient_2.id, quantity=2
+            product_ingredient_id=2,
+            product_id=product_1.id,
+            ingredient_id=ingredient_2.id,
+            quantity=2,
         )
         self.product_ingredient_repository.add(product_ingredient_2)
 
@@ -213,7 +216,10 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
-            product_ingredient_id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+            product_ingredient_id=1,
+            ingredient_id=ingredient_1.id,
+            product_id=product_1.id,
+            quantity=2,
         )
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
         order_detail_1 = build_order_detail(
