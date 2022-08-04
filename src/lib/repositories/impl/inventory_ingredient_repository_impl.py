@@ -17,9 +17,9 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
 
     def add(self, inventory_ingredient):
         inventory_ingredient.id = self._current_id
-        inventory_ingredient.create_date = datetime.now()
-        inventory_ingredient.update_by = inventory_ingredient.create_by
-        inventory_ingredient.update_date = inventory_ingredient.create_date
+        inventory_ingredient.created_date = datetime.now()
+        inventory_ingredient.updated_by = inventory_ingredient.created_by
+        inventory_ingredient.updated_date = inventory_ingredient.created_date
         self._inventory_ingredients[inventory_ingredient.id] = inventory_ingredient
         self._current_id += 1
 
@@ -48,8 +48,8 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
     def delete_by_id(self, inventory_ingredient_id, inventory_ingredient):
         inventory_ingredient_to_be_delete = self.get_by_id(inventory_ingredient_id)
         inventory_ingredient_to_be_delete.entity_status = Status.DELETED
-        inventory_ingredient_to_be_delete.update_date = datetime.now()
-        inventory_ingredient_to_be_delete.update_by = inventory_ingredient.update_by
+        inventory_ingredient_to_be_delete.updated_date = datetime.now()
+        inventory_ingredient_to_be_delete.updated_by = inventory_ingredient.updated_by
         self._update_by_id(
             inventory_ingredient_id,
             inventory_ingredient_to_be_delete,
@@ -82,9 +82,9 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredient.ingredient_quantity
             or current_inventory_ingredient.ingredient_quantity
         )
-        current_inventory_ingredient.update_date = datetime.now()
-        current_inventory_ingredient.update_by = (
-            inventory_ingredient.update_by or current_inventory_ingredient.update_by
+        current_inventory_ingredient.updated_date = datetime.now()
+        current_inventory_ingredient.updated_by = (
+            inventory_ingredient.updated_by or current_inventory_ingredient.updated_by
         )
         current_inventory_ingredient.entity_status = (
             inventory_ingredient.entity_status or current_inventory_ingredient

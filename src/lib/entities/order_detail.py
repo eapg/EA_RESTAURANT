@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from src.lib.entities.abstract_entity import AbstractEntity
 from src.utils.utils import equals
 

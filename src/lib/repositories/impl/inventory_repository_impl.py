@@ -12,9 +12,9 @@ class InventoryRepositoryImpl(InventoryRepository):
 
     def add(self, inventory):
         inventory.id = self._current_id
-        inventory.create_date = datetime.now()
-        inventory.update_by = inventory.create_by
-        inventory.update_date = inventory.create_date
+        inventory.created_date = datetime.now()
+        inventory.updated_by = inventory.created_by
+        inventory.updated_date = inventory.created_date
         self._inventories[inventory.id] = inventory
         self._current_id += 1
 
@@ -40,8 +40,8 @@ class InventoryRepositoryImpl(InventoryRepository):
     def delete_by_id(self, inventory_id, inventory):
         inventory_to_be_delete = self.get_by_id(inventory_id)
         inventory_to_be_delete.entity_status = Status.DELETED
-        inventory_to_be_delete.update_date = datetime.now()
-        inventory_to_be_delete.update_by = inventory.update_by
+        inventory_to_be_delete.updated_date = datetime.now()
+        inventory_to_be_delete.updated_by = inventory.updated_by
         self._update_by_id(
             inventory_id, inventory_to_be_delete, use_merge_with_existing=False
         )
@@ -53,8 +53,8 @@ class InventoryRepositoryImpl(InventoryRepository):
         current_inventory = (
             self.get_by_id(inventory_id) if use_merge_with_existing else inventory
         )
-        current_inventory.update_date = datetime.now()
-        current_inventory.update_by = inventory.update_by or current_inventory.update_by
+        current_inventory.updated_date = datetime.now()
+        current_inventory.updated_by = inventory.updated_by or current_inventory.updated_by
         current_inventory.entity_status = (
             inventory.entity_status or current_inventory.entity_status
         )

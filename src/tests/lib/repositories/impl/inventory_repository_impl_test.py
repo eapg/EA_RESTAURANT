@@ -5,9 +5,6 @@ from src.lib.repositories.impl.inventory_repository_impl import \
     InventoryRepositoryImpl
 from src.tests.utils.fixtures.inventory_fixture import (build_inventories,
                                                         build_inventory)
-from src.tests.utils.fixtures.inventory_ingredient_fixture import \
-    build_inventory_ingredient
-
 
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
     def test_add_inventory_successfully(self):
@@ -112,6 +109,6 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(inventories), 2)
         self.assertEqual(
-            updated_inventory.update_by,
-            inventory_to_update.update_by,
+            updated_inventory.updated_by,
+            inventory_to_update.updated_by,
         )

@@ -14,9 +14,9 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def add(self, order_status_history):
         order_status_history.id = self._current_id
-        order_status_history.create_date = datetime.now()
-        order_status_history.update_by = order_status_history.create_by
-        order_status_history.update_date = order_status_history.create_date
+        order_status_history.created_date = datetime.now()
+        order_status_history.updated_by = order_status_history.created_by
+        order_status_history.updated_date = order_status_history.created_date
         self._order_status_histories[order_status_history.id] = order_status_history
         self._current_id += 1
 
@@ -45,8 +45,8 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
     def delete_by_id(self, order_status_history_id, order_status_history):
         order_status_history_to_be_delete = self.get_by_id(order_status_history_id)
         order_status_history_to_be_delete.entity_status = Status.DELETED
-        order_status_history_to_be_delete.update_date = datetime.now()
-        order_status_history_to_be_delete.update_by = order_status_history.update_by
+        order_status_history_to_be_delete.updated_date = datetime.now()
+        order_status_history_to_be_delete.updated_by = order_status_history.updated_by
         self._update_by_id(
             order_status_history_id,
             order_status_history_to_be_delete,
@@ -82,9 +82,9 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         current_order_status_history.to_status = (
             order_status_history.to_status or current_order_status_history.to_status
         )
-        current_order_status_history.update_date = datetime.now()
-        current_order_status_history.update_by = (
-            order_status_history.update_by or current_order_status_history.update_by
+        current_order_status_history.updated_date = datetime.now()
+        current_order_status_history.updated_by = (
+            order_status_history.updated_by or current_order_status_history.updated_by
         )
         current_order_status_history.entity_status = (
             order_status_history.entity_status

@@ -12,9 +12,9 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
 
     def add(self, order_detail):
         order_detail.id = self._current_id
-        order_detail.create_date = datetime.now()
-        order_detail.update_by = order_detail.create_by
-        order_detail.update_date = order_detail.create_date
+        order_detail.created_date = datetime.now()
+        order_detail.updated_by = order_detail.created_by
+        order_detail.updated_date = order_detail.created_date
         self._order_details[order_detail.id] = order_detail
         self._current_id += 1
 
@@ -39,8 +39,8 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
     def delete_by_id(self, order_detail_id, order_detail):
         order_detail_to_be_delete = self.get_by_id(order_detail_id)
         order_detail_to_be_delete.entity_status = Status.DELETED
-        order_detail_to_be_delete.update_date = datetime.now()
-        order_detail_to_be_delete.update_by = order_detail.update_by
+        order_detail_to_be_delete.updated_date = datetime.now()
+        order_detail_to_be_delete.updated_by = order_detail.updated_by
         self._update_by_id(
             order_detail, order_detail_to_be_delete, use_merge_with_existing=False
         )
@@ -63,9 +63,9 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
         current_order_detail.quantity = (
             order_detail.quantity or current_order_detail.quantity
         )
-        current_order_detail.update_date = datetime.now()
-        current_order_detail.update_by = (
-            order_detail.update_by or current_order_detail.update_by
+        current_order_detail.updated_date = datetime.now()
+        current_order_detail.updated_by = (
+            order_detail.updated_by or current_order_detail.updated_by
         )
         current_order_detail.entity_status = (
             order_detail.entity_status or current_order_detail.entity_status

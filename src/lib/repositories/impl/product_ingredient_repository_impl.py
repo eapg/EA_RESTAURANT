@@ -13,9 +13,9 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
 
     def add(self, product_ingredient):
         product_ingredient.id = self._current_id
-        product_ingredient.create_date = datetime.now()
-        product_ingredient.update_by = product_ingredient.create_by
-        product_ingredient.update_date = product_ingredient.create_date
+        product_ingredient.created_date = datetime.now()
+        product_ingredient.updated_by = product_ingredient.created_by
+        product_ingredient.updated_date = product_ingredient.created_date
         self._product_ingredients[product_ingredient.id] = product_ingredient
         self._current_id += 1
 
@@ -42,8 +42,8 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
     def delete_by_id(self, product_ingredient_id, product_ingredient):
         product_ingredient_to_be_delete = self.get_by_id(product_ingredient_id)
         product_ingredient_to_be_delete.entity_status = Status.DELETED
-        product_ingredient_to_be_delete.update_date = datetime.now()
-        product_ingredient_to_be_delete.update_by = product_ingredient.update_by
+        product_ingredient_to_be_delete.updated_date = datetime.now()
+        product_ingredient_to_be_delete.updated_by = product_ingredient.updated_by
         self._update_by_id(
             product_ingredient_id,
             product_ingredient_to_be_delete,

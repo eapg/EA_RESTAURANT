@@ -123,6 +123,6 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
         self.assertEqual(len(inventories), 2)
         self.assertEqual(
-            updated_inventory.update_by,
-            inventory_to_update.update_by,
+            updated_inventory.updated_by,
+            inventory_to_update.updated_by,
         )
