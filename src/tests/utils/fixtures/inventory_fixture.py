@@ -1,5 +1,5 @@
-from src.lib.entities.inventory import Inventory
 from src.constants.audit import Status
+from src.lib.entities.inventory import Inventory
 
 
 def build_inventory(inventory_id=None, entity_status=None, update_by=None):

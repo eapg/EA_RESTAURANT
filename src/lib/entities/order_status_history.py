@@ -1,11 +1,11 @@
 # entity to manage order status history
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class OrderStatusHistory(AbstractEntity):
     def __init__(self):
-        self.id = None # integer
+        self.id = None  # integer
         self.order_id = None  # integer
         self.from_time = None  # time
         self.to_time = None  # time

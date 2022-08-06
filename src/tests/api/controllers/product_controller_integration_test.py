@@ -1,9 +1,12 @@
 import unittest
 from unittest import mock
-from src.constants.audit import Status
+
 from src.api.controllers.product_controller import ProductController
-from src.lib.repositories.impl.product_repository_impl import ProductRepositoryImpl
-from src.tests.utils.fixtures.product_fixture import build_product, build_products
+from src.constants.audit import Status
+from src.lib.repositories.impl.product_repository_impl import \
+    ProductRepositoryImpl
+from src.tests.utils.fixtures.product_fixture import (build_product,
+                                                      build_products)
 
 
 class ProductRepositoryControllerIntegrationTestCase(unittest.TestCase):

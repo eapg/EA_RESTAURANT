@@ -1,5 +1,5 @@
-from src.lib.entities.ingredient import Ingredient
 from src.constants.audit import Status
+from src.lib.entities.ingredient import Ingredient
 
 
 def build_ingredient(

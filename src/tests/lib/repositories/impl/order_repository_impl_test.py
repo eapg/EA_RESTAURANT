@@ -2,27 +2,23 @@ import unittest
 from unittest import mock
 
 from src.constants.audit import Status
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
-from src.lib.repositories.impl.order_detail_repository_impl import (
-    OrderDetailRepositoryImpl,
-)
+from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
+    InventoryIngredientRepositoryImpl
+from src.lib.repositories.impl.order_detail_repository_impl import \
+    OrderDetailRepositoryImpl
 from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.lib.repositories.impl.product_ingredient_repository_impl import (
-    ProductIngredientRepositoryImpl,
-)
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-)
-
+from src.lib.repositories.impl.product_ingredient_repository_impl import \
+    ProductIngredientRepositoryImpl
+from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
+from src.tests.utils.fixtures.inventory_ingredient_fixture import \
+    build_inventory_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
-from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
 from src.tests.utils.fixtures.product_fixture import build_product
-from src.constants.order_status import OrderStatus
-from src.constants.cooking_type import CookingType
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 
 class OrderRepositoryImplTestCase(unittest.TestCase):

@@ -10,10 +10,10 @@ CREATE TABLE products(
            name VARCHAR(50) NOT NULL,
     description VARCHAR(100) DEFAULT '',
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -36,10 +36,10 @@ CREATE TABLE users(
            role user_role_enum NOT NULL,
            type user_type_enum NOT NULL,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
  );
 
@@ -56,10 +56,10 @@ CREATE TABLE product_ingredients(
        quantity INTEGER NOT NULL,
    cooking_type cooking_type_enum NOT NULL,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -70,10 +70,10 @@ CREATE TABLE ingredients(
            name VARCHAR(50) NOT NULL,
     description VARCHAR(100) DEFAULT '',
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -85,10 +85,10 @@ CREATE TABLE inventory_ingredients(
    inventory_id BIGINT NOT NULL,
        quantity INTEGER NOT NULL,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -99,10 +99,10 @@ CREATE TABLE inventories(
              id BIGSERIAL NOT NULL,
            name VARCHAR(50) NOT NULL,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -117,10 +117,10 @@ CREATE TABLE orders(
             status order_status_enum NOT NULL,
   assigned_chef_id BIGINT NOT NULL,
      entity_status status_enum NOT NULL,
-         create_by BIGINT NOT NULL,
-       create_date TIMESTAMP WITHOUT TIME ZONE,
-         update_by BIGINT NOT NULL,
-       update_date TIMESTAMP WITHOUT TIME ZONE,
+         created_by BIGINT NOT NULL,
+       created_date TIMESTAMP WITHOUT TIME ZONE,
+         updated_by BIGINT NOT NULL,
+       updated_date TIMESTAMP WITHOUT TIME ZONE,
            PRIMARY KEY (id)
 );
 
@@ -132,10 +132,10 @@ CREATE TABLE order_details(
      product_id BIGINT NOT NULL,
        quantity INTEGER NOT NULL,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -149,10 +149,10 @@ CREATE TABLE order_status_histories(
     from_status order_status_enum,
       to_status order_status_enum,
   entity_status status_enum NOT NULL,
-      create_by BIGINT NOT NULL,
-    create_date TIMESTAMP WITHOUT TIME ZONE,
-      update_by BIGINT NOT NULL,
-    update_date TIMESTAMP WITHOUT TIME ZONE,
+      created_by BIGINT NOT NULL,
+    created_date TIMESTAMP WITHOUT TIME ZONE,
+      updated_by BIGINT NOT NULL,
+    updated_date TIMESTAMP WITHOUT TIME ZONE,
         PRIMARY KEY (id)
 );
 
@@ -163,27 +163,27 @@ CREATE TABLE chefs(
          user_id BIGINT NOT NULL,
            skill INTEGER NOT NULL,
    entity_status status_enum NOT NULL,
-       create_by BIGINT NOT NULL,
-     create_date TIMESTAMP WITHOUT TIME ZONE,
-       update_by BIGINT NOT NULL,
-     update_date TIMESTAMP WITHOUT TIME ZONE,
+       created_by BIGINT NOT NULL,
+     created_date TIMESTAMP WITHOUT TIME ZONE,
+       updated_by BIGINT NOT NULL,
+     updated_date TIMESTAMP WITHOUT TIME ZONE,
          PRIMARY KEY (id)
 );
 
 ALTER TABLE products 
-  ADD CONSTRAINT fk_product_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_product_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE products 
-  ADD CONSTRAINT fk_product_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_product_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
 
 ALTER TABLE product_ingredients 
-  ADD CONSTRAINT fk_product_ingredient_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_product_ingredient_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE product_ingredients 
-  ADD CONSTRAINT fk_product_ingredient_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_product_ingredient_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
      
 ALTER TABLE product_ingredients 
@@ -195,19 +195,19 @@ ALTER TABLE product_ingredients
       REFERENCES products (id);
 
 ALTER TABLE ingredients 
-  ADD CONSTRAINT fk_ingredient_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_ingredient_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE ingredients 
-  ADD CONSTRAINT fk_ingredient_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_ingredient_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
 
 ALTER TABLE inventory_ingredients 
-  ADD CONSTRAINT fk_inventory_ingredient_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_inventory_ingredient_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE inventory_ingredients 
-  ADD CONSTRAINT fk_inventory_ingredient_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_inventory_ingredient_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
      
 ALTER TABLE inventory_ingredients
@@ -219,19 +219,19 @@ ALTER TABLE inventory_ingredients
       REFERENCES inventories (id);
 
 ALTER TABLE inventories 
-  ADD CONSTRAINT fk_inventory_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_inventory_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE inventories 
-  ADD CONSTRAINT fk_inventory_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_inventory_user_update FOREIGN KEY (updated_by)
       REFERENCES users(id);
 
 ALTER TABLE orders 
-  ADD CONSTRAINT fk_order_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_order_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE orders 
-  ADD CONSTRAINT fk_order_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_order_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
 
 ALTER TABLE orders 
@@ -239,11 +239,11 @@ ALTER TABLE orders
       REFERENCES chefs (id);
 
 ALTER TABLE order_details 
-  ADD CONSTRAINT fk_order_detail_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_order_detail_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE order_details 
-  ADD CONSTRAINT fk_order_detail_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_order_detail_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
   
 ALTER TABLE order_details
@@ -255,11 +255,11 @@ ALTER TABLE order_details
       REFERENCES products (id);
 
 ALTER TABLE order_status_histories 
-  ADD CONSTRAINT fk_order_status_history_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_order_status_history_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE order_status_histories 
-  ADD CONSTRAINT fk_order_status_history_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_order_status_history_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
 
 ALTER TABLE order_status_histories
@@ -267,11 +267,11 @@ ALTER TABLE order_status_histories
       REFERENCES orders (id);
 
 ALTER TABLE chefs 
-  ADD CONSTRAINT fk_chef_user_create FOREIGN KEY (create_by)
+  ADD CONSTRAINT fk_chef_user_created FOREIGN KEY (created_by)
       REFERENCES users(id);
      
 ALTER TABLE chefs 
-  ADD CONSTRAINT fk_chef_user_update FOREIGN KEY (update_by)
+  ADD CONSTRAINT fk_chef_user_updated FOREIGN KEY (updated_by)
       REFERENCES users(id);
      
 ALTER TABLE chefs

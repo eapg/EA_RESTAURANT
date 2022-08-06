@@ -1,6 +1,6 @@
 # entity to relate the product with the ingredient and the quantity that the product need.
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class ProductIngredient(AbstractEntity):

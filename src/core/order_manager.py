@@ -1,6 +1,7 @@
 # order manager mechanism
 import queue
 from queue import PriorityQueue
+
 from src.constants.order_status import OrderStatus
 
 ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP = {

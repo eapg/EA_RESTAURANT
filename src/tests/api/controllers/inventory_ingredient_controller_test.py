@@ -1,16 +1,13 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.inventory_ingredient_controller import (
-    InventoryIngredientController,
-)
+from src.api.controllers.inventory_ingredient_controller import \
+    InventoryIngredientController
 from src.constants.audit import Status
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import build_inventory
 from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-)
+    build_inventory_ingredient, build_inventory_ingredients)
 
 
 class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
@@ -62,9 +59,13 @@ class InventoryIngredientRepositoryControllerTestCase(unittest.TestCase):
         inventory_ingredient_to_delete = build_inventory_ingredient(
             entity_status=Status.DELETED
         )
-        self.inventory_ingredient_controller.delete_by_id(2, inventory_ingredient_to_delete)
+        self.inventory_ingredient_controller.delete_by_id(
+            2, inventory_ingredient_to_delete
+        )
 
-        self.inventory_ingredient_repository.delete_by_id.assert_called_with(2, inventory_ingredient_to_delete)
+        self.inventory_ingredient_repository.delete_by_id.assert_called_with(
+            2, inventory_ingredient_to_delete
+        )
 
     def test_update_an_inventory_ingredient_successfully(self):
         inventory_ingredient = build_inventory_ingredient()

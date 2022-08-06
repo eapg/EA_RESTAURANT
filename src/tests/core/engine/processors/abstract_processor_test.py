@@ -4,9 +4,8 @@ from abc import ABCMeta
 from unittest import mock
 
 from src.core.engine.processors.abstract_processor import AbstractProcessor
-from src.tests.utils.fixtures.app_processor_config_fixture import (
-    build_app_processor_config,
-)
+from src.tests.utils.fixtures.app_processor_config_fixture import \
+    build_app_processor_config
 
 
 class TestProcessor(AbstractProcessor, metaclass=ABCMeta):

@@ -1,13 +1,12 @@
 import unittest
 from unittest import mock
 
+from src.api.controllers.order_controller import OrderController
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
-from src.api.controllers.order_controller import OrderController
 from src.tests.utils.fixtures.order_fixture import build_order, build_orders
-from src.tests.utils.fixtures.product_ingredient_fixture import (
-    build_product_ingredients,
-)
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredients
 
 
 class OrderRepositoryControllerTestCase(unittest.TestCase):

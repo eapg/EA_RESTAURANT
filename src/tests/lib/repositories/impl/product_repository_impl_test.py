@@ -1,7 +1,10 @@
 import unittest
+
 from src.constants.audit import Status
-from src.lib.repositories.impl.product_repository_impl import ProductRepositoryImpl
-from src.tests.utils.fixtures.product_fixture import build_product, build_products
+from src.lib.repositories.impl.product_repository_impl import \
+    ProductRepositoryImpl
+from src.tests.utils.fixtures.product_fixture import (build_product,
+                                                      build_products)
 
 
 class ProductRepositoryImplTestCase(unittest.TestCase):
@@ -83,7 +86,9 @@ class ProductRepositoryImplTestCase(unittest.TestCase):
     def test_delete_throws_key_error_when_there_are_no_products(self):
         product_repository = ProductRepositoryImpl()
         product_to_delete = build_product(entity_status=Status.DELETED)
-        self.assertRaises(KeyError, product_repository.delete_by_id, 2, product_to_delete)
+        self.assertRaises(
+            KeyError, product_repository.delete_by_id, 2, product_to_delete
+        )
 
     def test_update_product_successfully(self):
         products_to_insert = build_products(count=2)
