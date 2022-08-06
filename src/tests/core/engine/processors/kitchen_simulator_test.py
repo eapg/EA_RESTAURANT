@@ -71,7 +71,9 @@ class KitchenSimulatorTest(unittest.TestCase):
         mocked_order_estimated_time.asser_called_with(
             [
                 build_product_ingredient(
-                    product_ingredient_id=1, quantity=1, ingredient_type=CookingType.FRYING
+                    product_ingredient_id=1,
+                    quantity=1,
+                    ingredient_type=CookingType.FRYING,
                 )
             ],
             chef_1,
@@ -157,7 +159,9 @@ class KitchenSimulatorTest(unittest.TestCase):
         mocked_compute_order_estimated_time.assert_called_with(
             [
                 build_product_ingredient(
-                    product_ingredient_id=1, quantity=1, ingredient_type=CookingType.FRYING
+                    product_ingredient_id=1,
+                    quantity=1,
+                    ingredient_type=CookingType.FRYING,
                 )
             ],
             build_chef(chef_id=1),

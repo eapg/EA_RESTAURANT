@@ -13,6 +13,7 @@ from src.api.controllers.product_controller import ProductController
 from src.api.controllers.product_ingredient_controller import \
     ProductIngredientController
 from src.core.order_manager import OrderManager
+from src.core.sqlalchemy_config import create_session
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.ingredient_repository_impl import \
     IngredientRepositoryImpl
@@ -31,85 +32,81 @@ from src.lib.repositories.impl.product_repository_impl import \
     ProductRepositoryImpl
 
 
+def init_sqlalchemy_session(ioc_instance):
+    ioc_instance["sqlalchemy_session"] = create_session()
+
+
+def init_order_manager(ioc_instance):
+    ioc_instance["order_manager"] = OrderManager()
+
+
+def init_repositories(ioc_instance):
+    ioc_instance["product_ingredient_repository"] = ProductIngredientRepositoryImpl()
+    ioc_instance["product_repository"] = ProductRepositoryImpl()
+    ioc_instance["ingredient_repository"] = IngredientRepositoryImpl()
+    ioc_instance["inventory_ingredient_repository"] = InventoryIngredientRepositoryImpl(
+        ioc_instance["product_ingredient_repository"]
+    )
+    ioc_instance["order_detail_repository"] = OrderDetailRepositoryImpl()
+    ioc_instance["inventory_repository"] = InventoryRepositoryImpl()
+    ioc_instance["order_repository"] = OrderRepositoryImpl(
+        ioc_instance["order_detail_repository"],
+        ioc_instance["product_ingredient_repository"],
+        ioc_instance["inventory_ingredient_repository"],
+    )
+
+    ioc_instance["chef_repository"] = ChefRepositoryImpl()
+    ioc_instance["chef_repository"] = ChefRepositoryImpl(
+        ioc_instance["order_repository"]
+    )
+
+    ioc_instance["order_status_history_repository"] = OrderStatusHistoryRepositoryImpl()
+
+
+def init_controllers(ioc_instance):
+    ioc_instance["product_ingredient_controller"] = ProductIngredientController(
+        ioc_instance["product_ingredient_repository"]
+    )
+    ioc_instance["product_controller"] = ProductController(
+        ioc_instance["product_repository"]
+    )
+    ioc_instance["ingredient_controller"] = IngredientController(
+        ioc_instance["ingredient_repository"]
+    )
+    ioc_instance["inventory_ingredient_controller"] = InventoryIngredientController(
+        ioc_instance["inventory_ingredient_repository"]
+    )
+    ioc_instance["inventory_controller"] = InventoryController(
+        ioc_instance["inventory_repository"]
+    )
+    ioc_instance["order_controller"] = OrderController(ioc_instance["order_repository"])
+    ioc_instance["order_detail_controller"] = OrderDetailController(
+        ioc_instance["order_detail_repository"]
+    )
+    ioc_instance["chef_controller"] = ChefController(ioc_instance["chef_repository"])
+    ioc_instance["order_status_history_controller"] = OrderStatusHistoryController(
+        ioc_instance["order_status_history_repository"]
+    )
+
+
 class Ioc:
     def __init__(self):
-        self._instance_ioc = {}
-        self._init_order_manager()
-        self._init_repositories()
-        self._init_controllers()
-
-    def _init_order_manager(self):
-        self._instance_ioc["order_manager"] = OrderManager()
-
-    def _init_repositories(self):
-        self._instance_ioc[
-            "product_ingredient_repository"
-        ] = ProductIngredientRepositoryImpl()
-        self._instance_ioc["product_repository"] = ProductRepositoryImpl()
-        self._instance_ioc["ingredient_repository"] = IngredientRepositoryImpl()
-        self._instance_ioc[
-            "inventory_ingredient_repository"
-        ] = InventoryIngredientRepositoryImpl(
-            self._instance_ioc["product_ingredient_repository"]
-        )
-        self._instance_ioc["order_detail_repository"] = OrderDetailRepositoryImpl()
-        self._instance_ioc["inventory_repository"] = InventoryRepositoryImpl()
-        self._instance_ioc["order_repository"] = OrderRepositoryImpl(
-            self._instance_ioc["order_detail_repository"],
-            self._instance_ioc["product_ingredient_repository"],
-            self._instance_ioc["inventory_ingredient_repository"],
-        )
-
-        self._instance_ioc["chef_repository"] = ChefRepositoryImpl()
-        self._instance_ioc["chef_repository"] = ChefRepositoryImpl(
-            self._instance_ioc["order_repository"]
-        )
-
-        self._instance_ioc[
-            "order_status_history_repository"
-        ] = OrderStatusHistoryRepositoryImpl()
-
-    def _init_controllers(self):
-        self._instance_ioc[
-            "product_ingredient_controller"
-        ] = ProductIngredientController(
-            self._instance_ioc["product_ingredient_repository"]
-        )
-        self._instance_ioc["product_controller"] = ProductController(
-            self._instance_ioc["product_repository"]
-        )
-        self._instance_ioc["ingredient_controller"] = IngredientController(
-            self._instance_ioc["ingredient_repository"]
-        )
-        self._instance_ioc[
-            "inventory_ingredient_controller"
-        ] = InventoryIngredientController(
-            self._instance_ioc["inventory_ingredient_repository"]
-        )
-        self._instance_ioc["inventory_controller"] = InventoryController(
-            self._instance_ioc["inventory_repository"]
-        )
-        self._instance_ioc["order_controller"] = OrderController(
-            self._instance_ioc["order_repository"]
-        )
-        self._instance_ioc["order_detail_controller"] = OrderDetailController(
-            self._instance_ioc["order_detail_repository"]
-        )
-        self._instance_ioc["chef_controller"] = ChefController(
-            self._instance_ioc["chef_repository"]
-        )
-        self._instance_ioc[
-            "order_status_history_controller"
-        ] = OrderStatusHistoryController(
-            self._instance_ioc["order_status_history_repository"]
-        )
+        self._ioc_instance = {}
+        init_sqlalchemy_session(self._ioc_instance)
+        init_order_manager(self._ioc_instance)
+        init_repositories(self._ioc_instance)
+        init_controllers(self._ioc_instance)
 
     def get_instance(self, instance_id):
-        return self._instance_ioc[instance_id]
+        return self._ioc_instance[instance_id]
 
 
-ioc_instance = Ioc()
+IOC_CONTEXT_MAP = {"ioc_instance": None}
 
 
 def get_ioc_instance():
-    return ioc_instance
+
+    if not IOC_CONTEXT_MAP["ioc_instance"]:
+        IOC_CONTEXT_MAP["ioc_instance"] = Ioc()
+
+    return IOC_CONTEXT_MAP["ioc_instance"]

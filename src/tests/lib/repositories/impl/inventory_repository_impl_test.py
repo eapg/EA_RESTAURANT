@@ -6,6 +6,7 @@ from src.lib.repositories.impl.inventory_repository_impl import \
 from src.tests.utils.fixtures.inventory_fixture import (build_inventories,
                                                         build_inventory)
 
+
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
     def test_add_inventory_successfully(self):
         inventory = build_inventory()
