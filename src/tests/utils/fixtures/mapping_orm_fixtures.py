@@ -12,6 +12,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     ProductIngredient,
     InventoryIngredient,
     OrderStatusHistory,
+    Order,
 )
 
 
@@ -235,3 +236,29 @@ def build_order_status_history(
 
 def build_order_status_histories(count=1):
     return [build_order_status_history(order_status_id=n) for n in range(count)]
+
+
+def build_order(
+    order_id=None,
+    status=None,
+    assigned_chef_id=None,
+    client_id=None,
+    entity_status=None,
+    create_by=None,
+    update_by=None,
+):
+
+    order = Order()
+    order.id = order_id or 1
+    order.status = status or OrderStatus.NEW_ORDER.name
+    order.assigned_chef_id = assigned_chef_id or 1
+    order.client_id = client_id or 1
+    order.entity_status = entity_status or Status.ACTIVE.value
+    order.created_by = create_by or 1
+    order.updated_by = update_by or order.created_by
+
+    return order
+
+
+def build_orders(count=1):
+    return [build_order(order_id=n) for n in range(count)]

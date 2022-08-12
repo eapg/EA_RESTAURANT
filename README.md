@@ -49,7 +49,8 @@ Download and install the following tools:
 * Open `miniconda3`.
 * Go to the project path
 * Run `conda create --prefix=.venv python=3.10.0`
-
+* In order to active an enviroment run the following command: `conda activate .\venv\Scripts\activate.bat`
+* In order to update library dependency run the following command : `pip freeze > requirements.txt`
 ### Running tests
 
 This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just

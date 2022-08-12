@@ -10,8 +10,12 @@ class QueryOperationsMock:
         mocked_filter = mock.Mock()
         self.current_mock.return_value = mocked_filter
         mocked_filter.filter = mock.Mock()
-        mocked_filter.filter.return_value = return_value or mocked_filter.filter.return_value
-        mocked_filter.filter.side_effect = side_effect_fn or mocked_filter.filter.side_effect
+        mocked_filter.filter.return_value = (
+            return_value or mocked_filter.filter.return_value
+        )
+        mocked_filter.filter.side_effect = (
+            side_effect_fn or mocked_filter.filter.side_effect
+        )
         self.current_mock = mocked_filter.filter
         return self
 
@@ -19,8 +23,12 @@ class QueryOperationsMock:
         mocked_first = mock.Mock()
         self.current_mock.return_value = mocked_first
         mocked_first.first = mock.Mock()
-        mocked_first.first.return_value = return_value or mocked_first.first.return_value
-        mocked_first.first.side_effect = side_effect_fn or mocked_first.first.side_effect
+        mocked_first.first.return_value = (
+            return_value or mocked_first.first.return_value
+        )
+        mocked_first.first.side_effect = (
+            side_effect_fn or mocked_first.first.side_effect
+        )
         self.current_mock = mocked_first.first
         return self
 
@@ -28,8 +36,12 @@ class QueryOperationsMock:
         mocked_exists = mock.Mock()
         self.current_mock.return_value = mocked_exists
         mocked_exists.exists = mock.Mock()
-        mocked_exists.exists.return_value = return_value or mocked_exists.exists.return_value
-        mocked_exists.exists.side_effect = side_effect_fn or mocked_exists.exists.side_effect
+        mocked_exists.exists.return_value = (
+            return_value or mocked_exists.exists.return_value
+        )
+        mocked_exists.exists.side_effect = (
+            side_effect_fn or mocked_exists.exists.side_effect
+        )
         self.current_mock = mocked_exists.exists
         return self
 
@@ -37,8 +49,12 @@ class QueryOperationsMock:
         mocked_update = mock.Mock()
         self.current_mock.return_value = mocked_update
         mocked_update.update = mock.Mock()
-        mocked_update.update.return_value = return_value or mocked_update.update.return_value
-        mocked_update.update.side_effect = side_effect_fn or mocked_update.update.side_effect
+        mocked_update.update.return_value = (
+            return_value or mocked_update.update.return_value
+        )
+        mocked_update.update.side_effect = (
+            side_effect_fn or mocked_update.update.side_effect
+        )
         self.current_mock = mocked_update.update
         return self
 
@@ -46,8 +62,12 @@ class QueryOperationsMock:
         mocked_group_by = mock.Mock()
         self.current_mock.return_value = mocked_group_by
         mocked_group_by.group_by = mock.Mock()
-        mocked_group_by.group_by.return_value = return_value or mocked_group_by.group_by.return_value
-        mocked_group_by.group_by.side_effect = side_effect_fn or mocked_group_by.group_by.side_effect
+        mocked_group_by.group_by.return_value = (
+            return_value or mocked_group_by.group_by.return_value
+        )
+        mocked_group_by.group_by.side_effect = (
+            side_effect_fn or mocked_group_by.group_by.side_effect
+        )
         self.current_mock = mocked_group_by.group_by
         return self
 
@@ -58,6 +78,28 @@ class QueryOperationsMock:
         mocked_all.all.return_value = return_value or mocked_all.all.return_value
         mocked_all.all.side_effect = side_effect_fn or mocked_all.all.side_effect
         self.current_mock = mocked_all.all
+        return self
+
+    def limit(self, return_value=None, side_effect_fn=None):
+        mocked_limit = mock.Mock()
+        self.current_mock.return_value = mocked_limit
+        mocked_limit.limit = mock.Mock()
+        mocked_limit.limit.return_value = (
+            return_value or mocked_limit.limit.return_value
+        )
+        mocked_limit.limit.side_effect = (
+            side_effect_fn or mocked_limit.limit.side_effect
+        )
+        self.current_mock = mocked_limit.limit
+        return self
+
+    def join(self, return_value=None, side_effect_fn=None):
+        mocked_join = mock.Mock()
+        self.current_mock.return_value = mocked_join
+        mocked_join.join = mock.Mock()
+        mocked_join.join.return_value = return_value or mocked_join.join.return_value
+        mocked_join.join.side_effect = side_effect_fn or mocked_join.join.side_effect
+        self.current_mock = mocked_join.join
         return self
 
     def get_mocked_query(self):
