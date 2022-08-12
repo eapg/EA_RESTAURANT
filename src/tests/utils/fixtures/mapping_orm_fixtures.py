@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from src.constants.audit import Status
-from src.lib.entities.sqlalchemy_orm_mapping import Chef, Product
+from src.lib.entities.sqlalchemy_orm_mapping import Chef, Product, Ingredient
 
 
 def build_chef(
@@ -58,3 +58,31 @@ def build_product(
 
 def build_products(count=1):
     return [build_product(name=f"testing-product{n}") for n in range(count)]
+
+
+def build_ingredient(
+    ingredient_id=None,
+    name=None,
+    description=None,
+    entity_status=None,
+    create_by=None,
+    create_date=None,
+    update_date=None,
+    update_by=None,
+):
+
+    ingredient = Ingredient()
+    ingredient.id = ingredient_id or 1
+    ingredient.name = name or "testing-ingredient"
+    ingredient.description = description or "description"
+    ingredient.entity_status = (entity_status or Status.ACTIVE.value,)
+    ingredient.created_by = create_by or 1
+    ingredient.created_date = create_date or datetime.now()
+    ingredient.updated_date = update_date or create_date
+    ingredient.updated_by = update_by or create_by
+
+    return ingredient
+
+
+def build_ingredients(count=1):
+    return [build_ingredient(name=f"testing-ingredient{n}") for n in range(count)]
