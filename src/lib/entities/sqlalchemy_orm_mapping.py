@@ -2,8 +2,8 @@ from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.ext.declarative import declarative_base, AbstractConcreteBase
-from sqlalchemy.orm import relationship, declared_attr
+from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
+from sqlalchemy.orm import declared_attr, relationship
 
 from src.lib.entities.chef import Chef as ChefBase
 from src.lib.entities.client import Client as ClientBase
@@ -35,15 +35,11 @@ class AbstractEntity(Base, AbstractConcreteBase):
 
     @declared_attr
     def created_by(self):
-        return Column(
-            Integer(), ForeignKey("users.id"), nullable=False
-        )
+        return Column(Integer(), ForeignKey("users.id"), nullable=False)
 
     @declared_attr
     def updated_by(self):
-        return Column(
-            Integer(), ForeignKey("users.id"), nullable=False
-        )
+        return Column(Integer(), ForeignKey("users.id"), nullable=False)
 
 
 class Chef(AbstractEntity, ChefBase):
@@ -257,4 +253,3 @@ ProductIngredient.product = relationship(
 ProductIngredient.ingredient = relationship(
     Ingredient, foreign_keys=[ProductIngredient.ingredient_id]
 )
-

@@ -54,7 +54,9 @@ class InventoryRepositoryImpl(InventoryRepository):
             self.get_by_id(inventory_id) if use_merge_with_existing else inventory
         )
         current_inventory.updated_date = datetime.now()
-        current_inventory.updated_by = inventory.updated_by or current_inventory.updated_by
+        current_inventory.updated_by = (
+            inventory.updated_by or current_inventory.updated_by
+        )
         current_inventory.entity_status = (
             inventory.entity_status or current_inventory.entity_status
         )
