@@ -1,7 +1,15 @@
 from datetime import datetime
 
 from src.constants.audit import Status
-from src.lib.entities.sqlalchemy_orm_mapping import Chef, Product, Ingredient, Inventory, OrderDetail
+from src.constants.cooking_type import CookingType
+from src.lib.entities.sqlalchemy_orm_mapping import (
+    Chef,
+    Ingredient,
+    Inventory,
+    OrderDetail,
+    Product,
+    ProductIngredient,
+)
 
 
 def build_chef(
@@ -140,3 +148,31 @@ def build_order_detail(
 
 def build_order_details(count=1):
     return [build_order_detail(order_detail_id=n) for n in range(count)]
+
+
+def build_product_ingredient(
+    product_ingredient_id=None,
+    product_id=None,
+    ingredient_id=None,
+    quantity=None,
+    cooking_type=None,
+    entity_status=None,
+    create_by=None,
+    update_by=None,
+):
+
+    product_ingredient = ProductIngredient()
+    product_ingredient.id = product_ingredient_id or 1
+    product_ingredient.product_id = product_id or 1
+    product_ingredient.ingredient_id = ingredient_id or 1
+    product_ingredient.quantity = quantity or 5
+    product_ingredient.cooking_type = cooking_type or CookingType.ADDING.value
+    product_ingredient.entity_status = entity_status or Status.ACTIVE.value
+    product_ingredient.created_by = create_by or 1
+    product_ingredient.updated_by = update_by or create_by
+
+    return product_ingredient
+
+
+def build_product_ingredients(count=1):
+    return [build_product_ingredient(product_ingredient_id=n) for n in range(count)]
