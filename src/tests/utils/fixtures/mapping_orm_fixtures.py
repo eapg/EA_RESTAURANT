@@ -9,6 +9,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderDetail,
     Product,
     ProductIngredient,
+    InventoryIngredient,
 )
 
 
@@ -176,3 +177,29 @@ def build_product_ingredient(
 
 def build_product_ingredients(count=1):
     return [build_product_ingredient(product_ingredient_id=n) for n in range(count)]
+
+
+def build_inventory_ingredient(
+    inventory_ingredient_id=None,
+    ingredient_id=None,
+    inventory_id=None,
+    quantity=None,
+    entity_status=None,
+    create_by=None,
+    update_by=None,
+):
+
+    inventory_ingredient = InventoryIngredient()
+    inventory_ingredient.id = inventory_ingredient_id or 1
+    inventory_ingredient.ingredient_id = ingredient_id or 1
+    inventory_ingredient.inventory_id = inventory_id or 1
+    inventory_ingredient.quantity = quantity or 1
+    inventory_ingredient.entity_status = entity_status or Status.ACTIVE.value
+    inventory_ingredient.created_by = create_by or 1
+    inventory_ingredient.updated_by = update_by or create_by
+
+    return inventory_ingredient
+
+
+def build_inventory_ingredients(count=1):
+    return [build_inventory_ingredient(inventory_ingredient_id=n) for n in range(count)]
