@@ -2,6 +2,7 @@ from datetime import datetime
 
 from src.constants.audit import Status
 from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import (
     Chef,
     Ingredient,
@@ -10,6 +11,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     Product,
     ProductIngredient,
     InventoryIngredient,
+    OrderStatusHistory,
 )
 
 
@@ -203,3 +205,33 @@ def build_inventory_ingredient(
 
 def build_inventory_ingredients(count=1):
     return [build_inventory_ingredient(inventory_ingredient_id=n) for n in range(count)]
+
+
+def build_order_status_history(
+    order_status_id=None,
+    order_id=None,
+    from_time=None,
+    to_time=None,
+    from_status=None,
+    to_status=None,
+    entity_status=None,
+    create_by=None,
+    update_by=None,
+):
+
+    order_status_history = OrderStatusHistory()
+    order_status_history.id = order_status_id or 1
+    order_status_history.order_id = order_id or 1
+    order_status_history.from_status = from_status
+    order_status_history.to_status = to_status or OrderStatus.NEW_ORDER.name
+    order_status_history.from_time = from_time
+    order_status_history.to_time = to_time or datetime.now()
+    order_status_history.entity_status = entity_status or Status.ACTIVE.value
+    order_status_history.created_by = create_by or 1
+    order_status_history.updated_by = update_by or create_by
+
+    return order_status_history
+
+
+def build_order_status_histories(count=1):
+    return [build_order_status_history(order_status_id=n) for n in range(count)]
