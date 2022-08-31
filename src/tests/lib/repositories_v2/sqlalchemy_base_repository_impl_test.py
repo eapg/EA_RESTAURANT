@@ -24,6 +24,13 @@ class SqlAlchemyBaseRepositoryTestCase(unittest.TestCase):
             mock.Mock()
         )
 
+        self.mocked_sqlalchemy_session.begin.return_value.__enter__ = (
+            mock.Mock()
+        )
+        self.mocked_sqlalchemy_session.begin.return_value.__exit__ = (
+            mock.Mock()
+        )
+
         mocked_init_sqlalchemy_session.return_value = mock.Mock()
         mocked_init_sqlalchemy_session.side_effect = mocked_init_sqlalchemy_session_impl
         self.mocked_init_sqlalchemy_session = mocked_init_sqlalchemy_session
