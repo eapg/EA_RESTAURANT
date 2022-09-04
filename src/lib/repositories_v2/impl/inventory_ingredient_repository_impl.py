@@ -18,11 +18,11 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         self.session = ioc.get_instance("sqlalchemy_session")
 
     def add(self, inventory_ingredient):
-        inventory_ingredient.created_date = datetime.now()
-        inventory_ingredient.updated_by = inventory_ingredient.created_by
-        inventory_ingredient.updated_date = inventory_ingredient.created_date
-        self.session.add(inventory_ingredient)
-        self.session.commit()
+        with self.session.begin():
+            inventory_ingredient.created_date = datetime.now()
+            inventory_ingredient.updated_by = inventory_ingredient.created_by
+            inventory_ingredient.updated_date = inventory_ingredient.created_date
+            self.session.add(inventory_ingredient)
 
     def get_by_id(self, inventory_ingredient_id):
         return (
@@ -39,39 +39,42 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         return list(inventory_ingredients)
 
     def delete_by_id(self, inventory_ingredient_id, inventory_ingredient):
-        self.session.query(InventoryIngredient).filter(
-            InventoryIngredient.id == inventory_ingredient_id
-        ).update(
-            {
-                InventoryIngredient.entity_status: Status.DELETED.value,
-                InventoryIngredient.updated_date: datetime.now(),
-                InventoryIngredient.updated_by: inventory_ingredient.updated_by,
-            }
-        )
-        self.session.commit()
+        with self.session.begin():
+            self.session.query(InventoryIngredient).filter(
+                InventoryIngredient.id == inventory_ingredient_id
+            ).update(
+                {
+                    InventoryIngredient.entity_status: Status.DELETED.value,
+                    InventoryIngredient.updated_date: datetime.now(),
+                    InventoryIngredient.updated_by: inventory_ingredient.updated_by,
+                }
+            )
 
     def update_by_id(self, inventory_ingredient_id, inventory_ingredient):
-        inventory_ingredient_to_be_updated = (
-            self.session.query(InventoryIngredient)
-            .filter(InventoryIngredient.id == inventory_ingredient_id)
-            .first()
-        )
-        inventory_ingredient_to_be_updated.inventory_id = (
-            inventory_ingredient.inventory_id
-            or inventory_ingredient_to_be_updated.inventory_id
-        )
-        inventory_ingredient_to_be_updated.ingredient_id = (
-            inventory_ingredient.ingredient_id
-            or inventory_ingredient_to_be_updated.ingredient_id
-        )
-        inventory_ingredient_to_be_updated.quantity = (
-            inventory_ingredient.quantity or inventory_ingredient_to_be_updated.quantity
-        )
+        with self.session.begin():
+            inventory_ingredient_to_be_updated = (
+                self.session.query(InventoryIngredient)
+                .filter(InventoryIngredient.id == inventory_ingredient_id)
+                .first()
+            )
+            inventory_ingredient_to_be_updated.inventory_id = (
+                inventory_ingredient.inventory_id
+                or inventory_ingredient_to_be_updated.inventory_id
+            )
+            inventory_ingredient_to_be_updated.ingredient_id = (
+                inventory_ingredient.ingredient_id
+                or inventory_ingredient_to_be_updated.ingredient_id
+            )
+            inventory_ingredient_to_be_updated.quantity = (
+                inventory_ingredient.quantity
+                or inventory_ingredient_to_be_updated.quantity
+            )
 
-        inventory_ingredient_to_be_updated.updated_date = datetime.now()
-        inventory_ingredient_to_be_updated.updated_by = inventory_ingredient.updated_by
-        self.session.add(inventory_ingredient_to_be_updated)
-        self.session.commit()
+            inventory_ingredient_to_be_updated.updated_date = datetime.now()
+            inventory_ingredient_to_be_updated.updated_by = (
+                inventory_ingredient.updated_by
+            )
+            self.session.add(inventory_ingredient_to_be_updated)
 
     def get_by_ingredient_id(self, ingredient_id):
         inventory_ingredients = (

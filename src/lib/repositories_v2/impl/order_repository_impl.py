@@ -35,11 +35,11 @@ class OrderRepositoryImpl(OrderRepository):
         self.session = ioc.get_instance("sqlalchemy_session")
 
     def add(self, order):
-        order.created_date = datetime.now()
-        order.updated_by = order.created_by
-        order.updated_date = order.created_date
-        self.session.add(order)
-        self.session.commit()
+        with self.session.begin():
+            order.created_date = datetime.now()
+            order.updated_by = order.created_by
+            order.updated_date = order.created_date
+            self.session.add(order)
 
     def get_by_id(self, order_id):
         return (
@@ -56,25 +56,25 @@ class OrderRepositoryImpl(OrderRepository):
         return list(orders)
 
     def delete_by_id(self, order_id, order):
-        self.session.query(Order).filter(Order.id == order_id).update(
-            {
-                Order.entity_status: Status.DELETED.value,
-                Order.updated_date: datetime.now(),
-                Order.updated_by: order.updated_by,
-            }
-        )
-        self.session.commit()
+        with self.session.begin():
+            self.session.query(Order).filter(Order.id == order_id).update(
+                {
+                    Order.entity_status: Status.DELETED.value,
+                    Order.updated_date: datetime.now(),
+                    Order.updated_by: order.updated_by,
+                }
+            )
 
     def update_by_id(self, order_id, order):
-        order_to_be_updated = (
-            self.session.query(Order).filter(Order.id == order_id).first()
-        )
-        order_to_be_updated.user_id = order.user_id or order_to_be_updated.user_id
-        order_to_be_updated.skill = order.skill or order_to_be_updated.skill
-        order_to_be_updated.updated_date = datetime.now()
-        order_to_be_updated.updated_by = order.updated_by
-        self.session.add(order_to_be_updated)
-        self.session.commit()
+        with self.session.begin():
+            order_to_be_updated = (
+                self.session.query(Order).filter(Order.id == order_id).first()
+            )
+            order_to_be_updated.user_id = order.user_id or order_to_be_updated.user_id
+            order_to_be_updated.skill = order.skill or order_to_be_updated.skill
+            order_to_be_updated.updated_date = datetime.now()
+            order_to_be_updated.updated_by = order.updated_by
+            self.session.add(order_to_be_updated)
 
     def get_orders_by_status(self, order_status, order_limit=None):
         orders_by_status = (
