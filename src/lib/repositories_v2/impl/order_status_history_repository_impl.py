@@ -2,7 +2,6 @@ from datetime import datetime
 from src.constants.audit import Status
 from sqlalchemy.sql import func
 
-from src.constants.order_status import OrderStatus
 from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory
 from src.lib.repositories_v2.order_status_history_repository import (
@@ -17,11 +16,11 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         self.session = ioc.get_instance("sqlalchemy_session")
 
     def add(self, order_status_history):
-        order_status_history.created_date = datetime.now()
-        order_status_history.updated_by = order_status_history.created_by
-        order_status_history.updated_date = order_status_history.created_date
-        self.session.add(order_status_history)
-        self.session.commit()
+        with self.session.begin():
+            order_status_history.created_date = datetime.now()
+            order_status_history.updated_by = order_status_history.created_by
+            order_status_history.updated_date = order_status_history.created_date
+            self.session.add(order_status_history)
 
     def get_by_id(self, order_status_history_id):
         return (
@@ -38,45 +37,49 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         return list(order_status_histories)
 
     def delete_by_id(self, order_status_history_id, order_status_history):
-        self.session.query(OrderStatusHistory).filter(
-            OrderStatusHistory.id == order_status_history_id
-        ).update(
-            {
-                OrderStatusHistory.entity_status: Status.DELETED.value,
-                OrderStatusHistory.updated_date: datetime.now(),
-                OrderStatusHistory.updated_by: order_status_history.updated_by,
-            }
-        )
-        self.session.commit()
+        with self.session.begin():
+            self.session.query(OrderStatusHistory).filter(
+                OrderStatusHistory.id == order_status_history_id
+            ).update(
+                {
+                    OrderStatusHistory.entity_status: Status.DELETED.value,
+                    OrderStatusHistory.updated_date: datetime.now(),
+                    OrderStatusHistory.updated_by: order_status_history.updated_by,
+                }
+            )
 
     def update_by_id(self, order_status_history_id, order_status_history):
-        order_status_history_to_be_updated = (
-            self.session.query(OrderStatusHistory)
-            .filter(OrderStatusHistory.id == order_status_history_id)
-            .first()
-        )
-        order_status_history_to_be_updated.order_id = (
-            order_status_history.order_id or order_status_history_to_be_updated.order_id
-        )
-        order_status_history_to_be_updated.from_time = (
-            order_status_history.from_time
-            or order_status_history_to_be_updated.from_time
-        )
-        order_status_history_to_be_updated.to_time = (
-            order_status_history.to_time or order_status_history_to_be_updated.to_time
-        )
-        order_status_history_to_be_updated.from_status = (
-            order_status_history.from_status
-            or order_status_history_to_be_updated.from_status
-        )
-        order_status_history_to_be_updated.to_status = (
-            order_status_history.to_status
-            or order_status_history_to_be_updated.to_status
-        )
-        order_status_history_to_be_updated.updated_date = datetime.now()
-        order_status_history_to_be_updated.updated_by = order_status_history.updated_by
-        self.session.add(order_status_history_to_be_updated)
-        self.session.commit()
+        with self.session.begin():
+            order_status_history_to_be_updated = (
+                self.session.query(OrderStatusHistory)
+                .filter(OrderStatusHistory.id == order_status_history_id)
+                .first()
+            )
+            order_status_history_to_be_updated.order_id = (
+                order_status_history.order_id
+                or order_status_history_to_be_updated.order_id
+            )
+            order_status_history_to_be_updated.from_time = (
+                order_status_history.from_time
+                or order_status_history_to_be_updated.from_time
+            )
+            order_status_history_to_be_updated.to_time = (
+                order_status_history.to_time
+                or order_status_history_to_be_updated.to_time
+            )
+            order_status_history_to_be_updated.from_status = (
+                order_status_history.from_status
+                or order_status_history_to_be_updated.from_status
+            )
+            order_status_history_to_be_updated.to_status = (
+                order_status_history.to_status
+                or order_status_history_to_be_updated.to_status
+            )
+            order_status_history_to_be_updated.updated_date = datetime.now()
+            order_status_history_to_be_updated.updated_by = (
+                order_status_history.updated_by
+            )
+            self.session.add(order_status_history_to_be_updated)
 
     def get_by_order_id(self, order_id):
         order_status_histories = (
@@ -87,29 +90,33 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         return list(order_status_histories)
 
     def set_next_status_history_by_order_id(self, order_id, new_status):
-        last_order_status_history_from_time = self.session.query(
-            func.max(OrderStatusHistory.from_time)
-        ).first()
+        with self.session.begin():
+            last_order_status_history_from_time = self.session.query(
+                func.max(OrderStatusHistory.from_time)
+            ).first()
 
-        last_order_status_history = (
-            self.session.query(OrderStatusHistory)
-            .filter(OrderStatusHistory.entity_status == Status.ACTIVE.value)
-            .filter(OrderStatusHistory.order_id == order_id)
-            .filter(
-                OrderStatusHistory.from_time == last_order_status_history_from_time[0]
+            last_order_status_history = (
+                self.session.query(OrderStatusHistory)
+                .filter(OrderStatusHistory.entity_status == Status.ACTIVE.value)
+                .filter(OrderStatusHistory.order_id == order_id)
+                .filter(
+                    OrderStatusHistory.from_time
+                    == last_order_status_history_from_time[0]
+                )
+                .first()
             )
-            .first()
-        )
 
-        if last_order_status_history:
-            last_order_status_history.to_status = new_status
-            last_order_status_history.to_time = datetime.now()
-            self.update_by_id(last_order_status_history.id, last_order_status_history)
+            if last_order_status_history:
+                last_order_status_history.to_status = new_status
+                last_order_status_history.to_time = datetime.now()
+                self.update_by_id(
+                    last_order_status_history.id, last_order_status_history
+                )
 
-        new_status_history = OrderStatusHistory()
-        new_status_history.from_status = new_status
-        new_status_history.from_time = datetime.now()
-        new_status_history.entity_status = Status.ACTIVE.value
-        new_status_history.order_id = order_id
-        new_status_history.created_by = 2
-        self.add(new_status_history)
+            new_status_history = OrderStatusHistory()
+            new_status_history.from_status = new_status
+            new_status_history.from_time = datetime.now()
+            new_status_history.entity_status = Status.ACTIVE.value
+            new_status_history.order_id = order_id
+            new_status_history.created_by = 2
+            self.session.add(new_status_history)

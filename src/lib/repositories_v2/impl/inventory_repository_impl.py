@@ -12,11 +12,11 @@ class InventoryRepositoryImpl(InventoryRepository):
         self.session = ioc.get_instance("sqlalchemy_session")
 
     def add(self, inventory):
-        inventory.created_date = datetime.now()
-        inventory.updated_by = inventory.created_by
-        inventory.updated_date = inventory.created_date
-        self.session.add(inventory)
-        self.session.commit()
+        with self.session.begin():
+            inventory.created_date = datetime.now()
+            inventory.updated_by = inventory.created_by
+            inventory.updated_date = inventory.created_date
+            self.session.add(inventory)
 
     def get_by_id(self, inventory_id):
         return (
@@ -33,20 +33,28 @@ class InventoryRepositoryImpl(InventoryRepository):
         return list(inventories)
 
     def delete_by_id(self, inventory_id, inventory):
-        self.session.query(Inventory).filter(Inventory.id == inventory_id).update(
-            {
-                Inventory.entity_status: Status.DELETED.value,
-                Inventory.updated_date: datetime.now(),
-                Inventory.updated_by: inventory.updated_by,
-            }
-        )
-        self.session.commit()
+        with self.session.begin():
+            self.session.query(Inventory).filter(Inventory.id == inventory_id).update(
+                {
+                    Inventory.entity_status: Status.DELETED.value,
+                    Inventory.updated_date: datetime.now(),
+                    Inventory.updated_by: inventory.updated_by,
+                }
+            )
 
     def update_by_id(self, inventory_id, inventory):
-        inventory_to_be_updated = self.session.query(Inventory).filter(Inventory.id == inventory_id).first()
-        inventory_to_be_updated.user_id = inventory.user_id or inventory_to_be_updated.user_id
-        inventory_to_be_updated.skill = inventory.skill or inventory_to_be_updated.skill
-        inventory_to_be_updated.updated_date = datetime.now()
-        inventory_to_be_updated.updated_by = inventory.updated_by
-        self.session.add(inventory_to_be_updated)
-        self.session.commit()
+        with self.session.begin():
+            inventory_to_be_updated = (
+                self.session.query(Inventory)
+                .filter(Inventory.id == inventory_id)
+                .first()
+            )
+            inventory_to_be_updated.user_id = (
+                inventory.user_id or inventory_to_be_updated.user_id
+            )
+            inventory_to_be_updated.skill = (
+                inventory.skill or inventory_to_be_updated.skill
+            )
+            inventory_to_be_updated.updated_date = datetime.now()
+            inventory_to_be_updated.updated_by = inventory.updated_by
+            self.session.add(inventory_to_be_updated)
