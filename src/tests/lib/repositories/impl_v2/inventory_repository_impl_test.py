@@ -3,17 +3,17 @@ from unittest import mock
 from src.constants.audit import Status
 
 from src.lib.entities.sqlalchemy_orm_mapping import Inventory
-from src.lib.repositories_v2.impl.inventory_repository_impl import (
+from src.lib.repositories.impl_v2.inventory_repository_impl import (
     InventoryRepositoryImpl,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_inventory,
     build_inventories,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -90,7 +90,7 @@ class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
         self.assertEqual(inventories, returned_inventories)
 
-    @mock.patch("src.lib.repositories_v2.impl.inventory_repository_impl.datetime")
+    @mock.patch("src.lib.repositories.impl_v2.inventory_repository_impl.datetime")
     def test_delete_an_inventory_successfully(self, mocked_datetime):
         inventory_1 = build_inventory(
             name="inventory_1", entity_status=Status.ACTIVE.value, create_by=1

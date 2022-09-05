@@ -2,17 +2,17 @@ from unittest import mock
 
 from src.constants.audit import Status
 from src.lib.entities.sqlalchemy_orm_mapping import OrderDetail, Order
-from src.lib.repositories_v2.impl.order_detail_repository_impl import (
+from src.lib.repositories.impl_v2.order_detail_repository_impl import (
     OrderDetailRepositoryImpl,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_order_detail,
     build_order_details,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class OrderDetailRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -85,7 +85,7 @@ class OrderDetailRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
         self.assertEqual(order_details, returned_order_details)
 
-    @mock.patch("src.lib.repositories_v2.impl.order_detail_repository_impl.datetime")
+    @mock.patch("src.lib.repositories.impl_v2.order_detail_repository_impl.datetime")
     def test_delete_an_order_detail_successfully(self, mocked_datetime):
         order_detail_1 = build_order_detail()
         order_detail_1.updated_by = 1

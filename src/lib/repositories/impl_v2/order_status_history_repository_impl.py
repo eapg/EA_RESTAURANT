@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 
 from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory
-from src.lib.repositories_v2.order_status_history_repository import (
+from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
 )
 
@@ -88,6 +88,15 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             .filter(OrderStatusHistory.order_id == order_id)
         )
         return list(order_status_histories)
+
+    def get_last_status_history_by_order_id(self, order_id):
+        last_status_history_by_order_id = (
+            self.session.query(func.max(OrderStatusHistory.from_time))
+            .filter(OrderStatusHistory.order_id == order_id)
+            .first()
+        )
+
+        return last_status_history_by_order_id
 
     def set_next_status_history_by_order_id(self, order_id, new_status):
         with self.session.begin():

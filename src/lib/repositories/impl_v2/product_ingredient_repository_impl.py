@@ -3,7 +3,7 @@ from datetime import datetime
 from src.constants.audit import Status
 from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import ProductIngredient
-from src.lib.repositories_v2.product_ingredient_repository import (
+from src.lib.repositories.product_ingredient_repository import (
     ProductIngredientRepository,
 )
 
@@ -71,3 +71,6 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
             .filter(ProductIngredient.product_id == product_id)
         )
         return list(product_ingredients)
+
+    def get_product_ingredients_by_product_ids(self, product_ids):
+        pass

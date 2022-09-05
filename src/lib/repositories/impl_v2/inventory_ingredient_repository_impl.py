@@ -6,7 +6,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     InventoryIngredient,
     ProductIngredient,
 )
-from src.lib.repositories_v2.inventory_ingredient_repository import (
+from src.lib.repositories.inventory_ingredient_repository import (
     InventoryIngredientRepository,
 )
 
@@ -105,3 +105,8 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             (product_id, result)
             for product_id, result in final_product_qty_by_product_ids_query_result
         )
+
+    def validate_ingredient_availability(
+        self, inventory_id, ingredient_id, quantity_to_use
+    ):
+        pass

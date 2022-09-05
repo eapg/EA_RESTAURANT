@@ -2,12 +2,12 @@ from unittest import mock
 
 from src.constants.audit import Status
 from src.lib.entities.sqlalchemy_orm_mapping import Product
-from src.lib.repositories_v2.impl.product_repository_impl import ProductRepositoryImpl
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_product, build_products
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -84,7 +84,7 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
         self.assertEqual(products, returned_products)
 
-    @mock.patch("src.lib.repositories_v2.impl.product_repository_impl.datetime")
+    @mock.patch("src.lib.repositories.impl_v2.product_repository_impl.datetime")
     def test_delete_by_id_successfully(self, mocked_datetime):
         product_1 = build_product(
             name="product_1", entity_status=Status.ACTIVE.value, create_by=1

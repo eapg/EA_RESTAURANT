@@ -2,7 +2,7 @@ from datetime import datetime
 
 from src.constants.audit import Status
 from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import OrderDetail, Order
+from src.lib.entities.sqlalchemy_orm_mapping import OrderDetail
 from src.lib.repositories.order_detail_repository import OrderDetailRepository
 
 

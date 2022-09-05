@@ -9,7 +9,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderDetail,
     ProductIngredient,
 )
-from src.lib.repositories_v2.order_repository import OrderRepository
+from src.lib.repositories.order_repository import OrderRepository
 
 sql_query_to_reduce_ingredients_from_inventory = """
                 with order_ingredients_cte as (

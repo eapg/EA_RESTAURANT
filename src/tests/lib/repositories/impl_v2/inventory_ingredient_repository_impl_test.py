@@ -3,7 +3,7 @@ from unittest import mock
 
 from src.constants.audit import Status
 
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_inventory_ingredient,
     build_inventory_ingredients,
@@ -13,10 +13,10 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     Ingredient,
     ProductIngredient,
 )
-from src.lib.repositories_v2.impl.inventory_ingredient_repository_impl import (
+from src.lib.repositories.impl_v2.inventory_ingredient_repository_impl import (
     InventoryIngredientRepositoryImpl,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 
@@ -97,7 +97,7 @@ class InventoryIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase
         self.assertEqual(inventory_ingredients, returned_inventory_ingredients)
 
     @mock.patch(
-        "src.lib.repositories_v2.impl.inventory_ingredient_repository_impl.datetime"
+        "src.lib.repositories.impl_v2.inventory_ingredient_repository_impl.datetime"
     )
     def test_delete_by_id_successfully(self, mocked_datetime):
         inventory_ingredient_1 = build_inventory_ingredient()
@@ -222,7 +222,7 @@ class InventoryIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase
         )
 
     @mock.patch(
-        "src.lib.repositories_v2.impl.inventory_ingredient_repository_impl.func"
+        "src.lib.repositories.impl_v2.inventory_ingredient_repository_impl.func"
     )
     def test_get_final_product_qty_by_product_ids(self, mock_func):
 

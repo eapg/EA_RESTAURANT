@@ -8,8 +8,8 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     ProductIngredient,
     InventoryIngredient,
 )
-from src.lib.repositories_v2.impl.order_repository_impl import OrderRepositoryImpl
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
@@ -17,7 +17,7 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_orders,
     build_product_ingredient,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -90,7 +90,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
         self.assertEqual(orders, returned_orders)
 
-    @mock.patch("src.lib.repositories_v2.impl.order_repository_impl.datetime")
+    @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.datetime")
     def test_delete_by_id_successfully(self, mocked_datetime):
         order_1 = build_order()
 
@@ -278,7 +278,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             order_ingredients, [product_ingredient_1, product_ingredient_2]
         )
 
-    @mock.patch("src.lib.repositories_v2.impl.order_repository_impl.case")
+    @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.case")
     def test_get_validated_orders_map(self, mocked_case):
         order_1 = build_order(order_id=1)
         order_2 = build_order(order_id=2)
@@ -388,7 +388,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
         self.assertEqual(order_validation_map, {1: True, 2: True})
 
-    @mock.patch("src.lib.repositories_v2.impl.order_repository_impl.text")
+    @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.text")
     def test_reduce_order_ingredients_from_inventory(self, mocked_text):
         order_1 = build_order()
         order_1.id = 5
