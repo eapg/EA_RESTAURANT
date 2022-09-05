@@ -3,7 +3,7 @@ from datetime import datetime
 from src.constants.audit import Status
 from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import Product
-from src.lib.repositories_v2.product_repository import ProductRepository
+from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):

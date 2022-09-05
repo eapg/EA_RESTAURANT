@@ -3,15 +3,15 @@ from unittest import mock
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory, Order
-from src.tests.lib.repositories_v2.sqlalchemy_mock_builder import QueryMock
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_order_status_history,
     build_order_status_histories,
 )
-from src.lib.repositories_v2.impl.order_status_history_repository_impl import (
+from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
 )
-from src.tests.lib.repositories_v2.sqlalchemy_base_repository_impl_test import (
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 
@@ -91,7 +91,7 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
         self.assertEqual(order_status_histories, returned_order_status_histories)
 
     @mock.patch(
-        "src.lib.repositories_v2.impl.order_status_history_repository_impl.datetime"
+        "src.lib.repositories.impl_v2.order_status_history_repository_impl.datetime"
     )
     def test_delete_by_id_successfully(self, mocked_datetime):
         order_status_history_1 = build_order_status_history()
@@ -202,7 +202,7 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
         self.assertEqual(order_status_histories_returned, [order_status_history_1])
 
     @mock.patch(
-        "src.lib.repositories_v2.impl.order_status_history_repository_impl.func"
+        "src.lib.repositories.impl_v2.order_status_history_repository_impl.func"
     )
     def test_set_next_status_history_by_order_id(self, mocked_func):
         order_1 = Order()
@@ -211,11 +211,11 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
         order_status_history_to_return = build_order_status_history(order_id=order_1.id)
 
         query_last_order_status_id = (
-            QueryMock(self.mocked_sqlalchemy_session).query().first(return_value=(3,))
+            QueryMock().query().first(return_value=(3,))
         ).get_mocked_query()
 
         query_last_order_status_history = (
-            QueryMock(self.mocked_sqlalchemy_session)
+            QueryMock()
             .query()
             .filter()
             .filter()

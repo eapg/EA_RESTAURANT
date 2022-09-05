@@ -1,4 +1,4 @@
-# This file has the inventory ingredient repository impl
+# This file has the inventory ingredient repository impl_v2
 from datetime import datetime
 
 from src.constants.audit import Status
