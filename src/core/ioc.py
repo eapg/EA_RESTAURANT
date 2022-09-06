@@ -14,7 +14,7 @@ from src.api.controllers.product_ingredient_controller import \
     ProductIngredientController
 from src.core.order_manager import OrderManager
 from src.core.sqlalchemy_config import create_session
-from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
+from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl.ingredient_repository_impl import \
     IngredientRepositoryImpl
 from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
@@ -55,7 +55,7 @@ def init_repositories(ioc_instance):
         ioc_instance["inventory_ingredient_repository"],
     )
 
-    ioc_instance["chef_repository"] = ChefRepositoryImpl()
+    ioc_instance["chef_repository"] = ChefRepositoryImpl(ioc_instance["sqlalchemy_session"])
     ioc_instance["chef_repository"] = ChefRepositoryImpl(
         ioc_instance["order_repository"]
     )

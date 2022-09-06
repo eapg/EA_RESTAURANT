@@ -13,7 +13,7 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.chef_repository = ChefRepositoryImpl()
+        self.chef_repository = ChefRepositoryImpl(self.mocked_sqlalchemy_session)
 
     def test_add_chef_successfully(self):
         chef_1 = build_chef(entity_status="ACTIVE", skill=2, create_by=1, user_id=1)
