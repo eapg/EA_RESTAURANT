@@ -1,5 +1,5 @@
-from src.constants.audit import Status
-from src.lib.entities.order_detail import OrderDetail
+from src.constants import audit
+from src.lib.entities import order_detail
 
 
 def build_order_detail(
@@ -11,15 +11,15 @@ def build_order_detail(
     create_by=None,
 ):
 
-    order_detail = OrderDetail()
-    order_detail.id = order_detail_id
-    order_detail.order_id = order_id
-    order_detail.product_id = product_id
-    order_detail.quantity = quantity
-    order_detail.entity_status = entity_status or Status.ACTIVE
-    order_detail.create_by = create_by
+    order_detail_instance = order_detail.OrderDetail()
+    order_detail_instance.id = order_detail_id
+    order_detail_instance.order_id = order_id
+    order_detail_instance.product_id = product_id
+    order_detail_instance.quantity = quantity
+    order_detail_instance.entity_status = entity_status or audit.Status.ACTIVE
+    order_detail_instance.create_by = create_by
 
-    return order_detail
+    return order_detail_instance
 
 
 def build_order_details(count=1):

@@ -1,21 +1,18 @@
 from datetime import datetime
-from sqlalchemy.sql import func
-from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import (
-    InventoryIngredient,
-    ProductIngredient,
-)
-from src.lib.repositories.inventory_ingredient_repository import (
-    InventoryIngredientRepository,
-)
+from sqlalchemy import sql
+from src.constants import audit
+from src.core import ioc
+from src.lib.entities import sqlalchemy_orm_mapping
+from src.lib.repositories import inventory_ingredient_repository
 
 
-class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
+class InventoryIngredientRepositoryImpl(
+    inventory_ingredient_repository.InventoryIngredientRepository
+):
     def __init__(self):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        ioc_instance = ioc.get_ioc_instance()
+        self.session = ioc_instance.get_instance("sqlalchemy_session")
 
     def add(self, inventory_ingredient):
         with self.session.begin():
@@ -26,35 +23,46 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
 
     def get_by_id(self, inventory_ingredient_id):
         return (
-            self.session.query(InventoryIngredient)
-            .filter(InventoryIngredient.id == inventory_ingredient_id)
-            .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
+            self.session.query(sqlalchemy_orm_mapping.InventoryIngredient)
+            .filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.id == inventory_ingredient_id
+            )
+            .filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
             .first()
         )
 
     def get_all(self):
-        inventory_ingredients = self.session.query(InventoryIngredient).filter(
-            InventoryIngredient.entity_status == Status.ACTIVE.value
+        inventory_ingredients = self.session.query(
+            sqlalchemy_orm_mapping.InventoryIngredient
+        ).filter(
+            sqlalchemy_orm_mapping.InventoryIngredient.entity_status
+            == audit.Status.ACTIVE.value
         )
         return list(inventory_ingredients)
 
     def delete_by_id(self, inventory_ingredient_id, inventory_ingredient):
         with self.session.begin():
-            self.session.query(InventoryIngredient).filter(
-                InventoryIngredient.id == inventory_ingredient_id
+            self.session.query(sqlalchemy_orm_mapping.InventoryIngredient).filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.id == inventory_ingredient_id
             ).update(
                 {
-                    InventoryIngredient.entity_status: Status.DELETED.value,
-                    InventoryIngredient.updated_date: datetime.now(),
-                    InventoryIngredient.updated_by: inventory_ingredient.updated_by,
+                    sqlalchemy_orm_mapping.InventoryIngredient.entity_status: audit.Status.DELETED.value,
+                    sqlalchemy_orm_mapping.InventoryIngredient.updated_date: datetime.now(),
+                    sqlalchemy_orm_mapping.InventoryIngredient.updated_by: inventory_ingredient.updated_by,
                 }
             )
 
     def update_by_id(self, inventory_ingredient_id, inventory_ingredient):
         with self.session.begin():
             inventory_ingredient_to_be_updated = (
-                self.session.query(InventoryIngredient)
-                .filter(InventoryIngredient.id == inventory_ingredient_id)
+                self.session.query(sqlalchemy_orm_mapping.InventoryIngredient)
+                .filter(
+                    sqlalchemy_orm_mapping.InventoryIngredient.id
+                    == inventory_ingredient_id
+                )
                 .first()
             )
             inventory_ingredient_to_be_updated.inventory_id = (
@@ -78,9 +86,15 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
 
     def get_by_ingredient_id(self, ingredient_id):
         inventory_ingredients = (
-            self.session.query(InventoryIngredient)
-            .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
-            .filter(InventoryIngredient.ingredient_id == ingredient_id)
+            self.session.query(sqlalchemy_orm_mapping.InventoryIngredient)
+            .filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
+            .filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.ingredient_id
+                == ingredient_id
+            )
         )
         return list(inventory_ingredients)
 
@@ -88,16 +102,28 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
 
         final_product_qty_by_product_ids_query_result = (
             self.session.query(
-                ProductIngredient.product_id,
-                func.min(InventoryIngredient.quantity / ProductIngredient.quantity),
+                sqlalchemy_orm_mapping.ProductIngredient.product_id,
+                sql.func.min(
+                    sqlalchemy_orm_mapping.InventoryIngredient.quantity
+                    / sqlalchemy_orm_mapping.ProductIngredient.quantity
+                ),
             )
             .filter(
-                ProductIngredient.ingredient_id == InventoryIngredient.ingredient_id
+                sqlalchemy_orm_mapping.ProductIngredient.ingredient_id
+                == sqlalchemy_orm_mapping.InventoryIngredient.ingredient_id
             )
-            .filter(ProductIngredient.product_id.in_(product_ids))
-            .filter(ProductIngredient.entity_status == Status.ACTIVE.value)
-            .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
-            .group_by(ProductIngredient.product_id)
+            .filter(
+                sqlalchemy_orm_mapping.ProductIngredient.product_id.in_(product_ids)
+            )
+            .filter(
+                sqlalchemy_orm_mapping.ProductIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
+            .filter(
+                sqlalchemy_orm_mapping.InventoryIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
+            .group_by(sqlalchemy_orm_mapping.ProductIngredient.product_id)
             .all()
         )
 

@@ -1,11 +1,11 @@
 # This file has the order_detail_order_detail repository
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.repositories.order_detail_repository import OrderDetailRepository
+from src.constants import audit
+from src.lib.repositories import order_detail_repository
 
 
-class OrderDetailRepositoryImpl(OrderDetailRepository):
+class OrderDetailRepositoryImpl(order_detail_repository.OrderDetailRepository):
     def __init__(self):
         self._order_details = {}
         self._current_id = 1
@@ -22,7 +22,7 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
         order_detail_to_return = self._order_details[order_detail_id]
         order_detail_filtered = list(
             filter(
-                lambda order_detail: order_detail.entity_status == Status.ACTIVE,
+                lambda order_detail: order_detail.entity_status == audit.Status.ACTIVE,
                 [order_detail_to_return],
             )
         )
@@ -31,14 +31,14 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
     def get_all(self):
         order_details = list(self._order_details.values())
         order_details_filtered = filter(
-            lambda order_detail: order_detail.entity_status == Status.ACTIVE,
+            lambda order_detail: order_detail.entity_status == audit.Status.ACTIVE,
             order_details,
         )
         return list(order_details_filtered)
 
     def delete_by_id(self, order_detail_id, order_detail):
         order_detail_to_be_delete = self.get_by_id(order_detail_id)
-        order_detail_to_be_delete.entity_status = Status.DELETED
+        order_detail_to_be_delete.entity_status = audit.Status.DELETED
         order_detail_to_be_delete.updated_date = datetime.now()
         order_detail_to_be_delete.updated_by = order_detail.updated_by
         self._update_by_id(

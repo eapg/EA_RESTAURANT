@@ -1,14 +1,14 @@
 # This file has the inventory ingredient repository impl_v2
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.repositories.inventory_ingredient_repository import \
-    InventoryIngredientRepository
-from src.utils.inventory_ingredient_util import \
-    setup_products_qty_array_to_final_products_qty_map
+from src.constants import audit
+from src.lib.repositories import inventory_ingredient_repository
+from src.utils import inventory_ingredient_util
 
 
-class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
+class InventoryIngredientRepositoryImpl(
+    inventory_ingredient_repository.InventoryIngredientRepository
+):
     def __init__(self, product_ingredient_repository=None):
 
         self._inventory_ingredients = {}
@@ -30,7 +30,7 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         inventory_ingredient_filtered = list(
             filter(
                 lambda inventory_ingredient: inventory_ingredient.entity_status
-                == Status.ACTIVE,
+                == audit.Status.ACTIVE,
                 [inventory_ingredient_to_return],
             )
         )
@@ -40,14 +40,14 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         inventory_ingredients = list(self._inventory_ingredients.values())
         inventory_ingredients_filtered = filter(
             lambda inventory_ingredient: inventory_ingredient.entity_status
-            == Status.ACTIVE,
+            == audit.Status.ACTIVE,
             inventory_ingredients,
         )
         return list(inventory_ingredients_filtered)
 
     def delete_by_id(self, inventory_ingredient_id, inventory_ingredient):
         inventory_ingredient_to_be_delete = self.get_by_id(inventory_ingredient_id)
-        inventory_ingredient_to_be_delete.entity_status = Status.DELETED
+        inventory_ingredient_to_be_delete.entity_status = audit.Status.DELETED
         inventory_ingredient_to_be_delete.updated_date = datetime.now()
         inventory_ingredient_to_be_delete.updated_by = inventory_ingredient.updated_by
         self._update_by_id(
@@ -78,9 +78,8 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredient.ingredient_id
             or current_inventory_ingredient.ingredient_id
         )
-        current_inventory_ingredient.ingredient_quantity = (
-            inventory_ingredient.ingredient_quantity
-            or current_inventory_ingredient.ingredient_quantity
+        current_inventory_ingredient.quantity = (
+            inventory_ingredient.quantity or current_inventory_ingredient.quantity
         )
         current_inventory_ingredient.updated_date = datetime.now()
         current_inventory_ingredient.updated_by = (
@@ -116,17 +115,15 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
                 inventory_ingredients,
             )
         )
-        if ingredient_to_validate[0].ingredient_quantity > quantity_to_use:
+        if ingredient_to_validate[0].quantity > quantity_to_use:
             return True
         return False
 
     def get_final_product_qty_by_product_ids(self, product_ids):
 
-        reduce_products_qty_array_to_final_products_qty_map = (
-            setup_products_qty_array_to_final_products_qty_map(
-                self.get_by_ingredient_id,
-                self.product_ingredient_repository.get_by_product_id,
-            )
+        reduce_products_qty_array_to_final_products_qty_map = inventory_ingredient_util.setup_products_qty_array_to_final_products_qty_map(
+            self.get_by_ingredient_id,
+            self.product_ingredient_repository.get_by_product_id,
         )
 
         final_product_possible_qty_map = (

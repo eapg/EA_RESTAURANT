@@ -5,20 +5,17 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import declared_attr, relationship
 
-from src.lib.entities.chef import Chef as ChefBase
-from src.lib.entities.client import Client as ClientBase
-from src.lib.entities.ingredient import Ingredient as IngredientBase
-from src.lib.entities.inventory import Inventory as InventoryBase
-from src.lib.entities.inventory_ingredient import \
-    InventoryIngredient as InventoryIngredientBase
-from src.lib.entities.order import Order as OrderBase
-from src.lib.entities.order_detail import OrderDetail as OrderDetailBase
-from src.lib.entities.order_status_history import \
-    OrderStatusHistory as OrderStatusHistoryBase
-from src.lib.entities.product import Product as ProductBase
-from src.lib.entities.product_ingredient import \
-    ProductIngredient as ProductIngredientBase
-from src.lib.entities.user import User as UserBase
+from src.lib.entities import chef
+from src.lib.entities import client
+from src.lib.entities import ingredient
+from src.lib.entities import inventory
+from src.lib.entities import inventory_ingredient
+from src.lib.entities import order
+from src.lib.entities import order_detail
+from src.lib.entities import order_status_history
+from src.lib.entities import product
+from src.lib.entities import product_ingredient
+from src.lib.entities import user
 
 Base = declarative_base()
 
@@ -42,7 +39,7 @@ class AbstractEntity(Base, AbstractConcreteBase):
         return Column(Integer(), ForeignKey("users.id"), nullable=False)
 
 
-class Chef(AbstractEntity, ChefBase):
+class Chef(AbstractEntity, chef.Chef):
     __tablename__ = "chefs"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -53,7 +50,7 @@ class Chef(AbstractEntity, ChefBase):
     user = None
 
 
-class Client(AbstractEntity, ClientBase):
+class Client(AbstractEntity, client.Client):
     __tablename__ = "clients"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -63,7 +60,7 @@ class Client(AbstractEntity, ClientBase):
     user = None
 
 
-class Ingredient(AbstractEntity, IngredientBase):
+class Ingredient(AbstractEntity, ingredient.Ingredient):
     __tablename__ = "ingredients"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -71,7 +68,7 @@ class Ingredient(AbstractEntity, IngredientBase):
     description = Column(String(length=100), nullable=False)
 
 
-class InventoryIngredient(AbstractEntity, InventoryIngredientBase):
+class InventoryIngredient(AbstractEntity, inventory_ingredient.InventoryIngredient):
     __tablename__ = "inventory_ingredients"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -86,14 +83,14 @@ class InventoryIngredient(AbstractEntity, InventoryIngredientBase):
     inventory = None
 
 
-class Inventory(AbstractEntity, InventoryBase):
+class Inventory(AbstractEntity, inventory.Inventory):
     __tablename__ = "inventories"
 
     id = Column(Integer(), primary_key=True, nullable=False)
     name = Column(String(length=50), nullable=False)
 
 
-class Order(AbstractEntity, OrderBase):
+class Order(AbstractEntity, order.Order):
     __tablename__ = "orders"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -117,7 +114,7 @@ class Order(AbstractEntity, OrderBase):
     client = None
 
 
-class OrderDetail(AbstractEntity, OrderDetailBase):
+class OrderDetail(AbstractEntity, order_detail.OrderDetail):
     __tablename__ = "order_details"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -132,7 +129,7 @@ class OrderDetail(AbstractEntity, OrderDetailBase):
     order = None
 
 
-class OrderStatusHistory(AbstractEntity, OrderStatusHistoryBase):
+class OrderStatusHistory(AbstractEntity, order_status_history.OrderStatusHistory):
     __tablename__ = "order_status_histories"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -164,7 +161,7 @@ class OrderStatusHistory(AbstractEntity, OrderStatusHistoryBase):
     order = None
 
 
-class Product(AbstractEntity, ProductBase):
+class Product(AbstractEntity, product.Product):
     __tablename__ = "products"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -172,7 +169,7 @@ class Product(AbstractEntity, ProductBase):
     description = Column(String(length=100), nullable=False)
 
 
-class ProductIngredient(AbstractEntity, ProductIngredientBase):
+class ProductIngredient(AbstractEntity, product_ingredient.ProductIngredient):
     __tablename__ = "product_ingredients"
 
     id = Column(Integer(), primary_key=True, nullable=False)
@@ -201,7 +198,7 @@ class ProductIngredient(AbstractEntity, ProductIngredientBase):
     ingredient = None
 
 
-class User(AbstractEntity, UserBase):
+class User(AbstractEntity, user.User):
     __tablename__ = "users"
     id = Column(Integer(), primary_key=True, nullable=False)
     name = Column(String(length=50), nullable=False)

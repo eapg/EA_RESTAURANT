@@ -1,35 +1,36 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.product_ingredient_controller import \
-    ProductIngredientController
-from src.constants.audit import Status
-from src.lib.repositories.impl.product_ingredient_repository_impl import \
-    ProductIngredientRepositoryImpl
-from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import (
-    build_product_ingredient, build_product_ingredients)
+from src.api.controllers import product_ingredient_controller
+from src.constants import audit
+from src.lib.repositories.impl import product_ingredient_repository_impl
+from src.tests.utils.fixtures import ingredient_fixture
+from src.tests.utils.fixtures import product_fixture
+from src.tests.utils.fixtures import product_ingredient_fixture
 
 
 class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def setUp(self):
         self.product_ingredient_repository = mock.Mock(
-            wraps=ProductIngredientRepositoryImpl()
+            wraps=product_ingredient_repository_impl.ProductIngredientRepositoryImpl()
         )
-        self.product_ingredient_controller = ProductIngredientController(
-            self.product_ingredient_repository
+        self.product_ingredient_controller = (
+            product_ingredient_controller.ProductIngredientController(
+                self.product_ingredient_repository
+            )
         )
 
     def test_add_product_ingredient_to_repository_using_controller(self):
-        product_ingredient = build_product_ingredient()
+        product_ingredient = product_ingredient_fixture.build_product_ingredient()
 
         self.product_ingredient_controller.add(product_ingredient)
         self.product_ingredient_repository.add.assert_called_with(product_ingredient)
         self.assertEqual(product_ingredient.id, 1)
 
     def test_get_product_ingredient_from_repository_using_controller(self):
-        product_ingredients = build_product_ingredients(count=3)
+        product_ingredients = product_ingredient_fixture.build_product_ingredients(
+            count=3
+        )
 
         self.product_ingredient_controller.add(product_ingredients[0])
         self.product_ingredient_controller.add(product_ingredients[1])
@@ -41,7 +42,7 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         self.assertEqual(found_product_ingredient3.id, 3)
 
     def test_get_throws_key_error_for_non_existing_product_ingredient(self):
-        product_ingredient1 = build_product_ingredient()
+        product_ingredient1 = product_ingredient_fixture.build_product_ingredient()
 
         self.product_ingredient_controller.add(product_ingredient1)
 
@@ -50,7 +51,9 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
 
     def test_get_all_product_ingredients_from_repository_using_controller(self):
 
-        product_ingredients_to_insert = build_product_ingredients(count=4)
+        product_ingredients_to_insert = (
+            product_ingredient_fixture.build_product_ingredients(count=4)
+        )
 
         self.product_ingredient_controller.add(product_ingredients_to_insert[0])
         self.product_ingredient_controller.add(product_ingredients_to_insert[1])
@@ -77,9 +80,13 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         self.assertEqual(product_ingredients, [])
 
     def test_delete_an_product_ingredient_from_repository_using_controller(self):
-        product_ingredients_to_insert = build_product_ingredients(count=4)
-        product_ingredient_to_delete = build_product_ingredient(
-            entity_status=Status.DELETED
+        product_ingredients_to_insert = (
+            product_ingredient_fixture.build_product_ingredients(count=4)
+        )
+        product_ingredient_to_delete = (
+            product_ingredient_fixture.build_product_ingredient(
+                entity_status=audit.Status.DELETED
+            )
         )
         self.product_ingredient_controller.add(product_ingredients_to_insert[0])
         self.product_ingredient_controller.add(product_ingredients_to_insert[1])
@@ -103,8 +110,10 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         )
 
     def test_delete_throws_key_error_when_there_are_no_product_ingredients(self):
-        product_ingredient_to_delete = build_product_ingredient(
-            entity_status=Status.DELETED
+        product_ingredient_to_delete = (
+            product_ingredient_fixture.build_product_ingredient(
+                entity_status=audit.Status.DELETED
+            )
         )
         self.assertRaises(
             KeyError,
@@ -117,12 +126,16 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         )
 
     def test_update_product_ingredient_from_repository_using_controller(self):
-        product_ingredients_to_insert = build_product_ingredients(count=2)
+        product_ingredients_to_insert = (
+            product_ingredient_fixture.build_product_ingredients(count=2)
+        )
 
         self.product_ingredient_controller.add(product_ingredients_to_insert[0])
         self.product_ingredient_controller.add(product_ingredients_to_insert[1])
 
-        product_ingredient_to_update = build_product_ingredient(quantity=5)
+        product_ingredient_to_update = (
+            product_ingredient_fixture.build_product_ingredient(quantity=5)
+        )
 
         self.product_ingredient_controller.update_by_id(2, product_ingredient_to_update)
         updated_product_ingredient = self.product_ingredient_controller.get_by_id(2)
@@ -138,12 +151,14 @@ class ProductIngredientRepositoryControllerIntegrationTestCase(unittest.TestCase
         )
 
     def test_get_by_product_id_from_repository_using_controller(self):
-        ingredient_1 = build_ingredient(ingredient_id=1, name="test ingredient")
-        product_1 = build_product(product_id=1, name="test product")
-        product_ingredient_1 = build_product_ingredient(
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="test ingredient"
+        )
+        product_1 = product_fixture.build_product(product_id=1, name="test product")
+        product_ingredient_1 = product_ingredient_fixture.build_product_ingredient(
             ingredient_id=ingredient_1.id, product_id=product_1.id
         )
-        product_ingredient_2 = build_product_ingredient()
+        product_ingredient_2 = product_ingredient_fixture.build_product_ingredient()
 
         self.product_ingredient_controller.add(product_ingredient_1)
         self.product_ingredient_controller.add(product_ingredient_2)

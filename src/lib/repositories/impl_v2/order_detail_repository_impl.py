@@ -1,16 +1,16 @@
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import OrderDetail
+from src.constants import audit
+from src.core import ioc
+from src.lib.entities import sqlalchemy_orm_mapping
 from src.lib.repositories.order_detail_repository import OrderDetailRepository
 
 
 class OrderDetailRepositoryImpl(OrderDetailRepository):
     def __init__(self):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        ioc_instance = ioc.get_ioc_instance()
+        self.session = ioc_instance.get_instance("sqlalchemy_session")
 
     def add(self, order_detail):
         with self.session.begin():
@@ -21,35 +21,39 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
 
     def get_by_id(self, order_detail_id):
         return (
-            self.session.query(OrderDetail)
-            .filter(OrderDetail.id == order_detail_id)
-            .filter(OrderDetail.entity_status == Status.ACTIVE.value)
+            self.session.query(sqlalchemy_orm_mapping.OrderDetail)
+            .filter(sqlalchemy_orm_mapping.OrderDetail.id == order_detail_id)
+            .filter(
+                sqlalchemy_orm_mapping.OrderDetail.entity_status
+                == audit.Status.ACTIVE.value
+            )
             .first()
         )
 
     def get_all(self):
-        order_details = self.session.query(OrderDetail).filter(
-            OrderDetail.entity_status == Status.ACTIVE.value
+        order_details = self.session.query(sqlalchemy_orm_mapping.OrderDetail).filter(
+            sqlalchemy_orm_mapping.OrderDetail.entity_status
+            == audit.Status.ACTIVE.value
         )
         return list(order_details)
 
     def delete_by_id(self, order_detail_id, order_detail):
         with self.session.begin():
-            self.session.query(OrderDetail).filter(
-                OrderDetail.id == order_detail_id
+            self.session.query(sqlalchemy_orm_mapping.OrderDetail).filter(
+                sqlalchemy_orm_mapping.OrderDetail.id == order_detail_id
             ).update(
                 {
-                    OrderDetail.entity_status: Status.DELETED.value,
-                    OrderDetail.updated_date: datetime.now(),
-                    OrderDetail.updated_by: order_detail.updated_by,
+                    sqlalchemy_orm_mapping.OrderDetail.entity_status: audit.Status.DELETED.value,
+                    sqlalchemy_orm_mapping.OrderDetail.updated_date: datetime.now(),
+                    sqlalchemy_orm_mapping.OrderDetail.updated_by: order_detail.updated_by,
                 }
             )
 
     def update_by_id(self, order_detail_id, order_detail):
         with self.session.begin():
             order_detail_to_be_updated = (
-                self.session.query(OrderDetail)
-                .filter(OrderDetail.id == order_detail_id)
+                self.session.query(sqlalchemy_orm_mapping.OrderDetail)
+                .filter(sqlalchemy_orm_mapping.OrderDetail.id == order_detail_id)
                 .first()
             )
             order_detail_to_be_updated.user_id = (
@@ -64,8 +68,11 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
 
     def get_by_order_id(self, order_id):
         order_details = (
-            self.session.query(OrderDetail)
-            .filter(OrderDetail.entity_status == Status.ACTIVE.value)
-            .filter(OrderDetail.order_id == order_id)
+            self.session.query(sqlalchemy_orm_mapping.OrderDetail)
+            .filter(
+                sqlalchemy_orm_mapping.OrderDetail.entity_status
+                == audit.Status.ACTIVE.value
+            )
+            .filter(sqlalchemy_orm_mapping.OrderDetail.order_id == order_id)
         )
         return list(order_details)

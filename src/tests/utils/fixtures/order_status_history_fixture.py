@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.constants.order_status import OrderStatus
-from src.lib.entities.order_status_history import OrderStatusHistory
+from src.constants import audit
+from src.constants import order_status
+from src.lib.entities import order_status_history
 
 
 def build_order_status_history(
@@ -14,15 +14,19 @@ def build_order_status_history(
     to_status=None,
     entity_status=None,
 ):
-    order_status_history = OrderStatusHistory()
-    order_status_history.id = id
-    order_status_history.order_id = order_id
-    order_status_history.from_time = from_time or datetime.now()
-    order_status_history.to_time = to_time or datetime.now()
-    order_status_history.from_status = from_status or OrderStatus.NEW_ORDER
-    order_status_history.to_status = to_status or OrderStatus.ORDER_PLACED
-    order_status_history.entity_status = entity_status or Status.ACTIVE
-    return order_status_history
+    order_status_history_instance = order_status_history.OrderStatusHistory()
+    order_status_history_instance.id = id
+    order_status_history_instance.order_id = order_id
+    order_status_history_instance.from_time = from_time or datetime.now()
+    order_status_history_instance.to_time = to_time or datetime.now()
+    order_status_history_instance.from_status = (
+        from_status or order_status.OrderStatus.NEW_ORDER
+    )
+    order_status_history_instance.to_status = (
+        to_status or order_status.OrderStatus.ORDER_PLACED
+    )
+    order_status_history_instance.entity_status = entity_status or audit.Status.ACTIVE
+    return order_status_history_instance
 
 
 def build_order_status_histories(count=1):

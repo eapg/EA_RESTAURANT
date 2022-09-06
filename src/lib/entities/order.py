@@ -1,9 +1,9 @@
 # class to process the clients orders
-from src.lib.entities.abstract_entity import AbstractEntity
-from src.utils.utils import equals
+from src.lib.entities import abstract_entity
+from src.utils import utils
 
 
-class Order(AbstractEntity):
+class Order(abstract_entity.AbstractEntity):
     def __init__(self):
 
         self.id = None  # integer
@@ -11,4 +11,4 @@ class Order(AbstractEntity):
         self.assigned_chef_id = None  # integer
 
     def __eq__(self, other):
-        return equals(self, other)
+        return utils.equals(self, other)

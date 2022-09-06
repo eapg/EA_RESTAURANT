@@ -1,26 +1,27 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.ingredient_controller import IngredientController
-from src.constants.audit import Status
-from src.tests.utils.fixtures.ingredient_fixture import (build_ingredient,
-                                                         build_ingredients)
+from src.api.controllers import ingredient_controller
+from src.constants import audit
+from src.tests.utils.fixtures import ingredient_fixture
 
 
 class IngredientRepositoryControllerTestCase(unittest.TestCase):
     def setUp(self):
         self.ingredient_repository = mock.Mock()
-        self.ingredient_controller = IngredientController(self.ingredient_repository)
+        self.ingredient_controller = ingredient_controller.IngredientController(
+            self.ingredient_repository
+        )
 
     def test_add_ingredient_successfully(self):
-        ingredient = build_ingredient()
+        ingredient = ingredient_fixture.build_ingredient()
 
         self.ingredient_controller.add(ingredient)
 
         self.ingredient_repository.add.assert_called_with(ingredient)
 
     def test_get_ingredient_successfully(self):
-        ingredient = build_ingredient()
+        ingredient = ingredient_fixture.build_ingredient()
 
         self.ingredient_repository.get_by_id.return_value = ingredient
 
@@ -30,7 +31,7 @@ class IngredientRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(expected_ingredient.id, ingredient.id)
 
     def test_get_all_ingredients_successfully(self):
-        ingredients = build_ingredients(count=3)
+        ingredients = ingredient_fixture.build_ingredients(count=3)
 
         self.ingredient_repository.get_all.return_value = ingredients
 
@@ -41,7 +42,9 @@ class IngredientRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_ingredients), 3)
 
     def test_delete_an_ingredient_successfully(self):
-        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
+        ingredient_to_delete = ingredient_fixture.build_ingredient(
+            entity_status=audit.Status.DELETED
+        )
         self.ingredient_controller.delete_by_id(2, ingredient_to_delete)
 
         self.ingredient_repository.delete_by_id.assert_called_with(
@@ -49,7 +52,7 @@ class IngredientRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_update_an_ingredient_successfully(self):
-        ingredient = build_ingredient()
+        ingredient = ingredient_fixture.build_ingredient()
 
         self.ingredient_controller.update_by_id(1, ingredient)
 

@@ -1,13 +1,14 @@
 # This file has the order_status_history repository
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.entities.order_status_history import OrderStatusHistory
-from src.lib.repositories.order_status_history_repository import \
-    OrderStatusHistoryRepository
+from src.constants import audit
+from src.lib.entities import order_status_history
+from src.lib.repositories import order_status_history_repository
 
 
-class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
+class OrderStatusHistoryRepositoryImpl(
+    order_status_history_repository.OrderStatusHistoryRepository
+):
     def __init__(self):
         self._order_status_histories = {}
         self._current_id = 1
@@ -27,7 +28,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         order_status_history_filtered = list(
             filter(
                 lambda order_status_history: order_status_history.entity_status
-                == Status.ACTIVE,
+                == audit.Status.ACTIVE,
                 [order_status_history_to_return],
             )
         )
@@ -37,14 +38,14 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         order_status_histories = list(self._order_status_histories.values())
         order_status_histories_filtered = filter(
             lambda order_status_history: order_status_history.entity_status
-            == Status.ACTIVE,
+            == audit.Status.ACTIVE,
             order_status_histories,
         )
         return list(order_status_histories_filtered)
 
     def delete_by_id(self, order_status_history_id, order_status_history):
         order_status_history_to_be_delete = self.get_by_id(order_status_history_id)
-        order_status_history_to_be_delete.entity_status = Status.DELETED
+        order_status_history_to_be_delete.entity_status = audit.Status.DELETED
         order_status_history_to_be_delete.updated_date = datetime.now()
         order_status_history_to_be_delete.updated_by = order_status_history.updated_by
         self._update_by_id(
@@ -119,9 +120,9 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             last_order_status_history.to_time = datetime.now()
             self.update_by_id(last_order_status_history.id, last_order_status_history)
 
-        new_status_history = OrderStatusHistory()
+        new_status_history = order_status_history.OrderStatusHistory()
         new_status_history.from_status = new_status
         new_status_history.from_time = datetime.now()
-        new_status_history.entity_status = Status.ACTIVE
+        new_status_history.entity_status = audit.Status.ACTIVE
         new_status_history.order_id = order_id
         self.add(new_status_history)

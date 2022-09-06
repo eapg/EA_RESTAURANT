@@ -1,25 +1,23 @@
 import unittest
 
-from src.constants.audit import Status
-from src.lib.repositories.impl.inventory_repository_impl import \
-    InventoryRepositoryImpl
-from src.tests.utils.fixtures.inventory_fixture import (build_inventories,
-                                                        build_inventory)
+from src.constants import audit
+from src.lib.repositories.impl import inventory_repository_impl
+from src.tests.utils.fixtures import inventory_fixture
 
 
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
     def test_add_inventory_successfully(self):
-        inventory = build_inventory()
-        inventory_repository = InventoryRepositoryImpl()
+        inventory = inventory_fixture.build_inventory()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventory)
 
         self.assertEqual(inventory.id, 1)
 
     def test_get_inventory_successfully(self):
-        inventories = build_inventories(count=3)
+        inventories = inventory_fixture.build_inventories(count=3)
 
-        inventory_repository = InventoryRepositoryImpl()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventories[0])
         inventory_repository.add(inventories[1])
@@ -30,18 +28,18 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         self.assertEqual(found_inventory3.id, 3)
 
     def test_get_throws_key_error_for_non_existing_inventory(self):
-        inventory1 = build_inventory()
+        inventory1 = inventory_fixture.build_inventory()
 
-        inventory_repository = InventoryRepositoryImpl()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventory1)
 
         self.assertRaises(KeyError, inventory_repository.get_by_id, 2)
 
     def test_get_all_inventories_successfully(self):
-        inventories_to_insert = build_inventories(count=5)
+        inventories_to_insert = inventory_fixture.build_inventories(count=5)
 
-        inventory_repository = InventoryRepositoryImpl()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventories_to_insert[0])
         inventory_repository.add(inventories_to_insert[1])
@@ -63,16 +61,18 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         )
 
     def test_get_all_inventories_empty_successfully(self):
-        inventory_repository = InventoryRepositoryImpl()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventories = inventory_repository.get_all()
 
         self.assertEqual(inventories, [])
 
     def test_delete_an_inventory_successfully(self):
-        inventories_to_insert = build_inventories(count=3)
-        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
-        inventory_repository = InventoryRepositoryImpl()
+        inventories_to_insert = inventory_fixture.build_inventories(count=3)
+        inventory_to_delete = inventory_fixture.build_inventory(
+            entity_status=audit.Status.DELETED
+        )
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventories_to_insert[0])
         inventory_repository.add(inventories_to_insert[1])
@@ -88,21 +88,23 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_inventories(self):
-        inventory_repository = InventoryRepositoryImpl()
-        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
+        inventory_to_delete = inventory_fixture.build_inventory(
+            entity_status=audit.Status.DELETED
+        )
         self.assertRaises(
             KeyError, inventory_repository.delete_by_id, 2, inventory_to_delete
         )
 
     def test_update_inventory_successfully(self):
-        inventories_to_insert = build_inventories(count=2)
+        inventories_to_insert = inventory_fixture.build_inventories(count=2)
 
-        inventory_repository = InventoryRepositoryImpl()
+        inventory_repository = inventory_repository_impl.InventoryRepositoryImpl()
 
         inventory_repository.add(inventories_to_insert[0])
         inventory_repository.add(inventories_to_insert[1])
 
-        inventory_to_update = build_inventory(update_by="test")
+        inventory_to_update = inventory_fixture.build_inventory(update_by="test")
 
         inventory_repository.update_by_id(2, inventory_to_update)
         updated_inventory = inventory_repository.get_by_id(2)

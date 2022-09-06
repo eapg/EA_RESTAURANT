@@ -3,12 +3,11 @@ import unittest
 from abc import ABCMeta
 from unittest import mock
 
-from src.core.engine.processors.abstract_processor import AbstractProcessor
-from src.tests.utils.fixtures.app_processor_config_fixture import \
-    build_app_processor_config
+from src.core.engine.processors import abstract_processor
+from src.tests.utils.fixtures import app_processor_config_fixture
 
 
-class TestProcessor(AbstractProcessor, metaclass=ABCMeta):
+class TestProcessor(abstract_processor.AbstractProcessor, metaclass=ABCMeta):
     def __init__(self, app_processor_config=None, app_context=None):
         super().__init__(
             app_processor_config=app_processor_config, app_context=app_context
@@ -21,7 +20,9 @@ class TestProcessor(AbstractProcessor, metaclass=ABCMeta):
 class TestAbstractProcessor(unittest.TestCase):
     @mock.patch("threading.Thread.__init__")
     def test_processor_default_parameters(self, test_thread_init):
-        app_processor_config = build_app_processor_config(on_start=None)
+        app_processor_config = app_processor_config_fixture.build_app_processor_config(
+            on_start=None
+        )
         test_processor = TestProcessor(app_processor_config)
         test_thread_init.assert_called_once()
 
@@ -33,7 +34,7 @@ class TestAbstractProcessor(unittest.TestCase):
 
     @mock.patch.object(TestProcessor, "process")
     def test_processor_process_method_was_called(self, mocked_test_processor_process):
-        app_processor_config = build_app_processor_config()
+        app_processor_config = app_processor_config_fixture.build_app_processor_config()
         test_processor = TestProcessor(app_processor_config)
 
         def after_execute(_app_processor_config, _app_context):
@@ -49,7 +50,9 @@ class TestAbstractProcessor(unittest.TestCase):
 
     def test_processor_on_destroy(self):
         mocked_on_destroy = mock.Mock()
-        app_processor_config = build_app_processor_config(on_destroy=mocked_on_destroy)
+        app_processor_config = app_processor_config_fixture.build_app_processor_config(
+            on_destroy=mocked_on_destroy
+        )
         test_processor = TestProcessor(app_processor_config)
 
         def after_execute(_app_processor_config, _app_context):
@@ -66,7 +69,9 @@ class TestAbstractProcessor(unittest.TestCase):
 
     def test_processor_on_start(self):
         mocked_on_start = mock.Mock()
-        app_processor_config = build_app_processor_config(on_start=mocked_on_start)
+        app_processor_config = app_processor_config_fixture.build_app_processor_config(
+            on_start=mocked_on_start
+        )
         test_processor = TestProcessor(app_processor_config)
 
         def after_execute(_app_processor_config, _app_context):
@@ -83,7 +88,7 @@ class TestAbstractProcessor(unittest.TestCase):
 
     def test_processor_before_execute(self):
         mocked_before_execute = mock.Mock()
-        app_processor_config = build_app_processor_config(
+        app_processor_config = app_processor_config_fixture.build_app_processor_config(
             before_execute=mocked_before_execute
         )
         test_processor = TestProcessor(app_processor_config)
@@ -102,7 +107,7 @@ class TestAbstractProcessor(unittest.TestCase):
 
     @mock.patch.object(TestProcessor, "process")
     def test_processor_paused(self, mocked_test_processor_process):
-        app_processor_config = build_app_processor_config()
+        app_processor_config = app_processor_config_fixture.build_app_processor_config()
         test_processor = TestProcessor(app_processor_config)
 
         flag_map = {"interrupted": False}
@@ -134,7 +139,7 @@ class TestAbstractProcessor(unittest.TestCase):
 
     @mock.patch.object(TestProcessor, "process")
     def test_processor_last_execution_time(self, mocked_test_processor_process):
-        app_processor_config = build_app_processor_config()
+        app_processor_config = app_processor_config_fixture.build_app_processor_config()
         test_processor = TestProcessor(app_processor_config)
 
         last_execution_time_opportunities_map = {"max": 2, "last_execution_times": []}

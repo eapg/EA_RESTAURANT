@@ -1,11 +1,11 @@
 # This file has the inventory repository
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.repositories.inventory_repository import InventoryRepository
+from src.constants import audit
+from src.lib.repositories import inventory_repository
 
 
-class InventoryRepositoryImpl(InventoryRepository):
+class InventoryRepositoryImpl(inventory_repository.InventoryRepository):
     def __init__(self):
         self._inventories = {}
         self._current_id = 1
@@ -22,7 +22,7 @@ class InventoryRepositoryImpl(InventoryRepository):
         inventory_to_return = self._inventories[inventory_id]
         inventory_filtered = list(
             filter(
-                lambda inventory: inventory.entity_status == Status.ACTIVE,
+                lambda inventory: inventory.entity_status == audit.Status.ACTIVE,
                 [inventory_to_return],
             )
         )
@@ -32,14 +32,15 @@ class InventoryRepositoryImpl(InventoryRepository):
         inventories = list(self._inventories.values())
         inventories_filtered = list(
             filter(
-                lambda inventory: inventory.entity_status == Status.ACTIVE, inventories
+                lambda inventory: inventory.entity_status == audit.Status.ACTIVE,
+                inventories,
             )
         )
         return list(inventories_filtered)
 
     def delete_by_id(self, inventory_id, inventory):
         inventory_to_be_delete = self.get_by_id(inventory_id)
-        inventory_to_be_delete.entity_status = Status.DELETED
+        inventory_to_be_delete.entity_status = audit.Status.DELETED
         inventory_to_be_delete.updated_date = datetime.now()
         inventory_to_be_delete.updated_by = inventory.updated_by
         self._update_by_id(

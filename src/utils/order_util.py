@@ -1,5 +1,5 @@
 # reducer function to get assigned chef map
-from functools import reduce
+import functools
 
 
 def array_chef_to_chef_assigned_orders_map_reducer(
@@ -60,7 +60,7 @@ def setup_validated_orders_map(
             order_detail.product_id
             for order_detail in get_order_details_by_order_id(order.id)
         ]
-        return reduce(
+        return functools.reduce(
             lambda order_products_validation_result, order_detail: order_products_validation_reducer(
                 order_products_validation_result,
                 order_detail,
@@ -71,7 +71,7 @@ def setup_validated_orders_map(
         )
 
     def reduce_validated_orders_map(orders_to_process):
-        return reduce(
+        return functools.reduce(
             lambda validated_orders_result, order: validated_orders_reducer(
                 validated_orders_result,
                 order,
@@ -86,7 +86,7 @@ def setup_validated_orders_map(
 
 def compute_order_estimated_time(order_ingredient_list, chef):
 
-    order_estimated_time = reduce(
+    order_estimated_time = functools.reduce(
         lambda estimated_time_result, product_ingredient: estimated_time_result
         + (product_ingredient.ingredient_type.value * product_ingredient.quantity),
         order_ingredient_list,

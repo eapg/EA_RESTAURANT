@@ -1,18 +1,20 @@
 import unittest
 from unittest import mock
 
-from src.core.engine.app_engine_processor import AppEngineProcessor
-from src.tests.utils.fixtures.app_processor_config_fixture import \
-    build_app_processor_config
-from src.tests.utils.fixtures.kitchen_simulator_fixture import \
-    build_kitchen_simulator_running_once
+from src.core.engine import app_engine_processor
+from src.tests.utils.fixtures.app_processor_config_fixture import (
+    build_app_processor_config,
+)
+from src.tests.utils.fixtures.kitchen_simulator_fixture import (
+    build_kitchen_simulator_running_once,
+)
 
 
 class TestAppEngineProcessor(unittest.TestCase):
     def setUp(self):
         self.app_processor_config = build_app_processor_config()
         self.app_processor_config_patch = mock.patch(
-            "src.core.engine.app_engine_processor.AppProcessorConfig",
+            "src.core.engine.app_engine_processor.app_processor_config.AppProcessorConfig",
             return_value=self.app_processor_config,
         )
 
@@ -21,7 +23,7 @@ class TestAppEngineProcessor(unittest.TestCase):
         )
         self.mocked_kitchen_simulator = mock.Mock(wraps=self.kitchen_simulator)
         self.kitchen_simulator_patch = mock.patch(
-            "src.core.engine.app_engine_processor.KitchenSimulator",
+            "src.core.engine.app_engine_processor.kitchen_simulator.KitchenSimulator",
             return_value=self.mocked_kitchen_simulator,
         )
 
@@ -29,17 +31,17 @@ class TestAppEngineProcessor(unittest.TestCase):
         self.kitchen_simulator_patch.start()
 
     def test_engine_app_context(self):
-        app_engine_processor = AppEngineProcessor()
-        self.assertEqual(len(app_engine_processor.app_context.processors), 1)
+        app_engine_processor_instance = app_engine_processor.AppEngineProcessor()
+        self.assertEqual(len(app_engine_processor_instance.app_context.processors), 1)
         self.assertEqual(
-            app_engine_processor.app_context.processors[
+            app_engine_processor_instance.app_context.processors[
                 0
             ].app_processor_config._mock_wraps.id,
             self.app_processor_config.id,
         )
 
     def test_engine_start(self):
-        app_engine_processor = AppEngineProcessor()
-        app_engine_processor.start()
+        app_engine_processor_instance = app_engine_processor.AppEngineProcessor()
+        app_engine_processor_instance.start()
         self.kitchen_simulator.join()
         self.mocked_kitchen_simulator.start.assert_called_once()

@@ -1,4 +1,4 @@
-from functools import reduce
+import functools
 
 
 def products_qty_by_ingredients_qty_reducer(
@@ -27,7 +27,7 @@ def setup_products_qty_array_to_final_products_qty_map(
     get_inventory_ingredient_by_ingredient_id, get_product_ingredient_by_product_id
 ):
     def reduce_products_qty_by_ingredients_qty(product_id):
-        return reduce(
+        return functools.reduce(
             lambda quantity_ingredients_result, product_ingredient: products_qty_by_ingredients_qty_reducer(
                 quantity_ingredients_result,
                 product_ingredient,
@@ -40,7 +40,7 @@ def setup_products_qty_array_to_final_products_qty_map(
         )
 
     def reduce_products_qty_array_to_final_products_qty_map(product_ids):
-        return reduce(
+        return functools.reduce(
             lambda final_product_qty_result, product_id: products_qty_array_to_final_products_qty_map_reducer(
                 final_product_qty_result,
                 product_id,

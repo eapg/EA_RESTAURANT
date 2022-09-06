@@ -1,57 +1,54 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.order_controller import OrderController
-from src.constants.audit import Status
-from src.constants.cooking_type import CookingType
-from src.constants.order_status import OrderStatus
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
-    InventoryIngredientRepositoryImpl
-from src.lib.repositories.impl.order_detail_repository_impl import \
-    OrderDetailRepositoryImpl
-from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.lib.repositories.impl.product_ingredient_repository_impl import \
-    ProductIngredientRepositoryImpl
-from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.inventory_ingredient_fixture import \
-    build_inventory_ingredient
-from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
-from src.tests.utils.fixtures.order_fixture import build_order, build_orders
-from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import \
-    build_product_ingredient
+from src.api.controllers import order_controller
+from src.constants import audit
+from src.constants import cooking_type
+from src.constants import order_status
+from src.lib.repositories.impl import inventory_ingredient_repository_impl
+from src.lib.repositories.impl import order_detail_repository_impl
+from src.lib.repositories.impl import order_repository_impl
+from src.lib.repositories.impl import product_ingredient_repository_impl
+from src.tests.utils.fixtures import ingredient_fixture
+from src.tests.utils.fixtures import inventory_ingredient_fixture
+from src.tests.utils.fixtures import order_detail_fixture
+from src.tests.utils.fixtures import order_fixture
+from src.tests.utils.fixtures import product_fixture
+from src.tests.utils.fixtures import product_ingredient_fixture
 
 
 class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def setUp(self):
 
-        self.order_detail_repository = mock.Mock(wraps=OrderDetailRepositoryImpl())
+        self.order_detail_repository = mock.Mock(
+            wraps=order_detail_repository_impl.OrderDetailRepositoryImpl()
+        )
         self.product_ingredient_repository = mock.Mock(
-            wraps=ProductIngredientRepositoryImpl()
+            wraps=product_ingredient_repository_impl.ProductIngredientRepositoryImpl()
         )
         self.inventory_ingredient_repository = mock.Mock(
-            wraps=InventoryIngredientRepositoryImpl(
+            wraps=inventory_ingredient_repository_impl.InventoryIngredientRepositoryImpl(
                 product_ingredient_repository=self.product_ingredient_repository
             )
         )
         self.order_repository = mock.Mock(
-            wraps=OrderRepositoryImpl(
+            wraps=order_repository_impl.OrderRepositoryImpl(
                 order_detail_repository=self.order_detail_repository,
                 product_ingredient_repository=self.product_ingredient_repository,
                 inventory_ingredient_repository=self.inventory_ingredient_repository,
             )
         )
-        self.order_controller = OrderController(self.order_repository)
+        self.order_controller = order_controller.OrderController(self.order_repository)
 
     def test_add_order_to_repository_using_controller(self):
-        order = build_order()
+        order = order_fixture.build_order()
 
         self.order_controller.add(order)
         self.order_repository.add.assert_called_with(order)
         self.assertEqual(order.id, 1)
 
     def test_get_order_from_repository_using_controller(self):
-        orders = build_orders(count=3)
+        orders = order_fixture.build_orders(count=3)
 
         self.order_controller.add(orders[0])
         self.order_controller.add(orders[1])
@@ -63,7 +60,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.assertEqual(found_order3.id, 3)
 
     def test_get_throws_key_error_for_non_existing_order(self):
-        order1 = build_order()
+        order1 = order_fixture.build_order()
 
         self.order_controller.add(order1)
 
@@ -72,7 +69,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_get_all_orders_from_repository_using_controller(self):
 
-        orders_to_insert = build_orders(count=4)
+        orders_to_insert = order_fixture.build_orders(count=4)
 
         self.order_controller.add(orders_to_insert[0])
         self.order_controller.add(orders_to_insert[1])
@@ -99,8 +96,8 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.assertEqual(orders, [])
 
     def test_delete_an_order_from_repository_using_controller(self):
-        orders_to_insert = build_orders(count=4)
-        order_to_delete = build_order(entity_status=Status.DELETED)
+        orders_to_insert = order_fixture.build_orders(count=4)
+        order_to_delete = order_fixture.build_order(entity_status=audit.Status.DELETED)
         self.order_controller.add(orders_to_insert[0])
         self.order_controller.add(orders_to_insert[1])
         self.order_controller.add(orders_to_insert[2])
@@ -121,19 +118,19 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
 
     def test_delete_throws_key_error_when_there_are_no_orders(self):
-        order_to_delete = build_order(entity_status=Status.DELETED)
+        order_to_delete = order_fixture.build_order(entity_status=audit.Status.DELETED)
         self.assertRaises(
             KeyError, self.order_controller.delete_by_id, 3, order_to_delete
         )
         self.order_repository.delete_by_id.assert_called_with(3, order_to_delete)
 
     def test_update_order_from_repository_using_controller(self):
-        orders_to_insert = build_orders(count=2)
+        orders_to_insert = order_fixture.build_orders(count=2)
 
         self.order_controller.add(orders_to_insert[0])
         self.order_controller.add(orders_to_insert[1])
 
-        order_to_update = build_order(assigned_chef_id=2)
+        order_to_update = order_fixture.build_order(assigned_chef_id=2)
 
         self.order_controller.update_by_id(2, order_to_update)
         updated_order = self.order_controller.get_by_id(2)
@@ -148,28 +145,32 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_get_orders_by_status_successfully(self):
 
-        order_1 = build_order()
-        order_2 = build_order()
-        order_3 = build_order(status=OrderStatus.COMPLETED)
+        order_1 = order_fixture.build_order()
+        order_2 = order_fixture.build_order()
+        order_3 = order_fixture.build_order(status=order_status.OrderStatus.COMPLETED)
 
         self.order_controller.add(order_1)
         self.order_controller.add(order_2)
         self.order_controller.add(order_3)
 
         orders_by_status = self.order_controller.get_orders_by_status(
-            OrderStatus.NEW_ORDER, 10
+            order_status.OrderStatus.NEW_ORDER, 10
         )
         self.order_repository.get_orders_by_status.assert_called_with(
-            OrderStatus.NEW_ORDER, 10
+            order_status.OrderStatus.NEW_ORDER, 10
         )
         self.assertEqual(orders_by_status, [order_1, order_2])
 
     def test_get_order_ingredients_by_order_id_from_repository_using_controller(self):
 
-        ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient_1")
-        ingredient_2 = build_ingredient(ingredient_id=2, name="ingredient_2")
-        product_1 = build_product(product_id=1, name="product_1")
-        product_ingredient_1 = build_product_ingredient(
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="ingredient_1"
+        )
+        ingredient_2 = ingredient_fixture.build_ingredient(
+            ingredient_id=2, name="ingredient_2"
+        )
+        product_1 = product_fixture.build_product(product_id=1, name="product_1")
+        product_ingredient_1 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
@@ -177,7 +178,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
         self.product_ingredient_repository.add(product_ingredient_1)
 
-        product_ingredient_2 = build_product_ingredient(
+        product_ingredient_2 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=2,
             product_id=product_1.id,
             ingredient_id=ingredient_2.id,
@@ -185,8 +186,8 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         )
         self.product_ingredient_repository.add(product_ingredient_2)
 
-        order_1 = build_order(order_id=1)
-        order_detail_1 = build_order_detail(
+        order_1 = order_fixture.build_order(order_id=1)
+        order_detail_1 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
         )
         self.order_detail_repository.add(order_detail_1)
@@ -208,21 +209,27 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
 
     def test_get_validated_orders_map_from_repository_using_controller(self):
 
-        ingredient_1 = build_ingredient(ingredient_id=1, name="test_ingredient")
-        inventory_ingredient_1 = build_inventory_ingredient(
-            inventory_ingredient_id=1,
-            ingredient_id=ingredient_1.id,
-            ingredient_quantity=20,
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="test_ingredient"
         )
-        product_1 = build_product(product_id=1)
-        product_ingredient_1 = build_product_ingredient(
+        inventory_ingredient_1 = (
+            inventory_ingredient_fixture.build_inventory_ingredient(
+                inventory_ingredient_id=1,
+                ingredient_id=ingredient_1.id,
+                ingredient_quantity=20,
+            )
+        )
+        product_1 = product_fixture.build_product(product_id=1)
+        product_ingredient_1 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=1,
             ingredient_id=ingredient_1.id,
             product_id=product_1.id,
             quantity=2,
         )
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
-        order_detail_1 = build_order_detail(
+        order_1 = order_fixture.build_order(
+            order_id=1, status=order_status.OrderStatus.NEW_ORDER
+        )
+        order_detail_1 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
         )
 
@@ -230,14 +237,16 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.product_ingredient_repository.add(product_ingredient_1)
         self.inventory_ingredient_repository.add(inventory_ingredient_1)
 
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_1 = order_fixture.build_order(
+            order_id=1, status=order_status.OrderStatus.NEW_ORDER
+        )
 
         self.order_controller.add(order_1)
         order_1.order_detail_id = order_detail_1.id
         self.order_controller.update_by_id(order_1.id, order_1)
 
         orders_to_process = self.order_controller.get_orders_by_status(
-            OrderStatus.NEW_ORDER, 10
+            order_status.OrderStatus.NEW_ORDER, 10
         )
         order_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process
@@ -251,25 +260,31 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
     def test_reduce_order_ingredients_from_inventory_from_repository_using_controller(
         self,
     ):
-        ingredient_1 = build_ingredient(ingredient_id=1, name="potato")
-        inventory_ingredient_1 = build_inventory_ingredient(
-            inventory_ingredient_id=1,
-            ingredient_id=ingredient_1.id,
-            ingredient_quantity=20,
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="potato"
+        )
+        inventory_ingredient_1 = (
+            inventory_ingredient_fixture.build_inventory_ingredient(
+                inventory_ingredient_id=1,
+                ingredient_id=ingredient_1.id,
+                ingredient_quantity=20,
+            )
         )
         self.inventory_ingredient_repository.add(inventory_ingredient_1)
 
-        order_1 = build_order(order_id=1)
-        product_1 = build_product(product_id=1, name="fries potatoes")
-        ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
-        product_ingredient_1 = build_product_ingredient(
+        order_1 = order_fixture.build_order(order_id=1)
+        product_1 = product_fixture.build_product(product_id=1, name="fries potatoes")
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="potatoes"
+        )
+        product_ingredient_1 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
-            ingredient_type=CookingType.FRYING,
+            ingredient_type=cooking_type.CookingType.FRYING,
             quantity=10,
         )
-        order_detail_1 = build_order_detail(
+        order_detail_1 = order_detail_fixture.build_order_detail(
             product_id=product_1.id, order_id=order_1.id
         )
         self.order_detail_repository.add(order_detail_1)
@@ -283,4 +298,4 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         inventory_ingredient_after_reduce = (
             self.inventory_ingredient_repository.get_by_id(inventory_ingredient_1.id)
         )
-        self.assertEqual(inventory_ingredient_after_reduce.ingredient_quantity, 10)
+        self.assertEqual(inventory_ingredient_after_reduce.quantity, 10)

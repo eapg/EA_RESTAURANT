@@ -1,6 +1,6 @@
-from src.constants.audit import Status
-from src.constants.order_status import OrderStatus
-from src.lib.entities.order import Order
+from src.constants import audit
+from src.constants import order_status
+from src.lib.entities import order
 
 
 def build_order(
@@ -11,14 +11,14 @@ def build_order(
     create_by=None,
 ):
 
-    order = Order()
-    order.id = order_id
-    order.status = status or OrderStatus.NEW_ORDER
-    order.assigned_chef_id = assigned_chef_id
-    order.entity_status = entity_status or Status.ACTIVE
-    order.create_by = create_by
+    order_instance = order.Order()
+    order_instance.id = order_id
+    order_instance.status = status or order_status.OrderStatus.NEW_ORDER
+    order_instance.assigned_chef_id = assigned_chef_id
+    order_instance.entity_status = entity_status or audit.Status.ACTIVE
+    order_instance.create_by = create_by
 
-    return order
+    return order_instance
 
 
 def build_orders(count=1):

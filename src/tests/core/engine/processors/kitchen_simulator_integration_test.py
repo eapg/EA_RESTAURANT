@@ -1,21 +1,18 @@
 from unittest import TestCase, mock
 
-from src.constants.cooking_type import CookingType
-from src.constants.order_status import OrderStatus
-from src.core.engine.processors.kitchen_simulator import KitchenSimulator
-from src.core.ioc import get_ioc_instance
-from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
-from src.tests.utils.fixtures.app_processor_config_fixture import \
-    build_app_processor_config
-from src.tests.utils.fixtures.chef_fixture import build_chef
-from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.inventory_ingredient_fixture import \
-    build_inventory_ingredient
-from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
-from src.tests.utils.fixtures.order_fixture import build_order
-from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import \
-    build_product_ingredient
+from src.constants import cooking_type
+from src.constants import order_status
+from src.core.engine.processors import kitchen_simulator
+from src.core import ioc
+from src.core import order_manager
+from src.tests.utils.fixtures import app_processor_config_fixture
+from src.tests.utils.fixtures import chef_fixture
+from src.tests.utils.fixtures import ingredient_fixture
+from src.tests.utils.fixtures import inventory_ingredient_fixture
+from src.tests.utils.fixtures import order_detail_fixture
+from src.tests.utils.fixtures import order_fixture
+from src.tests.utils.fixtures import product_fixture
+from src.tests.utils.fixtures import product_ingredient_fixture
 
 ITERATIONS = 0
 
@@ -23,16 +20,22 @@ ITERATIONS = 0
 class KitchenSimulatorIntegrationTest(TestCase):
     def setUp(self):
 
-        ioc = get_ioc_instance()
-        self.order_detail_controller = ioc.get_instance("order_detail_controller")
-        self.product_ingredient_controller = ioc.get_instance(
+        ioc_instance = ioc.get_ioc_instance()
+        self.order_detail_controller = ioc_instance.get_instance(
+            "order_detail_controller"
+        )
+        self.product_ingredient_controller = ioc_instance.get_instance(
             "product_ingredient_controller"
         )
-        self.inventory_ingredient_controller = ioc.get_instance(
+        self.inventory_ingredient_controller = ioc_instance.get_instance(
             "inventory_ingredient_controller"
         )
-        self.app_engine_config = build_app_processor_config()
-        self.kitchen_simulator = KitchenSimulator(self.app_engine_config)
+        self.app_engine_config = (
+            app_processor_config_fixture.build_app_processor_config()
+        )
+        self.kitchen_simulator = kitchen_simulator.KitchenSimulator(
+            self.app_engine_config
+        )
         self.kitchen_simulator.order_manager = mock.Mock(
             wraps=self.kitchen_simulator.order_manager
         )
@@ -48,47 +51,55 @@ class KitchenSimulatorIntegrationTest(TestCase):
 
     def test_assign_orders_to_available_chefs(self):
         self.kitchen_simulator.check_for_order_completed = mock.Mock()
-        ingredient_1 = build_ingredient(ingredient_id=1, name="potatoes")
-        inventory_ingredient_1 = build_inventory_ingredient(
-            inventory_ingredient_id=1,
-            ingredient_id=ingredient_1.id,
-            ingredient_quantity=10,
+        ingredient_1 = ingredient_fixture.build_ingredient(
+            ingredient_id=1, name="potatoes"
         )
-        product_1 = build_product(product_id=1, name="fries potatoes")
-        product_ingredient_1 = build_product_ingredient(
+        inventory_ingredient_1 = (
+            inventory_ingredient_fixture.build_inventory_ingredient(
+                inventory_ingredient_id=1,
+                ingredient_id=ingredient_1.id,
+                ingredient_quantity=10,
+            )
+        )
+        product_1 = product_fixture.build_product(product_id=1, name="fries potatoes")
+        product_ingredient_1 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=1,
             ingredient_id=ingredient_1.id,
             product_id=product_1.id,
             quantity=6,
-            ingredient_type=CookingType.FRYING,
+            ingredient_type=cooking_type.CookingType.FRYING,
         )
 
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_1 = order_fixture.build_order(
+            order_id=1, status=order_status.OrderStatus.NEW_ORDER
+        )
         self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
             order_1.id, order_1.status
         )
         self.kitchen_simulator.order_controller.add(order_1)
         self.kitchen_simulator.order_manager.add_to_queue(order_1)
-        order_detail_1 = build_order_detail(
+        order_detail_1 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_1)
-        order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER)
+        order_2 = order_fixture.build_order(
+            order_id=2, status=order_status.OrderStatus.NEW_ORDER
+        )
         self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
             order_2.id, order_2.status
         )
         self.kitchen_simulator.order_controller.add(order_2)
         self.kitchen_simulator.order_manager.add_to_queue(order_2)
-        order_detail_2 = build_order_detail(
+        order_detail_2 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_2.id, product_id=product_1.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_2)
         self.product_ingredient_controller.add(product_ingredient_1)
         self.inventory_ingredient_controller.add(inventory_ingredient_1)
 
-        chef_1 = build_chef(chef_id=1, chef_skills=2)
+        chef_1 = chef_fixture.build_chef(chef_id=1, chef_skills=2)
         self.kitchen_simulator.chef_controller.add(chef_1)
-        chef_2 = build_chef(chef_id=2, chef_skills=3)
+        chef_2 = chef_fixture.build_chef(chef_id=2, chef_skills=3)
         self.kitchen_simulator.chef_controller.add(chef_2)
 
         def after_execute(_app_processor_config, _app_context):
@@ -104,13 +115,13 @@ class KitchenSimulatorIntegrationTest(TestCase):
 
         self.assertEqual(
             self.kitchen_simulator.order_manager.get_queue_from_status(
-                OrderStatus.IN_PROCESS
+                order_status.OrderStatus.IN_PROCESS
             ),
             order_1.id,
         )
         self.assertEqual(
             self.kitchen_simulator.order_manager.get_queue_from_status(
-                OrderStatus.CANCELLED
+                order_status.OrderStatus.CANCELLED
             ),
             order_2.id,
         )
@@ -124,15 +135,15 @@ class KitchenSimulatorIntegrationTest(TestCase):
         self.kitchen_simulator.order_controller.get_orders_by_status.assert_has_calls(
             [
                 mock.call(
-                    OrderStatus.NEW_ORDER,
-                    order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
-                        OrderStatus.NEW_ORDER
+                    order_status.OrderStatus.NEW_ORDER,
+                    order_limit=order_manager.ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                        order_status.OrderStatus.NEW_ORDER
                     ],
                 ),
                 mock.call(
-                    OrderStatus.NEW_ORDER,
-                    order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
-                        OrderStatus.NEW_ORDER
+                    order_status.OrderStatus.NEW_ORDER,
+                    order_limit=order_manager.ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                        order_status.OrderStatus.NEW_ORDER
                     ],
                 ),
             ]
@@ -143,47 +154,55 @@ class KitchenSimulatorIntegrationTest(TestCase):
 
     def test_check_for_order_complete(self):
 
-        ingredient_2 = build_ingredient(ingredient_id=2, name="potatoes")
-        inventory_ingredient_2 = build_inventory_ingredient(
-            inventory_ingredient_id=2,
-            ingredient_id=ingredient_2.id,
-            ingredient_quantity=10,
+        ingredient_2 = ingredient_fixture.build_ingredient(
+            ingredient_id=2, name="potatoes"
         )
-        product_2 = build_product(product_id=2, name="fries potatoes")
-        product_ingredient_2 = build_product_ingredient(
+        inventory_ingredient_2 = (
+            inventory_ingredient_fixture.build_inventory_ingredient(
+                inventory_ingredient_id=2,
+                ingredient_id=ingredient_2.id,
+                ingredient_quantity=10,
+            )
+        )
+        product_2 = product_fixture.build_product(product_id=2, name="fries potatoes")
+        product_ingredient_2 = product_ingredient_fixture.build_product_ingredient(
             product_ingredient_id=2,
             ingredient_id=ingredient_2.id,
             product_id=product_2.id,
             quantity=1,
-            ingredient_type=CookingType.FRYING,
+            ingredient_type=cooking_type.CookingType.FRYING,
         )
 
-        order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
+        order_3 = order_fixture.build_order(
+            order_id=3, status=order_status.OrderStatus.NEW_ORDER
+        )
         self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
             order_3.id, order_3.status
         )
         self.kitchen_simulator.order_controller.add(order_3)
         self.kitchen_simulator.order_manager.add_to_queue(order_3)
-        order_detail_1 = build_order_detail(
+        order_detail_1 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_3.id, product_id=product_2.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_1)
-        order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
+        order_4 = order_fixture.build_order(
+            order_id=4, status=order_status.OrderStatus.NEW_ORDER
+        )
         self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
             order_4.id, order_4.status
         )
         self.kitchen_simulator.order_controller.add(order_4)
         self.kitchen_simulator.order_manager.add_to_queue(order_4)
-        order_detail_2 = build_order_detail(
+        order_detail_2 = order_detail_fixture.build_order_detail(
             order_detail_id=1, order_id=order_4.id, product_id=product_2.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_2)
         self.product_ingredient_controller.add(product_ingredient_2)
         self.inventory_ingredient_controller.add(inventory_ingredient_2)
 
-        chef_3 = build_chef(chef_id=3, chef_skills=10)
+        chef_3 = chef_fixture.build_chef(chef_id=3, chef_skills=10)
         self.kitchen_simulator.chef_controller.add(chef_3)
-        chef_4 = build_chef(chef_id=4, chef_skills=10)
+        chef_4 = chef_fixture.build_chef(chef_id=4, chef_skills=10)
         self.kitchen_simulator.chef_controller.add(chef_4)
 
         def after_execute(_app_processor_config, _app_context):
@@ -199,14 +218,14 @@ class KitchenSimulatorIntegrationTest(TestCase):
 
         self.assertEqual(
             self.kitchen_simulator.order_manager.get_queue_from_status(
-                OrderStatus.COMPLETED
+                order_status.OrderStatus.COMPLETED
             ),
             order_3.id,
         )
 
         self.assertEqual(
             self.kitchen_simulator.order_manager.get_queue_from_status(
-                OrderStatus.COMPLETED
+                order_status.OrderStatus.COMPLETED
             ),
             order_4.id,
         )

@@ -1,28 +1,28 @@
 from abc import ABCMeta
 from datetime import datetime, timedelta
 
-from src.constants.audit import InternalUsers
-from src.constants.order_status import OrderStatus
-from src.core.engine.processors.abstract_processor import AbstractProcessor
-from src.core.ioc import get_ioc_instance
-from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
-from src.utils.order_util import compute_order_estimated_time
-from src.utils.time_util import get_unix_time_stamp_milliseconds
+from src.constants import audit
+from src.constants import order_status
+from src.core.engine.processors import abstract_processor
+from src.core import ioc
+from src.core import order_manager
+from src.utils import order_util
+from src.utils import time_util
 
 
-class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
+class KitchenSimulator(abstract_processor.AbstractProcessor, metaclass=ABCMeta):
     def __init__(self, app_processor_config, app_context=None):
         super().__init__(
             app_processor_config=app_processor_config, app_context=app_context
         )
 
-        ioc = get_ioc_instance()
-        self.order_controller = ioc.get_instance("order_controller")
-        self.order_status_history_controller = ioc.get_instance(
+        ioc_instance = ioc.get_ioc_instance()
+        self.order_controller = ioc_instance.get_instance("order_controller")
+        self.order_status_history_controller = ioc_instance.get_instance(
             "order_status_history_controller"
         )
-        self.chef_controller = ioc.get_instance("chef_controller")
-        self.order_manager = ioc.get_instance("order_manager")
+        self.chef_controller = ioc_instance.get_instance("chef_controller")
+        self.order_manager = ioc_instance.get_instance("order_manager")
         self._process_clean_queues_timeout = 60  # seconds
         self._process_clean_queues_delta_time_sum = 0  # float
 
@@ -35,8 +35,10 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def process_new_orders(self):
 
         orders_to_process = self.order_controller.get_orders_by_status(
-            OrderStatus.NEW_ORDER,
-            order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER],
+            order_status.OrderStatus.NEW_ORDER,
+            order_limit=order_manager.ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                order_status.OrderStatus.NEW_ORDER
+            ],
         )
         orders_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process
@@ -46,7 +48,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         if available_chef_ids:
 
             order_in_turn_id = self.order_manager.get_queue_from_status(
-                OrderStatus.NEW_ORDER
+                order_status.OrderStatus.NEW_ORDER
             )
 
             if order_in_turn_id:
@@ -67,7 +69,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def process_orders_in_process(self):
 
         order_id_to_be_checked = self.order_manager.get_queue_from_status(
-            OrderStatus.IN_PROCESS
+            order_status.OrderStatus.IN_PROCESS
         )
 
         if order_id_to_be_checked:
@@ -83,15 +85,17 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             order_ingredients = self.order_controller.get_order_ingredients_by_order_id(
                 order_id_to_be_checked
             )
-            order_estimate_time = compute_order_estimated_time(
+            order_estimate_time = order_util.compute_order_estimated_time(
                 order_ingredients, chef_assigned
             )
-            date_time_now_milliseconds = get_unix_time_stamp_milliseconds(
+            date_time_now_milliseconds = time_util.get_unix_time_stamp_milliseconds(
                 datetime.now()
             )
-            order_estimate_time_milliseconds = get_unix_time_stamp_milliseconds(
-                last_order_status_history.from_time
-                + timedelta(seconds=order_estimate_time)
+            order_estimate_time_milliseconds = (
+                time_util.get_unix_time_stamp_milliseconds(
+                    last_order_status_history.from_time
+                    + timedelta(seconds=order_estimate_time)
+                )
             )
             if date_time_now_milliseconds > order_estimate_time_milliseconds:
                 self._order_send_to_complete(order_to_be_checked)
@@ -113,11 +117,11 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     ):
         order_to_be_assign.assigned_chef_id = available_chef_id
         print(f"chef {available_chef_id} assigned to order {order_to_be_assign.id}")
-        order_to_be_assign.status = OrderStatus.IN_PROCESS
+        order_to_be_assign.status = order_status.OrderStatus.IN_PROCESS
         self.order_controller.reduce_order_ingredients_from_inventory(
             order_to_be_assign.id
         )
-        order_to_be_assign.update_by = InternalUsers.KITCHEN_SIMULATOR
+        order_to_be_assign.update_by = audit.InternalUsers.KITCHEN_SIMULATOR
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
@@ -126,7 +130,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         print(f"order {order_to_be_assign.id} in process at {datetime.now()}")
 
     def _order_send_to_cancel(self, order_to_be_cancel):
-        order_to_be_cancel.status = OrderStatus.CANCELLED
+        order_to_be_cancel.status = order_status.OrderStatus.CANCELLED
         self.order_controller.update_by_id(order_to_be_cancel.id, order_to_be_cancel)
         self.order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_cancel.id, order_to_be_cancel.status
@@ -135,7 +139,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         print(f"order {order_to_be_cancel.id} cancelled at {datetime.now()}")
 
     def _order_send_to_complete(self, order_to_be_complete):
-        order_to_be_complete.status = OrderStatus.COMPLETED
+        order_to_be_complete.status = order_status.OrderStatus.COMPLETED
         self.order_controller.update_by_id(
             order_to_be_complete.id, order_to_be_complete
         )

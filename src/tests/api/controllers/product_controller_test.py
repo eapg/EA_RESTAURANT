@@ -1,26 +1,27 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.product_controller import ProductController
-from src.constants.audit import Status
-from src.tests.utils.fixtures.product_fixture import (build_product,
-                                                      build_products)
+from src.api.controllers import product_controller
+from src.constants import audit
+from src.tests.utils.fixtures import product_fixture
 
 
 class ProductRepositoryControllerTestCase(unittest.TestCase):
     def setUp(self):
         self.product_repository = mock.Mock()
-        self.product_controller = ProductController(self.product_repository)
+        self.product_controller = product_controller.ProductController(
+            self.product_repository
+        )
 
     def test_add_product_successfully(self):
-        product = build_product()
+        product = product_fixture.build_product()
 
         self.product_controller.add(product)
 
         self.product_repository.add.assert_called_with(product)
 
     def test_get_product_successfully(self):
-        product = build_product()
+        product = product_fixture.build_product()
 
         self.product_repository.get_by_id.return_value = product
 
@@ -30,7 +31,7 @@ class ProductRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(expected_product.id, product.id)
 
     def test_get_all_products_successfully(self):
-        products = build_products(count=3)
+        products = product_fixture.build_products(count=3)
 
         self.product_repository.get_all.return_value = products
 
@@ -41,13 +42,15 @@ class ProductRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_products), 3)
 
     def test_delete_an_product_successfully(self):
-        product_to_delete = build_product(entity_status=Status.DELETED)
+        product_to_delete = product_fixture.build_product(
+            entity_status=audit.Status.DELETED
+        )
         self.product_controller.delete_by_id(2, product_to_delete)
 
         self.product_repository.delete_by_id.assert_called_with(2, product_to_delete)
 
     def test_update_an_product_successfully(self):
-        product = build_product()
+        product = product_fixture.build_product()
 
         self.product_controller.update_by_id(1, product)
 

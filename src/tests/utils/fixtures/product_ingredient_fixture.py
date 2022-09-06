@@ -1,5 +1,5 @@
-from src.constants.audit import Status
-from src.lib.entities.product_ingredient import ProductIngredient
+from src.constants import audit
+from src.lib.entities import product_ingredient
 
 
 def build_product_ingredient(
@@ -11,15 +11,15 @@ def build_product_ingredient(
     entity_status=None,
     create_by=None,
 ):
-    product_ingredient = ProductIngredient()
-    product_ingredient.id = product_ingredient_id
-    product_ingredient.product_id = product_id
-    product_ingredient.ingredient_id = ingredient_id
-    product_ingredient.quantity = quantity
-    product_ingredient.ingredient_type = ingredient_type
-    product_ingredient.entity_status = entity_status or Status.ACTIVE
-    product_ingredient.create_by = create_by
-    return product_ingredient
+    product_ingredient_instance = product_ingredient.ProductIngredient()
+    product_ingredient_instance.id = product_ingredient_id
+    product_ingredient_instance.product_id = product_id
+    product_ingredient_instance.ingredient_id = ingredient_id
+    product_ingredient_instance.quantity = quantity
+    product_ingredient_instance.ingredient_type = ingredient_type
+    product_ingredient_instance.entity_status = entity_status or audit.Status.ACTIVE
+    product_ingredient_instance.create_by = create_by
+    return product_ingredient_instance
 
 
 def build_product_ingredients(count=1):

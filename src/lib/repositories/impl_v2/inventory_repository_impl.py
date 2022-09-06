@@ -1,15 +1,15 @@
 from datetime import datetime
-from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import Inventory
-from src.lib.repositories.inventory_repository import InventoryRepository
+from src.constants import audit
+from src.core import ioc
+from src.lib.entities import sqlalchemy_orm_mapping
+from src.lib.repositories import inventory_repository
 
 
-class InventoryRepositoryImpl(InventoryRepository):
+class InventoryRepositoryImpl(inventory_repository.InventoryRepository):
     def __init__(self):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        ioc_instance = ioc.get_ioc_instance()
+        self.session = ioc_instance.get_instance("sqlalchemy_session")
 
     def add(self, inventory):
         with self.session.begin():
@@ -20,33 +20,38 @@ class InventoryRepositoryImpl(InventoryRepository):
 
     def get_by_id(self, inventory_id):
         return (
-            self.session.query(Inventory)
-            .filter(Inventory.id == inventory_id)
-            .filter(Inventory.entity_status == Status.ACTIVE.value)
+            self.session.query(sqlalchemy_orm_mapping.Inventory)
+            .filter(sqlalchemy_orm_mapping.Inventory.id == inventory_id)
+            .filter(
+                sqlalchemy_orm_mapping.Inventory.entity_status
+                == audit.Status.ACTIVE.value
+            )
             .first()
         )
 
     def get_all(self):
-        inventories = self.session.query(Inventory).filter(
-            Inventory.entity_status == Status.ACTIVE.value
+        inventories = self.session.query(sqlalchemy_orm_mapping.Inventory).filter(
+            sqlalchemy_orm_mapping.Inventory.entity_status == audit.Status.ACTIVE.value
         )
         return list(inventories)
 
     def delete_by_id(self, inventory_id, inventory):
         with self.session.begin():
-            self.session.query(Inventory).filter(Inventory.id == inventory_id).update(
+            self.session.query(sqlalchemy_orm_mapping.Inventory).filter(
+                sqlalchemy_orm_mapping.Inventory.id == inventory_id
+            ).update(
                 {
-                    Inventory.entity_status: Status.DELETED.value,
-                    Inventory.updated_date: datetime.now(),
-                    Inventory.updated_by: inventory.updated_by,
+                    sqlalchemy_orm_mapping.Inventory.entity_status: audit.Status.DELETED.value,
+                    sqlalchemy_orm_mapping.Inventory.updated_date: datetime.now(),
+                    sqlalchemy_orm_mapping.Inventory.updated_by: inventory.updated_by,
                 }
             )
 
     def update_by_id(self, inventory_id, inventory):
         with self.session.begin():
             inventory_to_be_updated = (
-                self.session.query(Inventory)
-                .filter(Inventory.id == inventory_id)
+                self.session.query(sqlalchemy_orm_mapping.Inventory)
+                .filter(sqlalchemy_orm_mapping.Inventory.id == inventory_id)
                 .first()
             )
             inventory_to_be_updated.user_id = (

@@ -1,10 +1,10 @@
 # Interface for the repositories through Abstract method
 from abc import ABCMeta, abstractmethod
 
-from src.lib.repositories.generic_repository import GenericRepository
+from src.lib.repositories import generic_repository
 
 
-class ProductIngredientRepository(GenericRepository, metaclass=ABCMeta):
+class ProductIngredientRepository(generic_repository.GenericRepository, metaclass=ABCMeta):
     @abstractmethod
     def get_by_product_id(self, product_id):
         pass

@@ -1,16 +1,16 @@
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import Product
+from src.constants import audit
+from src.core import ioc
+from src.lib.entities import sqlalchemy_orm_mapping
 from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
     def __init__(self):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        ioc_instance = ioc.get_ioc_instance()
+        self.session = ioc_instance.get_instance("sqlalchemy_session")
 
     def add(self, product):
         with self.session.begin():
@@ -21,32 +21,39 @@ class ProductRepositoryImpl(ProductRepository):
 
     def get_by_id(self, product_id):
         return (
-            self.session.query(Product)
-            .filter(Product.id == product_id)
-            .filter(Product.entity_status == Status.ACTIVE.value)
+            self.session.query(sqlalchemy_orm_mapping.Product)
+            .filter(sqlalchemy_orm_mapping.Product.id == product_id)
+            .filter(
+                sqlalchemy_orm_mapping.Product.entity_status
+                == audit.Status.ACTIVE.value
+            )
             .first()
         )
 
     def get_all(self):
-        products = self.session.query(Product).filter(
-            Product.entity_status == Status.ACTIVE.value
+        products = self.session.query(sqlalchemy_orm_mapping.Product).filter(
+            sqlalchemy_orm_mapping.Product.entity_status == audit.Status.ACTIVE.value
         )
         return list(products)
 
     def delete_by_id(self, product_id, product):
         with self.session.begin():
-            self.session.query(Product).filter(Product.id == product_id).update(
+            self.session.query(sqlalchemy_orm_mapping.Product).filter(
+                sqlalchemy_orm_mapping.Product.id == product_id
+            ).update(
                 {
-                    Product.entity_status: Status.DELETED.value,
-                    Product.updated_date: datetime.now(),
-                    Product.updated_by: product.updated_by,
+                    sqlalchemy_orm_mapping.Product.entity_status: audit.Status.DELETED.value,
+                    sqlalchemy_orm_mapping.Product.updated_date: datetime.now(),
+                    sqlalchemy_orm_mapping.Product.updated_by: product.updated_by,
                 }
             )
 
     def update_by_id(self, product_id, product):
         with self.session.begin():
             product_to_be_updated = (
-                self.session.query(Product).filter(Product.id == product_id).first()
+                self.session.query(sqlalchemy_orm_mapping.Product)
+                .filter(sqlalchemy_orm_mapping.Product.id == product_id)
+                .first()
             )
             product_to_be_updated.name = product.name or product_to_be_updated.name
             product_to_be_updated.description = (

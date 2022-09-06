@@ -1,15 +1,14 @@
 # This file has the order repository
 from datetime import datetime
-from functools import reduce
+import functools
 
-from src.constants.audit import Status
-from src.constants.order_status import OrderStatus
-from src.lib.repositories.order_repository import OrderRepository
-from src.utils.order_util import (
-    array_chef_to_chef_assigned_orders_map_reducer, setup_validated_orders_map)
+from src.constants import audit
+from src.constants import order_status
+from src.lib.repositories import order_repository
+from src.utils import order_util
 
 
-class OrderRepositoryImpl(OrderRepository):
+class OrderRepositoryImpl(order_repository.OrderRepository):
     def __init__(
         self,
         order_detail_repository=None,
@@ -34,7 +33,7 @@ class OrderRepositoryImpl(OrderRepository):
         order_to_return = self._orders[order_id]
         order_filtered = list(
             filter(
-                lambda order: order.entity_status == Status.ACTIVE,
+                lambda order: order.entity_status == audit.Status.ACTIVE,
                 [order_to_return],
             )
         )
@@ -43,13 +42,13 @@ class OrderRepositoryImpl(OrderRepository):
     def get_all(self):
         orders = list(self._orders.values())
         orders_filtered = filter(
-            lambda order: order.entity_status == Status.ACTIVE, orders
+            lambda order: order.entity_status == audit.Status.ACTIVE, orders
         )
         return list(orders_filtered)
 
     def delete_by_id(self, order_id, order):
         order_to_be_delete = self.get_by_id(order_id)
-        order_to_be_delete.entity_status = Status.DELETED
+        order_to_be_delete.entity_status = audit.Status.DELETED
         order_to_be_delete.updated_date = datetime.now()
         order_to_be_delete.updated_by = order.updated_by
         self._update_by_id(order_id, order_to_be_delete, use_merge_with_existing=False)
@@ -74,9 +73,9 @@ class OrderRepositoryImpl(OrderRepository):
 
     def get_chefs_with_assigned_orders(self, chef_ids):
 
-        orders = self.get_orders_by_status(OrderStatus.IN_PROCESS)
-        chefs_with_assigned_orders_map = reduce(
-            lambda assigned_chef_result, chef_id: array_chef_to_chef_assigned_orders_map_reducer(
+        orders = self.get_orders_by_status(order_status.OrderStatus.IN_PROCESS)
+        chefs_with_assigned_orders_map = functools.reduce(
+            lambda assigned_chef_result, chef_id: order_util.array_chef_to_chef_assigned_orders_map_reducer(
                 assigned_chef_result, chef_id, orders
             ),
             chef_ids,
@@ -97,7 +96,7 @@ class OrderRepositoryImpl(OrderRepository):
         return filtered_product_ingredients
 
     def get_validated_orders_map(self, orders_to_process):
-        reduce_validated_orders_map = setup_validated_orders_map(
+        reduce_validated_orders_map = order_util.setup_validated_orders_map(
             self.inventory_ingredient_repository.get_final_product_qty_by_product_ids,
             self.order_detail_repository.get_by_order_id,
         )
@@ -115,9 +114,8 @@ class OrderRepositoryImpl(OrderRepository):
                     product_ingredient.ingredient_id
                 )
             )
-            inventory_ingredient[0].ingredient_quantity = (
-                inventory_ingredient[0].ingredient_quantity
-                - product_ingredient.quantity
+            inventory_ingredient[0].quantity = (
+                inventory_ingredient[0].quantity - product_ingredient.quantity
             )
             self.inventory_ingredient_repository.update_by_id(
                 inventory_ingredient[0].id, inventory_ingredient[0]

@@ -1,5 +1,5 @@
-from src.constants.audit import Status
-from src.lib.entities.inventory_ingredient import InventoryIngredient
+from src.constants import audit
+from src.lib.entities import inventory_ingredient
 
 
 def build_inventory_ingredient(
@@ -11,16 +11,16 @@ def build_inventory_ingredient(
     create_by=None,
     update_by=None,
 ):
-    inventory_ingredient = InventoryIngredient()
-    inventory_ingredient.id = inventory_ingredient_id
-    inventory_ingredient.inventory_id = inventory_id
-    inventory_ingredient.ingredient_id = ingredient_id
-    inventory_ingredient.ingredient_quantity = ingredient_quantity or 1
-    inventory_ingredient.entity_status = entity_status or Status.ACTIVE
-    inventory_ingredient.create_by = create_by
-    inventory_ingredient.update_by = update_by
+    inventory_ingredient_instance = inventory_ingredient.InventoryIngredient()
+    inventory_ingredient_instance.id = inventory_ingredient_id
+    inventory_ingredient_instance.inventory_id = inventory_id
+    inventory_ingredient_instance.ingredient_id = ingredient_id
+    inventory_ingredient_instance.quantity = ingredient_quantity or 1
+    inventory_ingredient_instance.entity_status = entity_status or audit.Status.ACTIVE
+    inventory_ingredient_instance.create_by = create_by
+    inventory_ingredient_instance.update_by = update_by
 
-    return inventory_ingredient
+    return inventory_ingredient_instance
 
 
 def build_inventory_ingredients(count=1):

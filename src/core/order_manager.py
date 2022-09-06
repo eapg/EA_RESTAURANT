@@ -1,31 +1,38 @@
 # order manager mechanism
 import queue
-from queue import PriorityQueue
 
-from src.constants.order_status import OrderStatus
+from src.constants import order_status
 
 ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP = {
-    OrderStatus.NEW_ORDER: 1000,
-    OrderStatus.CANCELLED: 1000,
-    OrderStatus.IN_PROCESS: 1000,
-    OrderStatus.COMPLETED: 1000,
+    order_status.OrderStatus.NEW_ORDER: 1000,
+    order_status.OrderStatus.CANCELLED: 1000,
+    order_status.OrderStatus.IN_PROCESS: 1000,
+    order_status.OrderStatus.COMPLETED: 1000,
 }
 
 
 class OrderManager:
     def __init__(self):
         self._order_status_to_order_queue_map = {
-            OrderStatus.NEW_ORDER: PriorityQueue(
-                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
+            order_status.OrderStatus.NEW_ORDER: queue.PriorityQueue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                    order_status.OrderStatus.NEW_ORDER
+                ]
             ),
-            OrderStatus.IN_PROCESS: PriorityQueue(
-                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.IN_PROCESS]
+            order_status.OrderStatus.IN_PROCESS: queue.PriorityQueue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                    order_status.OrderStatus.IN_PROCESS
+                ]
             ),
-            OrderStatus.CANCELLED: PriorityQueue(
-                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.CANCELLED]
+            order_status.OrderStatus.CANCELLED: queue.PriorityQueue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                    order_status.OrderStatus.CANCELLED
+                ]
             ),
-            OrderStatus.COMPLETED: PriorityQueue(
-                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.COMPLETED]
+            order_status.OrderStatus.COMPLETED: queue.PriorityQueue(
+                maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[
+                    order_status.OrderStatus.COMPLETED
+                ]
             ),
         }
 
@@ -48,7 +55,10 @@ class OrderManager:
 
     def clean_queues_with_full_storage(self, limit_value_before_clean=500):
 
-        for status in [OrderStatus.COMPLETED, OrderStatus.CANCELLED]:
+        for status in [
+            order_status.OrderStatus.COMPLETED,
+            order_status.OrderStatus.CANCELLED,
+        ]:
             if self.get_queue_size(status) > limit_value_before_clean:
                 for _ in range(100):
                     deque_id = self.get_queue_from_status(status)

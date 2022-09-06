@@ -1,10 +1,10 @@
 # Interface for the repositories through Abstract method
 from abc import ABCMeta
 
-from src.lib.repositories.generic_repository import GenericRepository
+from src.lib.repositories import generic_repository
 
 
-class OrderRepository(GenericRepository, metaclass=ABCMeta):
+class OrderRepository(generic_repository.GenericRepository, metaclass=ABCMeta):
     @staticmethod
     def get_orders_by_status(order_status, order_limit=None):
         pass

@@ -1,7 +1,7 @@
 # This file has the product_ingredient repository
 from datetime import datetime
 
-from src.constants.audit import Status
+from src.constants import audit
 from src.lib.repositories.product_ingredient_repository import \
     ProductIngredientRepository
 
@@ -24,7 +24,7 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
         product_ingredient_filtered = list(
             filter(
                 lambda product_ingredient: product_ingredient.entity_status
-                == Status.ACTIVE,
+                == audit.Status.ACTIVE,
                 [product_ingredient_to_return],
             )
         )
@@ -34,14 +34,14 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
         product_ingredients = list(self._product_ingredients.values())
         product_ingredients_filtered = filter(
             lambda product_ingredient: product_ingredient.entity_status
-            == Status.ACTIVE,
+            == audit.Status.ACTIVE,
             product_ingredients,
         )
         return list(product_ingredients_filtered)
 
     def delete_by_id(self, product_ingredient_id, product_ingredient):
         product_ingredient_to_be_delete = self.get_by_id(product_ingredient_id)
-        product_ingredient_to_be_delete.entity_status = Status.DELETED
+        product_ingredient_to_be_delete.entity_status = audit.Status.DELETED
         product_ingredient_to_be_delete.updated_date = datetime.now()
         product_ingredient_to_be_delete.updated_by = product_ingredient.updated_by
         self._update_by_id(

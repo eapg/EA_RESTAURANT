@@ -1,18 +1,17 @@
 # thread manager
 
-from src.core.engine.app_engine_processor_context import \
-    AppEngineProcessorContext
-from src.core.engine.app_processor_config import AppProcessorConfig
-from src.core.engine.processors.kitchen_simulator import KitchenSimulator
+from src.core.engine import app_engine_processor_context
+from src.core.engine import app_processor_config
+from src.core.engine.processors import kitchen_simulator
 
 
 class AppEngineProcessor:
     def __init__(self):
-        kitchen_simulator_config = AppProcessorConfig("kitchen_simulator_test", 0.2)
-        kitchen_simulator = KitchenSimulator(kitchen_simulator_config)
-        self.app_context = AppEngineProcessorContext(processors=[kitchen_simulator])
+        kitchen_simulator_config = app_processor_config.AppProcessorConfig("kitchen_simulator_test", 0.2)
+        kitchen_simulator_instance = kitchen_simulator.KitchenSimulator(kitchen_simulator_config)
+        self.app_context = app_engine_processor_context.AppEngineProcessorContext(processors=[kitchen_simulator_instance])
 
-        kitchen_simulator.app_context = self.app_context
+        kitchen_simulator_instance.app_context = self.app_context
 
     # method to Start thread process
     def start(self):

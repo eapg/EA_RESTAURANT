@@ -1,8 +1,8 @@
-from src.lib.entities.abstract_entity import AbstractEntity
-from src.utils.utils import equals
+from src.lib.entities import abstract_entity
+from src.utils import utils
 
 
-class User(AbstractEntity):
+class User(abstract_entity.AbstractEntity):
     def __init__(self):
 
         self.name = None
@@ -13,4 +13,4 @@ class User(AbstractEntity):
         self.type = None
 
     def __eq__(self, other):
-        return equals(self, other)
+        return utils.equals(self, other)

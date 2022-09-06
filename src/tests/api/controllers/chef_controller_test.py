@@ -1,25 +1,25 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.chef_controller import ChefController
-from src.constants.audit import Status
-from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
+from src.api.controllers import chef_controller
+from src.constants import audit
+from src.tests.utils.fixtures import chef_fixture
 
 
 class ChefRepositoryControllerTestCase(unittest.TestCase):
     def setUp(self):
         self.chef_repository = mock.Mock()
-        self.chef_controller = ChefController(self.chef_repository)
+        self.chef_controller = chef_controller.ChefController(self.chef_repository)
 
     def test_add_chef_successfully(self):
-        chef = build_chef()
+        chef = chef_fixture.build_chef()
 
         self.chef_controller.add(chef)
 
         self.chef_repository.add.assert_called_with(chef)
 
     def test_get_chef_successfully(self):
-        chef = build_chef()
+        chef = chef_fixture.build_chef()
 
         self.chef_repository.get_by_id.return_value = chef
 
@@ -29,7 +29,7 @@ class ChefRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(expected_chef.id, chef.id)
 
     def test_get_all_chefs_successfully(self):
-        chefs = build_chefs(count=3)
+        chefs = chef_fixture.build_chefs(count=3)
 
         self.chef_repository.get_all.return_value = chefs
 
@@ -40,20 +40,20 @@ class ChefRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_chefs), 3)
 
     def test_delete_an_chef_successfully(self):
-        chef_to_delete = build_chef(entity_status=Status.DELETED)
+        chef_to_delete = chef_fixture.build_chef(entity_status=audit.Status.DELETED)
         self.chef_controller.delete_by_id(2, chef_to_delete)
 
         self.chef_repository.delete_by_id.assert_called_with(2, chef_to_delete)
 
     def test_update_an_chef_successfully(self):
-        chef = build_chef()
+        chef = chef_fixture.build_chef()
 
         self.chef_controller.update_by_id(1, chef)
 
         self.chef_repository.update_by_id.assert_called_with(1, chef)
 
     def test_get_available_chefs_successfully(self):
-        available_chefs = build_chefs(3)
+        available_chefs = chef_fixture.build_chefs(3)
 
         self.chef_repository.get_available_chefs.return_value = available_chefs
 

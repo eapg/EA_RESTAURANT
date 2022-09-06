@@ -1,18 +1,18 @@
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
-from src.lib.entities.sqlalchemy_orm_mapping import ProductIngredient
-from src.lib.repositories.product_ingredient_repository import (
-    ProductIngredientRepository,
-)
+from src.constants import audit
+from src.core import ioc
+from src.lib.entities import sqlalchemy_orm_mapping
+from src.lib.repositories import product_ingredient_repository
 
 
-class ProductIngredientRepositoryImpl(ProductIngredientRepository):
+class ProductIngredientRepositoryImpl(
+    product_ingredient_repository.ProductIngredientRepository
+):
     def __init__(self):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        ioc_instance = ioc.get_ioc_instance()
+        self.session = ioc_instance.get_instance("sqlalchemy_session")
 
     def add(self, product_ingredient):
         with self.session.begin():
@@ -23,35 +23,45 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
 
     def get_by_id(self, product_ingredient_id):
         return (
-            self.session.query(ProductIngredient)
-            .filter(ProductIngredient.id == product_ingredient_id)
-            .filter(ProductIngredient.entity_status == Status.ACTIVE.value)
+            self.session.query(sqlalchemy_orm_mapping.ProductIngredient)
+            .filter(
+                sqlalchemy_orm_mapping.ProductIngredient.id == product_ingredient_id
+            )
+            .filter(
+                sqlalchemy_orm_mapping.ProductIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
             .first()
         )
 
     def get_all(self):
-        product_ingredients = self.session.query(ProductIngredient).filter(
-            ProductIngredient.entity_status == Status.ACTIVE.value
+        product_ingredients = self.session.query(
+            sqlalchemy_orm_mapping.ProductIngredient
+        ).filter(
+            sqlalchemy_orm_mapping.ProductIngredient.entity_status
+            == audit.Status.ACTIVE.value
         )
         return list(product_ingredients)
 
     def delete_by_id(self, product_ingredient_id, product_ingredient):
         with self.session.begin():
-            self.session.query(ProductIngredient).filter(
-                ProductIngredient.id == product_ingredient_id
+            self.session.query(sqlalchemy_orm_mapping.ProductIngredient).filter(
+                sqlalchemy_orm_mapping.ProductIngredient.id == product_ingredient_id
             ).update(
                 {
-                    ProductIngredient.entity_status: Status.DELETED.value,
-                    ProductIngredient.updated_date: datetime.now(),
-                    ProductIngredient.updated_by: product_ingredient.updated_by,
+                    sqlalchemy_orm_mapping.ProductIngredient.entity_status: audit.Status.DELETED.value,
+                    sqlalchemy_orm_mapping.ProductIngredient.updated_date: datetime.now(),
+                    sqlalchemy_orm_mapping.ProductIngredient.updated_by: product_ingredient.updated_by,
                 }
             )
 
     def update_by_id(self, product_ingredient_id, product_ingredient):
         with self.session.begin():
             product_ingredient_to_be_updated = (
-                self.session.query(ProductIngredient)
-                .filter(ProductIngredient.id == product_ingredient_id)
+                self.session.query(sqlalchemy_orm_mapping.ProductIngredient)
+                .filter(
+                    sqlalchemy_orm_mapping.ProductIngredient.id == product_ingredient_id
+                )
                 .first()
             )
             product_ingredient_to_be_updated.user_id = (
@@ -66,9 +76,12 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
 
     def get_by_product_id(self, product_id):
         product_ingredients = (
-            self.session.query(ProductIngredient)
-            .filter(ProductIngredient.entity_status == Status.ACTIVE.value)
-            .filter(ProductIngredient.product_id == product_id)
+            self.session.query(sqlalchemy_orm_mapping.ProductIngredient)
+            .filter(
+                sqlalchemy_orm_mapping.ProductIngredient.entity_status
+                == audit.Status.ACTIVE.value
+            )
+            .filter(sqlalchemy_orm_mapping.ProductIngredient.product_id == product_id)
         )
         return list(product_ingredients)
 

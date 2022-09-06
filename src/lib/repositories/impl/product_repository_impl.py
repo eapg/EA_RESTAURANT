@@ -1,11 +1,11 @@
 # This file has the product repository
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.repositories.product_repository import ProductRepository
+from src.constants import audit
+from src.lib.repositories import product_repository
 
 
-class ProductRepositoryImpl(ProductRepository):
+class ProductRepositoryImpl(product_repository.ProductRepository):
     def __init__(self):
         self._products = {}
         self._current_id = 1
@@ -22,7 +22,7 @@ class ProductRepositoryImpl(ProductRepository):
         product_to_return = self._products[product_id]
         product_filtered = list(
             filter(
-                lambda product: product.entity_status == Status.ACTIVE,
+                lambda product: product.entity_status == audit.Status.ACTIVE,
                 [product_to_return],
             )
         )
@@ -31,13 +31,15 @@ class ProductRepositoryImpl(ProductRepository):
     def get_all(self):
         products = list(self._products.values())
         products_filtered = list(
-            filter(lambda product: product.entity_status == Status.ACTIVE, products)
+            filter(
+                lambda product: product.entity_status == audit.Status.ACTIVE, products
+            )
         )
         return list(products_filtered)
 
     def delete_by_id(self, product_id, product):
         product_to_be_delete = self.get_by_id(product_id)
-        product_to_be_delete.entity_status = Status.DELETED
+        product_to_be_delete.entity_status = audit.Status.DELETED
         product_to_be_delete.updated_date = datetime.now()
         product_to_be_delete.updated_by = product.updated_by
         self._update_by_id(

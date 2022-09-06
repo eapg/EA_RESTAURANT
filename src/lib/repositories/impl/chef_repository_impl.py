@@ -1,11 +1,11 @@
 # This file has the chef repository
 from datetime import datetime
 
-from src.constants.audit import Status
-from src.lib.repositories.chef_repository import ChefRepository
+from src.constants import audit
+from src.lib.repositories import chef_repository
 
 
-class ChefRepositoryImpl(ChefRepository):
+class ChefRepositoryImpl(chef_repository.ChefRepository):
     def __init__(self, order_repository=None):
         self._chefs = {}
         self._current_id = 1
@@ -23,7 +23,7 @@ class ChefRepositoryImpl(ChefRepository):
         chef_to_return = self._chefs[chef_id]
         chef_filtered = list(
             filter(
-                lambda chef: chef.entity_status == Status.ACTIVE,
+                lambda chef: chef.entity_status == audit.Status.ACTIVE,
                 [chef_to_return],
             )
         )
@@ -31,12 +31,14 @@ class ChefRepositoryImpl(ChefRepository):
 
     def get_all(self):
         chefs = list(self._chefs.values())
-        chefs_filtered = filter(lambda chef: chef.entity_status == Status.ACTIVE, chefs)
+        chefs_filtered = filter(
+            lambda chef: chef.entity_status == audit.Status.ACTIVE, chefs
+        )
         return list(chefs_filtered)
 
     def delete_by_id(self, chef_id, chef):
         chef_to_be_delete = self.get_by_id(chef_id)
-        chef_to_be_delete.entity_status = Status.DELETED
+        chef_to_be_delete.entity_status = audit.Status.DELETED
         chef_to_be_delete.updated_date = datetime.now()
         chef_to_be_delete.updated_by = chef.updated_by
         self._update_by_id(chef_id, chef_to_be_delete, use_merge_with_existing=False)
