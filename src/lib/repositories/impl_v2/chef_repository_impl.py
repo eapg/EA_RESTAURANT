@@ -2,16 +2,14 @@ from datetime import datetime
 from sqlalchemy import not_
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
-from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import Chef, Order
 from src.lib.repositories.chef_repository import ChefRepository
 
 
 class ChefRepositoryImpl(ChefRepository):
-    def __init__(self):
+    def __init__(self, session):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        self.session = session
 
     def add(self, chef):
 
