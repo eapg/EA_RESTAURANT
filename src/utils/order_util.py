@@ -1,6 +1,8 @@
 # reducer function to get assigned chef map
 from functools import reduce
 
+from src.constants.cooking_type import CookingType
+
 
 def array_chef_to_chef_assigned_orders_map_reducer(
     chef_with_assigned_orders_result, chef_id, orders
@@ -88,7 +90,7 @@ def compute_order_estimated_time(order_ingredient_list, chef):
 
     order_estimated_time = reduce(
         lambda estimated_time_result, product_ingredient: estimated_time_result
-        + (product_ingredient.ingredient_type.value * product_ingredient.quantity),
+        + (CookingType[product_ingredient.cooking_type].value * product_ingredient.quantity),
         order_ingredient_list,
         0,
     )

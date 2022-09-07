@@ -18,6 +18,7 @@ class AbstractProcessor(Thread):
         pass
 
     def run(self):
+
         if self.app_processor_config.on_start:
             self.app_processor_config.on_start(
                 self.app_processor_config, self.app_context
