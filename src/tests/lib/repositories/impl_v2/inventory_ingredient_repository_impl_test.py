@@ -23,7 +23,9 @@ from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
 
 class InventoryIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
+        self.inventory_ingredient_repository = InventoryIngredientRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_inventory_ingredient_successfully(self):
         inventory_ingredient_1 = build_inventory_ingredient()

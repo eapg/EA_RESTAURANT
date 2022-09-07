@@ -18,7 +18,9 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.inventory_repository = InventoryRepositoryImpl()
+        self.inventory_repository = InventoryRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_inventory_successfully(self):
         inventory_1 = build_inventory(

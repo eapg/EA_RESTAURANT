@@ -1,16 +1,14 @@
 from datetime import datetime
 
 from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import Product
 from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
-    def __init__(self):
+    def __init__(self, session):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        self.session = session
 
     def add(self, product):
         with self.session.begin():

@@ -17,7 +17,9 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class OrderDetailRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_detail_repository = OrderDetailRepositoryImpl()
+        self.order_detail_repository = OrderDetailRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_order_detail_successfully(self):
         order_detail_1 = build_order_detail()

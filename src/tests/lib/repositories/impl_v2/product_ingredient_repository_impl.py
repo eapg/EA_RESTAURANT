@@ -17,7 +17,9 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class ProductIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.product_ingredient_repository = ProductIngredientRepositoryImpl()
+        self.product_ingredient_repository = ProductIngredientRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_product_ingredient_successfully(self):
         product_ingredient_1 = build_product_ingredient()

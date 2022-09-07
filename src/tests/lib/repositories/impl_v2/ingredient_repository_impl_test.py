@@ -17,7 +17,9 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
 
 class IngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.ingredient_repository = IngredientRepositoryImpl()
+        self.ingredient_repository = IngredientRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_ingredient_successfully(self):
         ingredient_1 = build_ingredient(
