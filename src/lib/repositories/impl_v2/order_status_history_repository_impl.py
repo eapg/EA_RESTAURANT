@@ -1,8 +1,6 @@
 from datetime import datetime
 from src.constants.audit import Status
 from sqlalchemy.sql import func
-
-from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
@@ -10,10 +8,9 @@ from src.lib.repositories.order_status_history_repository import (
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
-    def __init__(self):
+    def __init__(self, session):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        self.session = session
 
     def add(self, order_status_history):
         with self.session.begin():

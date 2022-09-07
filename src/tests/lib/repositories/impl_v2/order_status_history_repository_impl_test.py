@@ -18,7 +18,9 @@ from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
 
 class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_status_history_repository = OrderStatusHistoryRepositoryImpl()
+        self.order_status_history_repository = OrderStatusHistoryRepositoryImpl(
+            self.mocked_sqlalchemy_session
+        )
 
     def test_add_order_status_history_successfully(self):
         order_status_history_1 = build_order_status_history()

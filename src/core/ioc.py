@@ -3,33 +3,41 @@
 from src.api.controllers.chef_controller import ChefController
 from src.api.controllers.ingredient_controller import IngredientController
 from src.api.controllers.inventory_controller import InventoryController
-from src.api.controllers.inventory_ingredient_controller import \
-    InventoryIngredientController
+from src.api.controllers.inventory_ingredient_controller import (
+    InventoryIngredientController,
+)
 from src.api.controllers.order_controller import OrderController
 from src.api.controllers.order_detail_controller import OrderDetailController
-from src.api.controllers.order_status_history_controller import \
-    OrderStatusHistoryController
+from src.api.controllers.order_status_history_controller import (
+    OrderStatusHistoryController,
+)
 from src.api.controllers.product_controller import ProductController
-from src.api.controllers.product_ingredient_controller import \
-    ProductIngredientController
+from src.api.controllers.product_ingredient_controller import (
+    ProductIngredientController,
+)
 from src.core.order_manager import OrderManager
 from src.core.sqlalchemy_config import create_session
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
-from src.lib.repositories.impl.ingredient_repository_impl import \
-    IngredientRepositoryImpl
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
-    InventoryIngredientRepositoryImpl
-from src.lib.repositories.impl.inventory_repository_impl import \
-    InventoryRepositoryImpl
-from src.lib.repositories.impl.order_detail_repository_impl import \
-    OrderDetailRepositoryImpl
-from src.lib.repositories.impl.order_repository_impl import OrderRepositoryImpl
-from src.lib.repositories.impl.order_status_history_repository_impl import \
-    OrderStatusHistoryRepositoryImpl
-from src.lib.repositories.impl.product_ingredient_repository_impl import \
-    ProductIngredientRepositoryImpl
-from src.lib.repositories.impl.product_repository_impl import \
-    ProductRepositoryImpl
+from src.lib.repositories.impl_v2.ingredient_repository_impl import (
+    IngredientRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.inventory_ingredient_repository_impl import (
+    InventoryIngredientRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.inventory_repository_impl import (
+    InventoryRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.order_detail_repository_impl import (
+    OrderDetailRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
+from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
+    ProductIngredientRepositoryImpl,
+)
+from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
 
 
 def init_sqlalchemy_session(ioc_instance):
@@ -41,26 +49,33 @@ def init_order_manager(ioc_instance):
 
 
 def init_repositories(ioc_instance):
-    ioc_instance["product_ingredient_repository"] = ProductIngredientRepositoryImpl()
-    ioc_instance["product_repository"] = ProductRepositoryImpl()
-    ioc_instance["ingredient_repository"] = IngredientRepositoryImpl()
+    ioc_instance["product_ingredient_repository"] = ProductIngredientRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
+    ioc_instance["product_repository"] = ProductRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
+    ioc_instance["ingredient_repository"] = IngredientRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
     ioc_instance["inventory_ingredient_repository"] = InventoryIngredientRepositoryImpl(
-        ioc_instance["product_ingredient_repository"]
+        ioc_instance["sqlalchemy_session"]
     )
-    ioc_instance["order_detail_repository"] = OrderDetailRepositoryImpl()
-    ioc_instance["inventory_repository"] = InventoryRepositoryImpl()
+    ioc_instance["order_detail_repository"] = OrderDetailRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
+    ioc_instance["inventory_repository"] = InventoryRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
     ioc_instance["order_repository"] = OrderRepositoryImpl(
-        ioc_instance["order_detail_repository"],
-        ioc_instance["product_ingredient_repository"],
-        ioc_instance["inventory_ingredient_repository"],
+        ioc_instance["sqlalchemy_session"]
     )
-
-    ioc_instance["chef_repository"] = ChefRepositoryImpl(ioc_instance["sqlalchemy_session"])
     ioc_instance["chef_repository"] = ChefRepositoryImpl(
-        ioc_instance["order_repository"]
+        ioc_instance["sqlalchemy_session"]
     )
-
-    ioc_instance["order_status_history_repository"] = OrderStatusHistoryRepositoryImpl()
+    ioc_instance["order_status_history_repository"] = OrderStatusHistoryRepositoryImpl(
+        ioc_instance["sqlalchemy_session"]
+    )
 
 
 def init_controllers(ioc_instance):

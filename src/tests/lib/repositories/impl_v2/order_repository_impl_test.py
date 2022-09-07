@@ -22,7 +22,7 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_repository = OrderRepositoryImpl()
+        self.order_repository = OrderRepositoryImpl(self.mocked_sqlalchemy_session)
 
     def test_add_order_successfully(self):
         order_1 = build_order()

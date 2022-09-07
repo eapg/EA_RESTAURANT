@@ -12,7 +12,7 @@ from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.product_repository = ProductRepositoryImpl()
+        self.product_repository = ProductRepositoryImpl(self.mocked_sqlalchemy_session)
 
     def test_add_product_successfully(self):
         product_1 = build_product(

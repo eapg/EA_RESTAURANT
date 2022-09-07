@@ -1,15 +1,13 @@
 from datetime import datetime
 from src.constants.audit import Status
-from src.core.ioc import get_ioc_instance
 from src.lib.entities.sqlalchemy_orm_mapping import Inventory
 from src.lib.repositories.inventory_repository import InventoryRepository
 
 
 class InventoryRepositoryImpl(InventoryRepository):
-    def __init__(self):
+    def __init__(self, session):
 
-        ioc = get_ioc_instance()
-        self.session = ioc.get_instance("sqlalchemy_session")
+        self.session = session
 
     def add(self, inventory):
         with self.session.begin():
