@@ -204,70 +204,56 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
         self.assertEqual(order_status_histories_returned, [order_status_history_1])
 
     @mock.patch(
-        "src.lib.repositories.impl_v2.order_status_history_repository_impl.func"
+        "src.lib.repositories.impl_v2.order_status_history_repository_impl.desc"
     )
-    def test_set_next_status_history_by_order_id(self, mocked_func):
+    def test_set_next_status_history_by_order_id(self, mocked_desc):
         order_1 = Order()
         order_1.id = 3
 
         order_status_history_to_return = build_order_status_history(order_id=order_1.id)
 
-        query_last_order_status_id = (
-            QueryMock().query().first(return_value=(3,))
-        ).get_mocked_query()
-
         query_last_order_status_history = (
-            QueryMock()
+            QueryMock(self.mocked_sqlalchemy_session)
             .query()
             .filter()
-            .filter()
-            .filter()
-            .first(return_value=order_status_history_to_return)
-        ).get_mocked_query()
-
-        def mock_query_side_effect(t):
-            return (
-                query_last_order_status_id.return_value
-                if t == mocked_func.max()
-                else query_last_order_status_history.return_value
-            )
-
-        QueryMock(self.mocked_sqlalchemy_session).query(
-            side_effect_fn=mock_query_side_effect
+            .order_by()
+            .limit()
+            .all(return_value=order_status_history_to_return)
+            .get_mocked_query()
         )
 
         self.order_status_history_repository.set_next_status_history_by_order_id(
             order_1.id, OrderStatus.CANCELLED.name
         )
 
-        self.assertEqual(
-            query_last_order_status_history.return_value.filter.mock_calls[0]
-            .args[0]
-            .left.key,
-            "entity_status",
-        )
+        query_last_order_status_history.assert_called_with(OrderStatusHistory)
 
         self.assertEqual(
             query_last_order_status_history.return_value.filter.mock_calls[0]
             .args[0]
             .right.value,
-            Status.ACTIVE.value,
+            order_1.id,
         )
 
         self.assertEqual(
-            query_last_order_status_history.return_value.filter.return_value.filter.mock_calls[
-                0
-            ]
+            query_last_order_status_history.return_value.filter.mock_calls[0]
             .args[0]
             .left,
             OrderStatusHistory.order_id,
         )
-
         self.assertEqual(
-            query_last_order_status_history.return_value.filter.return_value.filter.mock_calls[
+            query_last_order_status_history.return_value.filter.return_value.order_by.mock_calls[
                 0
-            ]
-            .args[0]
-            .right.value,
-            order_1.id,
+            ].args[
+                0
+            ],
+            mocked_desc(),
+        )
+        self.assertEqual(
+            query_last_order_status_history.return_value.filter.return_value.order_by.return_value.limit.mock_calls[
+                0
+            ].args[
+                0
+            ],
+            1,
         )

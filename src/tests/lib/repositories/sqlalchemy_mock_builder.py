@@ -102,6 +102,15 @@ class QueryOperationsMock:
         self.current_mock = mocked_join.join
         return self
 
+    def order_by(self, return_value=None, side_effect_fn=None):
+        mocked_order_by = mock.Mock()
+        self.current_mock.return_value = mocked_order_by
+        mocked_order_by.order_by = mock.Mock()
+        mocked_order_by.order_by.return_value = return_value or mocked_order_by.order_by.return_value
+        mocked_order_by.order_by.side_effect = side_effect_fn or mocked_order_by.order_by.side_effect
+        self.current_mock = mocked_order_by.order_by
+        return self
+
     def get_mocked_query(self):
         return self.mocked_query
 
