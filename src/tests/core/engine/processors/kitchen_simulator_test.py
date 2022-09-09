@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 from unittest import mock
-
+from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
 from src.constants.cooking_type import CookingType
 from src.constants.order_status import OrderStatus
 from src.core.engine.processors.kitchen_simulator import KitchenSimulator
@@ -32,14 +32,14 @@ class KitchenSimulatorTest(unittest.TestCase):
     ):
 
         chef_1 = build_chef(chef_id=1)
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER.name)
 
         self.kitchen_simulator.order_controller.get_orders_by_status.return_value = [
             order_1
         ]
         self.kitchen_simulator.order_controller.get_order_ingredients_by_order_id.return_value = [
             build_product_ingredient(
-                product_ingredient_id=1, quantity=1, ingredient_type=CookingType.FRYING
+                product_ingredient_id=1, quantity=1, cooking_type=CookingType.FRYING.name
             )
         ]
         self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [
@@ -54,7 +54,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         )
         self.kitchen_simulator.process_new_orders()
         self.kitchen_simulator.order_controller.get_orders_by_status.assert_called_with(
-            OrderStatus.NEW_ORDER, order_limit=1000
+            OrderStatus.NEW_ORDER.name, order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
         )
         self.kitchen_simulator.order_controller.get_validated_orders_map.assert_called_with(
             [order_1]
@@ -62,18 +62,18 @@ class KitchenSimulatorTest(unittest.TestCase):
 
         self.kitchen_simulator.chef_controller.get_available_chefs.assert_called()
         self.kitchen_simulator.order_manager.get_queue_from_status.assert_called_with(
-            OrderStatus.NEW_ORDER
+            OrderStatus.NEW_ORDER.name
         )
         arg_with_method_was_called = (
             self.kitchen_simulator.order_manager._mock_mock_calls[1][1]
         )
-        self.assertEqual(arg_with_method_was_called[0].status, OrderStatus.IN_PROCESS)
+        self.assertEqual(arg_with_method_was_called[0].status, OrderStatus.IN_PROCESS.name)
         mocked_order_estimated_time.asser_called_with(
             [
                 build_product_ingredient(
                     product_ingredient_id=1,
                     quantity=1,
-                    ingredient_type=CookingType.FRYING,
+                    cooking_type=CookingType.FRYING.name,
                 )
             ],
             chef_1,
@@ -84,7 +84,7 @@ class KitchenSimulatorTest(unittest.TestCase):
 
     def test_assign_orders_to_available_chefs_when_order_is_not_valid(self):
         chef_1 = build_chef(chef_id=1)
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER.name)
 
         self.kitchen_simulator.order_controller.get_orders_by_status.return_value = [
             order_1
@@ -100,19 +100,19 @@ class KitchenSimulatorTest(unittest.TestCase):
         )
         self.kitchen_simulator.process_new_orders()
         self.kitchen_simulator.order_controller.get_orders_by_status.assert_called_with(
-            OrderStatus.NEW_ORDER, order_limit=1000
+            OrderStatus.NEW_ORDER.name, order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
         )
         self.kitchen_simulator.order_controller.get_validated_orders_map.assert_called_with(
             [order_1]
         )
         self.kitchen_simulator.chef_controller.get_available_chefs.assert_called()
         self.kitchen_simulator.order_manager.get_queue_from_status.assert_called_with(
-            OrderStatus.NEW_ORDER
+            OrderStatus.NEW_ORDER.name
         )
         arg_with_method_was_called = (
             self.kitchen_simulator.order_manager._mock_mock_calls[1][1]
         )
-        self.assertEqual(arg_with_method_was_called[0].status, OrderStatus.CANCELLED)
+        self.assertEqual(arg_with_method_was_called[0].status, OrderStatus.CANCELLED.name)
 
     @mock.patch(
         "src.core.engine.processors.kitchen_simulator.compute_order_estimated_time",
@@ -127,7 +127,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         )
         self.kitchen_simulator.order_controller.get_order_ingredients_by_order_id.return_value = [
             build_product_ingredient(
-                product_ingredient_id=1, quantity=1, ingredient_type=CookingType.FRYING
+                product_ingredient_id=1, quantity=1, cooking_type=CookingType.FRYING.name
             )
         ]
         order_1 = build_order(order_id=1, status=OrderStatus.IN_PROCESS)
@@ -145,7 +145,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         )
         self.kitchen_simulator.process_orders_in_process()
         self.kitchen_simulator.order_manager.get_queue_from_status.assert_called_with(
-            OrderStatus.IN_PROCESS
+            OrderStatus.IN_PROCESS.name
         )
         self.kitchen_simulator.order_controller.get_by_id.assert_called_with(order_1.id)
         self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_called_with(
@@ -155,13 +155,13 @@ class KitchenSimulatorTest(unittest.TestCase):
         arg_with_method_was_call = (
             self.kitchen_simulator.order_manager.add_to_queue.mock_calls[0][1]
         )
-        self.assertEqual(arg_with_method_was_call[0].status, OrderStatus.COMPLETED)
+        self.assertEqual(arg_with_method_was_call[0].status, OrderStatus.COMPLETED.name)
         mocked_compute_order_estimated_time.assert_called_with(
             [
                 build_product_ingredient(
                     product_ingredient_id=1,
                     quantity=1,
-                    ingredient_type=CookingType.FRYING,
+                    cooking_type=CookingType.FRYING.name,
                 )
             ],
             build_chef(chef_id=1),

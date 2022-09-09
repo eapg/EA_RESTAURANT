@@ -60,7 +60,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
             ingredient_id=ingredient_1.id,
             product_id=product_1.id,
             quantity=6,
-            ingredient_type=CookingType.FRYING,
+            cooking_type=CookingType.FRYING.name,
         )
 
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
@@ -155,7 +155,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
             ingredient_id=ingredient_2.id,
             product_id=product_2.id,
             quantity=1,
-            ingredient_type=CookingType.FRYING,
+            cooking_type=CookingType.FRYING,
         )
 
         order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)

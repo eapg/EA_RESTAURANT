@@ -7,7 +7,7 @@ def build_product_ingredient(
     product_id=None,
     ingredient_id=None,
     quantity=None,
-    ingredient_type=None,
+    cooking_type=None,
     entity_status=None,
     create_by=None,
 ):
@@ -16,7 +16,7 @@ def build_product_ingredient(
     product_ingredient.product_id = product_id
     product_ingredient.ingredient_id = ingredient_id
     product_ingredient.quantity = quantity
-    product_ingredient.ingredient_type = ingredient_type
+    product_ingredient.cooking_type = cooking_type
     product_ingredient.entity_status = entity_status or Status.ACTIVE
     product_ingredient.create_by = create_by
     return product_ingredient

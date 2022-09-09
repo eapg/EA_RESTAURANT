@@ -554,28 +554,64 @@ BEGIN
        order_status:='NEW_ORDER',
     order_created_by:=1
   ); 
- 
-  CALL insert_order_with_defaults(
-       order_status:='NEW_ORDER',
-    order_created_by:=1
-  ); 
- 
-  CALL insert_order_with_defaults(
-       order_status:='NEW_ORDER',
-    order_created_by:=1
-  ); 
- 
-  CALL insert_order_with_defaults(
-       order_status:='NEW_ORDER',
-    order_created_by:=1
-  ); 
+
+  CALL insert_order_status_history_with_defaults(
+    order_status_history_order_id:=1,
+        order_status_history_to_time:=NULL ,
+    order_status_history_from_status:='NEW_ORDER',
+      order_status_history_to_status:=NULL
+  );
  
   CALL insert_order_with_defaults(
        order_status:='NEW_ORDER',
     order_created_by:=1
   );
  
-
+  CALL insert_order_status_history_with_defaults(
+    order_status_history_order_id:=2,
+        order_status_history_to_time:=NULL ,
+    order_status_history_from_status:='NEW_ORDER',
+      order_status_history_to_status:=NULL
+  );
+ 
+  CALL insert_order_with_defaults(
+       order_status:='NEW_ORDER',
+    order_created_by:=1
+  );
+  
+  CALL insert_order_status_history_with_defaults(
+    order_status_history_order_id:=3,
+        order_status_history_to_time:=NULL ,
+    order_status_history_from_status:='NEW_ORDER',
+      order_status_history_to_status:=NULL
+  );
+ 
+  CALL insert_order_with_defaults(
+       order_status:='NEW_ORDER',
+    order_created_by:=1
+  );
+ 
+  CALL insert_order_status_history_with_defaults(
+    order_status_history_order_id:=4,
+        order_status_history_to_time:=NULL ,
+    order_status_history_from_status:='NEW_ORDER',
+      order_status_history_to_status:=NULL
+  );
+  
+ 
+  CALL insert_order_with_defaults(
+       order_status:='NEW_ORDER',
+    order_created_by:=1
+  );
+ 
+  CALL insert_order_status_history_with_defaults(
+    order_status_history_order_id:=5,
+        order_status_history_to_time:=NULL ,
+    order_status_history_from_status:='NEW_ORDER',
+      order_status_history_to_status:=NULL
+  );
+  
+ 
   CALL insert_order_detail_with_defaults(
       order_detail_order_id:=1,
     order_detail_product_id:=1,

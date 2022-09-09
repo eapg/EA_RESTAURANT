@@ -9,7 +9,7 @@ class ProductIngredient(AbstractEntity):
         self.product_id = None  # integer
         self.ingredient_id = None  # integer
         self.quantity = None  # integer
-        self.ingredient_type = None  # string
+        self.cooking_type = None  # string
 
     def __eq__(self, other):
         return equals(self, other)
