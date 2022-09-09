@@ -95,4 +95,4 @@ def compute_order_estimated_time(order_ingredient_list, chef):
         0,
     )
 
-    return order_estimated_time / chef.chef_skills
+    return order_estimated_time / chef.skill
