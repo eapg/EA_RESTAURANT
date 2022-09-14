@@ -15,6 +15,7 @@ from src.api.controllers.product_controller import ProductController
 from src.api.controllers.product_ingredient_controller import (
     ProductIngredientController,
 )
+from src.core.mongo_engine_config import mongo_engine_connection
 from src.core.order_manager import OrderManager
 from src.core.sqlalchemy_config import create_session
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
@@ -38,6 +39,10 @@ from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
     ProductIngredientRepositoryImpl,
 )
 from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
+
+
+def init_mongo_engine_connection(ioc_instance):
+    ioc_instance["mongo_engine_connection"] = mongo_engine_connection()
 
 
 def init_sqlalchemy_session(ioc_instance):
@@ -107,6 +112,7 @@ def init_controllers(ioc_instance):
 class Ioc:
     def __init__(self):
         self._ioc_instance = {}
+        init_mongo_engine_connection(self._ioc_instance)
         init_sqlalchemy_session(self._ioc_instance)
         init_order_manager(self._ioc_instance)
         init_repositories(self._ioc_instance)
