@@ -26,3 +26,4 @@ typing_extensions==4.2.0
 userpath==1.7.0
 wincertstore==0.2
 wrapt==1.14.0
+mongoengine==0.24.2
