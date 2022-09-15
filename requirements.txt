@@ -27,3 +27,4 @@ userpath==1.7.0
 wincertstore==0.2
 wrapt==1.14.0
 mongoengine==0.24.2
+mongomock==4.1.2
