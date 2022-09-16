@@ -38,5 +38,5 @@ class OrderStatusHistoryController:
             order_id, new_status
         )
 
-    def set_batch_processed(self, order_status_history_ids):
-        self.set_batch_processed(order_status_history_ids)
+    def update_batch_to_processed(self, order_status_history_ids):
+        self.update_batch_to_processed(order_status_history_ids)

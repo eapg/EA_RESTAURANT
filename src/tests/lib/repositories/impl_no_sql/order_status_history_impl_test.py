@@ -1,6 +1,6 @@
 from unittest import mock
 
-from src.constants.audit import Status
+from src.constants.audit import Status, InternalUsers
 from src.constants.order_status import OrderStatus
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
@@ -134,11 +134,14 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
         mocked_save.assert_called_with()
         self.assertEqual(len(mocked_save.mock_calls), 3)
 
+    @mock.patch(
+        "src.lib.repositories.impl_no_sql.order_status_history_repository_impl.datetime"
+    )
     @mock.patch("pymongo.collection.Collection.update_many")
-    def test_update_batch_processed(self, mocked_update_many):
+    def test_update_batch_processed(self, mocked_update_many, mocked_datetime):
         postgresql_ids = [1, 2]
 
-        self.order_status_history_repository.update_batch_processed(postgresql_ids)
+        self.order_status_history_repository.update_batch_to_processed(postgresql_ids)
 
         self.assertEqual(
             mocked_update_many.mock_calls[0].args[0],
@@ -147,5 +150,11 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
 
         self.assertEqual(
             mocked_update_many.mock_calls[0].args[1],
-            {"$set": {"etl_status": "PROCESSED"}},
+            {
+                "$set": {
+                    "etl_status": "PROCESSED",
+                    "updated_date": mocked_datetime.now(),
+                    "updated_by": InternalUsers.ETL.value,
+                }
+            },
         )

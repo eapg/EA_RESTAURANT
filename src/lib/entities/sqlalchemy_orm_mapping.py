@@ -136,6 +136,7 @@ class OrderStatusHistory(AbstractEntity, OrderStatusHistoryBase):
     __tablename__ = "order_status_histories"
 
     id = Column(Integer(), primary_key=True, nullable=False)
+    mongo_order_status_history_uuid = Column(String(length=50))
     order_id = Column(
         Integer(), ForeignKey("orders.id", ondelete="CASCADE"), nullable=False
     )
