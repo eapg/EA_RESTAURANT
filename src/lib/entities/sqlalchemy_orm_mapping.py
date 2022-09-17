@@ -161,6 +161,7 @@ class OrderStatusHistory(AbstractEntity, OrderStatusHistoryBase):
             create_type=False,
         )
     )
+    etl_status = Column(String(length=50))
     order = None
 
 
