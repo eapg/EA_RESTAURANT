@@ -1,13 +1,18 @@
 from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 
 from src.constants.audit import Status
-from sqlalchemy.sql import func
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
 )
+
+sql_query_to_update_etl_status = """
+          UPDATE order_status_histories
+            SET etl_status = 'PROCESSED'
+            WHERE  id in order_status_history_ids  
+"""
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
@@ -92,10 +97,10 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
     def get_last_status_history_by_order_id(self, order_id):
         last_status_history_by_order_id = (
             self.session.query(OrderStatusHistory)
-                .filter(OrderStatusHistory.order_id == order_id)
-                .order_by(desc(OrderStatusHistory.from_time))
-                .limit(1)
-                .all()
+            .filter(OrderStatusHistory.order_id == order_id)
+            .order_by(desc(OrderStatusHistory.from_time))
+            .limit(1)
+            .all()
         )
 
         return last_status_history_by_order_id[0]
@@ -104,10 +109,10 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         with self.session.begin():
             last_order_status_history = (
                 self.session.query(OrderStatusHistory)
-                    .filter(OrderStatusHistory.order_id == order_id)
-                    .order_by(desc(OrderStatusHistory.from_time))
-                    .limit(1)
-                    .all()
+                .filter(OrderStatusHistory.order_id == order_id)
+                .order_by(desc(OrderStatusHistory.from_time))
+                .limit(1)
+                .all()
             )
 
             if last_order_status_history:
@@ -124,3 +129,12 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             new_status_history.updated_by = new_status_history.created_by
             self.session.add(new_status_history)
 
+    def set_batch_processed(self, order_status_history_ids):
+        engine = self.session.get_bind()
+
+        with engine.begin() as conn:
+
+            conn.execute(
+                text(sql_query_to_update_etl_status),
+                {"order_status_history_ids": order_status_history_ids},
+            )
