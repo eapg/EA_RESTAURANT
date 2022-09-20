@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from mongoengine import connect
+from pymongo import MongoClient
 from src.constants.audit import Status, InternalUsers
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
@@ -10,6 +12,7 @@ from src.lib.repositories.order_status_history_repository import (
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
     def __init__(self, mongo_engine_connection):
         self.mongo_engine_connection = mongo_engine_connection
+        self.mongo_client = MongoClient("mongodb://localhost")
 
     def add(self, order_status_history):
         order_status_history.created_date = datetime.now()
@@ -98,3 +101,12 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         new_status_history.created_by = InternalUsers.KITCHEN_SIMULATOR.value
         new_status_history.updated_by = new_status_history.created_by
         new_status_history.save()
+
+    def update_batch_processed(self, order_status_history_ids):
+
+        db = self.mongo_client["ea_restaurant"]
+        collection = db["order_status_histories"]
+        collection.update_many(
+            {"_id": {"$in": order_status_history_ids}},
+            {"$set": {"etl_status": "PROCESSED"}},
+        )

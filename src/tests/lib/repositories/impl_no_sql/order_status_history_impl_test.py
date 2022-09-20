@@ -133,3 +133,19 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
         )
         mocked_save.assert_called_with()
         self.assertEqual(len(mocked_save.mock_calls), 3)
+
+    @mock.patch("pymongo.collection.Collection.update_many")
+    def test_update_batch_processed(self, mocked_update_many):
+        postgresql_ids = [1, 2]
+
+        self.order_status_history_repository.update_batch_processed(postgresql_ids)
+
+        self.assertEqual(
+            mocked_update_many.mock_calls[0].args[0],
+            {"_id": {"$in": postgresql_ids}},
+        )
+
+        self.assertEqual(
+            mocked_update_many.mock_calls[0].args[1],
+            {"$set": {"etl_status": "PROCESSED"}},
+        )
