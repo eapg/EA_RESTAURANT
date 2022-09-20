@@ -37,3 +37,6 @@ class OrderStatusHistoryController:
         self._order_status_history_repository.set_next_status_history_by_order_id(
             order_id, new_status
         )
+
+    def set_batch_processed(self, order_status_history_ids):
+        self.set_batch_processed(order_status_history_ids)
