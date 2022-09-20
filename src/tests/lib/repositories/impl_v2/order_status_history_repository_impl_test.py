@@ -273,5 +273,5 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
 
         self.assertEqual(
             self.mocked_sqlalchemy_session.mock_calls[3].args[1],
-            {"order_status_history_uuids": mongo_uuids},
+            {"order_status_history_ids": mongo_uuids},
         )
