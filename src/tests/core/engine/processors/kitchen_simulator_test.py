@@ -22,7 +22,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_manager = mock.Mock()
         self.kitchen_simulator.chef_controller = mock.Mock()
         self.kitchen_simulator.order_controller = mock.Mock()
-        self.kitchen_simulator.order_status_history_controller = mock.Mock()
+        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock()
 
     @mock.patch(
         "src.core.engine.processors.kitchen_simulator.compute_order_estimated_time"
@@ -140,7 +140,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         )
         self.kitchen_simulator.order_manager.get_queue_from_status.return_value = 1
         self.kitchen_simulator.order_controller.get_by_id.return_value = order_1
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.return_value = (
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.return_value = (
             order_status_history
         )
         self.kitchen_simulator.process_orders_in_process()
@@ -148,7 +148,7 @@ class KitchenSimulatorTest(unittest.TestCase):
             OrderStatus.IN_PROCESS.name
         )
         self.kitchen_simulator.order_controller.get_by_id.assert_called_with(order_1.id)
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_called_with(
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.assert_called_with(
             order_1.id
         )
 

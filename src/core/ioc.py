@@ -40,6 +40,10 @@ from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
 )
 from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
 
+from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepositoryImpl,
+)
+
 
 def init_mongo_engine_connection(ioc_instance):
     ioc_instance["mongo_engine_connection"] = mongo_engine_connection()
@@ -83,6 +87,12 @@ def init_repositories(ioc_instance):
     )
 
 
+def init_mongo_repositories(ioc_instance):
+    ioc_instance[
+        "mongo_order_status_history_repository"
+    ] = MongoOrderStatusHistoryRepositoryImpl(ioc_instance["mongo_engine_connection"])
+
+
 def init_controllers(ioc_instance):
     ioc_instance["product_ingredient_controller"] = ProductIngredientController(
         ioc_instance["product_ingredient_repository"]
@@ -109,6 +119,14 @@ def init_controllers(ioc_instance):
     )
 
 
+def init_mongo_controllers(ioc_instance):
+    ioc_instance[
+        "mongo_order_status_history_controller"
+    ] = OrderStatusHistoryController(
+        ioc_instance["mongo_order_status_history_repository"]
+    )
+
+
 class Ioc:
     def __init__(self):
         self._ioc_instance = {}
@@ -117,6 +135,8 @@ class Ioc:
         init_order_manager(self._ioc_instance)
         init_repositories(self._ioc_instance)
         init_controllers(self._ioc_instance)
+        init_mongo_repositories(self._ioc_instance)
+        init_mongo_controllers(self._ioc_instance)
 
     def get_instance(self, instance_id):
         return self._ioc_instance[instance_id]

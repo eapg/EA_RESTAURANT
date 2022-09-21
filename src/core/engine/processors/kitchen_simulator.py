@@ -48,14 +48,14 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self._process_clean_queues_timeout = 60  # seconds
         self.order_manager = None
         self.chef_controller = None
-        self.order_status_history_controller = None
+        self.mongo_order_status_history_controller = None
         self.order_controller = None
 
     def set_app_context(self, app_context):
         ioc = app_context.ioc
         self.order_controller = ioc.get_instance("order_controller")
-        self.order_status_history_controller = ioc.get_instance(
-            "order_status_history_controller"
+        self.mongo_order_status_history_controller = ioc.get_instance(
+            "mongo_order_status_history_controller"
         )
         self.chef_controller = ioc.get_instance("chef_controller")
         self.order_manager = self.app_processor_config.order_manager
@@ -108,7 +108,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             order_to_be_checked = self.order_controller.get_by_id(
                 order_id_to_be_checked
             )
-            last_order_status_history = self.order_status_history_controller.get_last_status_history_by_order_id(
+            last_order_status_history = self.mongo_order_status_history_controller.get_last_status_history_by_order_id(
                 order_id_to_be_checked
             )
             chef_assigned = self.chef_controller.get_by_id(
@@ -153,7 +153,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         )
         order_to_be_assign.update_by = InternalUsers.KITCHEN_SIMULATOR
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
         )
         self.order_manager.add_to_queue(order_to_be_assign)
@@ -162,7 +162,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def _order_send_to_cancel(self, order_to_be_cancel):
         order_to_be_cancel.status = OrderStatus.CANCELLED.name
         self.order_controller.update_by_id(order_to_be_cancel.id, order_to_be_cancel)
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_cancel.id, order_to_be_cancel.status
         )
         self.order_manager.add_to_queue(order_to_be_cancel)
@@ -173,7 +173,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self.order_controller.update_by_id(
             order_to_be_complete.id, order_to_be_complete
         )
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_complete.id, order_to_be_complete.status
         )
         self.order_manager.add_to_queue(order_to_be_complete)

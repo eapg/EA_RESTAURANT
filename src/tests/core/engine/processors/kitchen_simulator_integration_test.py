@@ -42,8 +42,8 @@ class KitchenSimulatorIntegrationTest(TestCase):
         self.kitchen_simulator.order_controller = mock.Mock(
             wraps=self.kitchen_simulator.order_controller
         )
-        self.kitchen_simulator.order_status_history_controller = mock.Mock(
-            wraps=self.kitchen_simulator.order_status_history_controller
+        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock(
+            wraps=self.kitchen_simulator.mongo_order_status_history_controller
         )
 
     def test_assign_orders_to_available_chefs(self):
@@ -64,7 +64,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
 
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_1.id, order_1.status
         )
         self.kitchen_simulator.order_controller.add(order_1)
@@ -74,7 +74,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_2.id, order_2.status
         )
         self.kitchen_simulator.order_controller.add(order_2)
@@ -159,7 +159,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
 
         order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_3.id, order_3.status
         )
         self.kitchen_simulator.order_controller.add(order_3)
@@ -169,7 +169,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_4.id, order_4.status
         )
         self.kitchen_simulator.order_controller.add(order_4)
@@ -212,6 +212,6 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         order_3_complete = self.kitchen_simulator.order_controller.get_by_id(order_3.id)
         order_4_complete = self.kitchen_simulator.order_controller.get_by_id(order_4.id)
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
             [mock.call(order_3.id), mock.call(order_4.id)]
         )
