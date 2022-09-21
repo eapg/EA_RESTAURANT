@@ -52,8 +52,8 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         self.kitchen_simulator.order_controller = mock.Mock(
             wraps=self.kitchen_simulator.order_controller
         )
-        self.kitchen_simulator.order_status_history_controller = mock.Mock(
-            wraps=self.kitchen_simulator.order_status_history_controller
+        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock(
+            wraps=self.kitchen_simulator.mongo_order_status_history_controller
         )
 
     def test_assign_orders_to_available_chefs(self):
@@ -75,7 +75,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         )
 
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_1.id, order_1.status
         )
         self.kitchen_simulator.order_controller.add(order_1)
@@ -85,7 +85,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_2.id, order_2.status
         )
         self.kitchen_simulator.order_controller.add(order_2)
@@ -172,7 +172,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         )
 
         order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_3.id, order_3.status
         )
         self.kitchen_simulator.order_controller.add(order_3)
@@ -182,7 +182,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_4.id, order_4.status
         )
         self.kitchen_simulator.order_controller.add(order_4)
@@ -209,7 +209,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         order_3.status = OrderStatus.COMPLETED
         self.kitchen_simulator.order_controller.get_by_id.return_value = order_3
         last_order_status_history = build_order_status_history(from_time=datetime.now())
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.return_value = (
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.return_value = (
             last_order_status_history
         )
         self.kitchen_simulator.order_manager.get_queue_from_status.return_value = (
@@ -238,6 +238,6 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
 
         order_3_complete = self.kitchen_simulator.order_controller.get_by_id(order_3.id)
 
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
             [mock.call(order_3.id)]
         )
