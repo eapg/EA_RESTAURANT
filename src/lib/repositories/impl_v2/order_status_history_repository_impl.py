@@ -11,7 +11,7 @@ from src.lib.repositories.order_status_history_repository import (
 sql_query_to_update_etl_status = """
           UPDATE order_status_histories
             SET etl_status = 'PROCESSED'
-            WHERE  id in order_status_history_ids  
+            WHERE  id in :order_status_history_ids 
 """
 
 
@@ -129,12 +129,13 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             new_status_history.updated_by = new_status_history.created_by
             self.session.add(new_status_history)
 
-    def set_batch_processed(self, order_status_history_ids):
+    def update_batch_processed(self, order_status_history_ids):
         engine = self.session.get_bind()
 
         with engine.begin() as conn:
 
             conn.execute(
-                text(sql_query_to_update_etl_status),
-                {"order_status_history_ids": order_status_history_ids},
+                text(sql_query_to_update_etl_status).bindparams(
+                    order_status_history_ids=tuple(order_status_history_ids)
+                )
             )
