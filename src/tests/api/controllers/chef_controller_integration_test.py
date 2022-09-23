@@ -118,7 +118,7 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.chef_repository.update_by_id.assert_called_once_with(2, chef_to_update)
 
         self.assertEqual(len(chefs), 2)
-        self.assertEqual(updated_chef.chef_skills, chef_to_update.chef_skills)
+        self.assertEqual(updated_chef.skill, chef_to_update.skill)
 
     def test_get_available_chefs_from_repository_using_controller(self):
 

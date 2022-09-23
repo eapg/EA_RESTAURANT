@@ -15,10 +15,10 @@ from src.utils.inventory_ingredient_util import (
 def get_inventory_ingredient_by_ingredient_id_mock(ingredient_id):
 
     inventory_ingredient_1 = build_inventory_ingredient(
-        inventory_ingredient_id=1, ingredient_id=1, ingredient_quantity=20
+        inventory_ingredient_id=1, ingredient_id=1, quantity=20
     )
     inventory_ingredient_2 = build_inventory_ingredient(
-        inventory_ingredient_id=2, ingredient_id=2, ingredient_quantity=30
+        inventory_ingredient_id=2, ingredient_id=2, quantity=30
     )
     inventory_ingredients = {1: inventory_ingredient_1, 2: inventory_ingredient_2}
     return [inventory_ingredients[ingredient_id]]
@@ -42,7 +42,7 @@ class TestInventoryIngredient(unittest.TestCase):
             product_ingredient_id=1, ingredient_id=ingredient.id, quantity=2
         )
         inventory_ingredient = build_inventory_ingredient(
-            inventory_ingredient_id=1, ingredient_id=1, ingredient_quantity=20
+            inventory_ingredient_id=1, ingredient_id=1, quantity=20
         )
 
         quantity_ingredients_to_prepare_product = (
@@ -58,7 +58,7 @@ class TestInventoryIngredient(unittest.TestCase):
             product_ingredient_id=1, ingredient_id=ingredient.id, quantity=2
         )
         inventory_ingredient = build_inventory_ingredient(
-            inventory_ingredient_id=1, ingredient_id=1, ingredient_quantity=20
+            inventory_ingredient_id=1, ingredient_id=1, quantity=20
         )
 
         quantity_ingredients_to_prepare_product = (

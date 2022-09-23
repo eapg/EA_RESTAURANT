@@ -257,21 +257,3 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
             ],
             1,
         )
-
-    @mock.patch(
-        "src.lib.repositories.impl_v2.order_status_history_repository_impl.text"
-    )
-    def test_set_batch_processed_successfully(self, mocked_text):
-
-        mongo_uuids = ["63222a6ef4126578a0df35ef", "63222e46d25ef4c305ebc943"]
-
-        self.order_status_history_repository.set_batch_processed(mongo_uuids)
-
-        self.assertEqual(
-            self.mocked_sqlalchemy_session.mock_calls[3].args[0], mocked_text()
-        )
-
-        self.assertEqual(
-            self.mocked_sqlalchemy_session.mock_calls[3].args[1],
-            {"order_status_history_ids": mongo_uuids},
-        )

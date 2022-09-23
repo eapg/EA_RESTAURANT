@@ -116,7 +116,7 @@ class OrderRepositoryImpl(OrderRepository):
                 )
             )
             inventory_ingredient[0].ingredient_quantity = (
-                inventory_ingredient[0].ingredient_quantity
+                inventory_ingredient[0].quantity
                 - product_ingredient.quantity
             )
             self.inventory_ingredient_repository.update_by_id(

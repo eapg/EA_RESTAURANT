@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase, mock
 
 from src.constants.cooking_type import CookingType
@@ -20,6 +21,7 @@ from src.tests.utils.fixtures.product_ingredient_fixture import \
 ITERATIONS = 0
 
 
+@unittest.skip("Deprecated - Refer to version v2")
 class KitchenSimulatorIntegrationTest(TestCase):
     def setUp(self):
 
@@ -52,7 +54,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
             ingredient_id=ingredient_1.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         product_1 = build_product(product_id=1, name="fries potatoes")
         product_ingredient_1 = build_product_ingredient(
@@ -147,7 +149,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         inventory_ingredient_2 = build_inventory_ingredient(
             inventory_ingredient_id=2,
             ingredient_id=ingredient_2.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         product_2 = build_product(product_id=2, name="fries potatoes")
         product_ingredient_2 = build_product_ingredient(
