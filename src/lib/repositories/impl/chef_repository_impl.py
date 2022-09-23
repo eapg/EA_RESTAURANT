@@ -47,7 +47,7 @@ class ChefRepositoryImpl(ChefRepository):
     def _update_by_id(self, chef_id, chef, use_merge_with_existing=True):
         current_chef = self.get_by_id(chef_id) if use_merge_with_existing else chef
         current_chef.name = chef.name or current_chef.name
-        current_chef.chef_skills = chef.chef_skills or current_chef.chef_skills
+        current_chef.skill = chef.skill or current_chef.skill
         current_chef.updated_date = datetime.now()
         current_chef.updated_by = chef.updated_by or current_chef.updated_by
         current_chef.entity_status = chef.entity_status or current_chef.entity_status

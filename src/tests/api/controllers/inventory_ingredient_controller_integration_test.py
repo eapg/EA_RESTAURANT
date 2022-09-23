@@ -129,7 +129,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[1])
 
         inventory_ingredient_to_update = build_inventory_ingredient(
-            ingredient_quantity=2
+            quantity=2
         )
 
         self.inventory_ingredient_controller.update_by_id(
@@ -144,14 +144,14 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
 
         self.assertEqual(len(inventory_ingredients), 2)
         self.assertEqual(
-            updated_inventory_ingredient.ingredient_quantity,
-            inventory_ingredient_to_update.ingredient_quantity,
+            updated_inventory_ingredient.quantity,
+            inventory_ingredient_to_update.quantity,
         )
 
     def test_get_by_ingredient_id_from_repository_using_controller(self):
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient_id=ingredient_1.id, ingredient_quantity=10
+            ingredient_id=ingredient_1.id, quantity=10
         )
         inventory_ingredient_2 = build_inventory_ingredient()
 
@@ -173,7 +173,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(unittest.TestCa
         inventory_ingredient_1 = build_inventory_ingredient(
             ingredient_id=ingredient_1.id,
             inventory_id=inventory_1.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         self.inventory_ingredient_controller.add(inventory_ingredient_1)
         self.inventory_ingredient_controller.validate_ingredient_availability(

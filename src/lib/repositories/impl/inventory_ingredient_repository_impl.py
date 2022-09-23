@@ -78,9 +78,9 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredient.ingredient_id
             or current_inventory_ingredient.ingredient_id
         )
-        current_inventory_ingredient.ingredient_quantity = (
-            inventory_ingredient.ingredient_quantity
-            or current_inventory_ingredient.ingredient_quantity
+        current_inventory_ingredient.quantity = (
+            inventory_ingredient.quantity
+            or current_inventory_ingredient.quantity
         )
         current_inventory_ingredient.updated_date = datetime.now()
         current_inventory_ingredient.updated_by = (
@@ -116,7 +116,7 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
                 inventory_ingredients,
             )
         )
-        if ingredient_to_validate[0].ingredient_quantity > quantity_to_use:
+        if ingredient_to_validate[0].quantity > quantity_to_use:
             return True
         return False
 

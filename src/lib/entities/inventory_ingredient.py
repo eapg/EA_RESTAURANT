@@ -9,7 +9,7 @@ class InventoryIngredient(AbstractEntity):
         self.id = None  # integer
         self.ingredient_id = None  # integer
         self.inventory_id = None  # integer
-        self.ingredient_quantity = None  # integer
+        self.quantity = None  # integer
 
     def __eq__(self, other):
         return equals(self, other)

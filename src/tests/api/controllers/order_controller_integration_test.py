@@ -212,7 +212,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
             ingredient_id=ingredient_1.id,
-            ingredient_quantity=20,
+            quantity=20,
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
@@ -255,7 +255,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
             ingredient_id=ingredient_1.id,
-            ingredient_quantity=20,
+            quantity=20,
         )
         self.inventory_ingredient_repository.add(inventory_ingredient_1)
 
@@ -266,7 +266,7 @@ class OrderRepositoryControllerIntegrationTestCase(unittest.TestCase):
             product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
-            ingredient_type=CookingType.FRYING,
+            cooking_type=CookingType.FRYING,
             quantity=10,
         )
         order_detail_1 = build_order_detail(

@@ -2,15 +2,18 @@ import unittest
 from unittest import mock
 
 from src.core.engine.app_engine_processor import AppEngineProcessor
+from src.core.order_manager import OrderManager
 from src.tests.utils.fixtures.app_processor_config_fixture import \
     build_app_processor_config
 from src.tests.utils.fixtures.kitchen_simulator_fixture import \
     build_kitchen_simulator_running_once
 
 
+@unittest.skip("Deprecated - refer to version v2")
 class TestAppEngineProcessor(unittest.TestCase):
     def setUp(self):
         self.app_processor_config = build_app_processor_config()
+        self.app_processor_config.order_manager = OrderManager()
         self.app_processor_config_patch = mock.patch(
             "src.core.engine.app_engine_processor.AppProcessorConfig",
             return_value=self.app_processor_config,
@@ -30,7 +33,8 @@ class TestAppEngineProcessor(unittest.TestCase):
 
     def test_engine_app_context(self):
         app_engine_processor = AppEngineProcessor()
-        self.assertEqual(len(app_engine_processor.app_context.processors), 1)
+        self.kitchen_simulator.set_app_context(app_engine_processor.app_context)
+        self.assertEqual(len(app_engine_processor.app_context.processors), 2)
         self.assertEqual(
             app_engine_processor.app_context.processors[
                 0

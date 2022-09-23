@@ -1,8 +1,10 @@
+import unittest
 from unittest import TestCase, mock
 
 from src.core.engine.app_engine_processor import AppEngineProcessor
 
 
+@unittest.skip("skipped")
 class AppEngineProcessorIntegrationTest(TestCase):
     def test_process_run(self):
         app_engine_processor = AppEngineProcessor()

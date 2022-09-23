@@ -70,9 +70,9 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
         current_product_ingredient.quantity = (
             product_ingredient.quantity or current_product_ingredient.quantity
         )
-        current_product_ingredient.ingredient_type = (
-            product_ingredient.ingredient_type
-            or current_product_ingredient.ingredient_type
+        current_product_ingredient.cooking_type = (
+            product_ingredient.cooking_type
+            or current_product_ingredient.cooking_type
         )
 
     def get_by_product_id(self, product_id):
