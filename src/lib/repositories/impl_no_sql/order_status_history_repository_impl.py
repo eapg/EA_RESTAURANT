@@ -118,3 +118,6 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
                 }
             },
         )
+
+    def get_last_order_status_histories_by_order_ids(self, order_id):
+        pass

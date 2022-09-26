@@ -1,6 +1,7 @@
-
+import unittest
 from unittest import mock
 
+from src.constants.audit import InternalUsers
 from src.constants.etl_status import EtlStatus
 from src.lib.entities.mongo_engine_odm_mapping import (
     OrderStatusHistory as MongoOrderStatusHistory,
@@ -73,7 +74,13 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
             mock.call(mongo_order_status_history_2),
         )
 
-    def test_load_data_successfully(self):
+    @mock.patch(
+        "src.core.engine.processors.mongo_to_postgresql_order_status_history.update_last_order_status_history"
+    )
+    def test_load_data_successfully(self, mocked_update_last_order_status_history):
+        last_order_status_history_1 = build_order_status_history()
+        last_order_status_history_2 = build_order_status_history()
+
         self.mongo_to_postgres_etl.extract_data = mock.Mock()
 
         self.mongo_to_postgres_etl.transform_data = mock.Mock()
@@ -88,6 +95,11 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
             "632b1cbdd411e2e0c2ac80e7"
         )
 
+        self.mongo_to_postgres_etl.order_status_history_controller.get_last_order_status_histories_by_order_ids.return_value = [
+            last_order_status_history_1,
+            last_order_status_history_2,
+        ]
+
         self.mongo_to_postgres_etl.transform_data.return_value = [
             order_status_history_1,
             order_status_history_2,
@@ -99,7 +111,14 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         self.mongo_to_postgres_etl.app_processor_config.after_execute = after_execute
 
         self.mongo_to_postgres_etl.start()
-
+        mocked_update_last_order_status_history.assert_called_with(
+            [last_order_status_history_1, last_order_status_history_2],
+            [
+                order_status_history_1,
+                order_status_history_2,
+            ],
+            InternalUsers.ETL.value,
+        )
         self.mongo_to_postgres_etl.order_status_history_controller.add.has_called_with(
             [mock.call(order_status_history_1), mock.call(order_status_history_2)]
         )
