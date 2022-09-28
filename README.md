@@ -56,6 +56,12 @@ Download and install the following tools:
 This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
 run `python -m unittest discover --pattern=*_test.py`
 
+This project is using [coverage](https://coverage.readthedocs.io/en/latest/index.html) for coverage. To run test
+coverage just run the commands:
+* coverage run: `coverage run -m unittest discover --pattern=*test.py`
+* coverage report: `coverage report --include='src/tests/*'`
+* coverage html report: `coverage html --include='src/tests/*'`
+
 ### Linter and Formatter
 
 This project is using:
