@@ -45,5 +45,6 @@ repos:
         entry: python -m unittest discover --pattern=*_test.py
         language: system
         types: [python]
+        pass_filenames: false
         stages: [commit]
-        always_run: True
+
