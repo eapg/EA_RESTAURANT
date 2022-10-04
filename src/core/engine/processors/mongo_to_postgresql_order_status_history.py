@@ -1,5 +1,6 @@
 from bson import ObjectId
 
+from src.constants.audit import InternalUsers
 from src.constants.etl_status import EtlStatus
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl
 from src.lib.entities.mongo_engine_odm_mapping import (
@@ -8,10 +9,10 @@ from src.lib.entities.mongo_engine_odm_mapping import (
 from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderStatusHistory as SqlalchemyOrderStatusHistory,
 )
-
 from src.utils.etl_util import (
     convert_mongo_order_status_history_to_postgres_order_status_history,
 )
+from src.utils.order_status_history_util import update_last_order_status_history
 
 """
 This class MongoToPostgresqlOrderStatusHistory is an etl between mongo and postgres. It will migrate the data store 
@@ -65,12 +66,32 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
         return transformed_data
 
     def load_data(self, transformed_data):
-        mongo_uuids = []
+        mongo_uuids = [
+            ObjectId(order_status_history.mongo_order_status_history_uuid)
+            for order_status_history in transformed_data
+        ]
+        order_ids = [
+            order_status_history_1.order_id
+            for order_status_history_1 in transformed_data
+        ]
 
-        for postgres_order_status_history in transformed_data:
-            mongo_uuids.append(
-                ObjectId(postgres_order_status_history.mongo_order_status_history_uuid)
+        last_order_status_histories = self.order_status_history_controller.get_last_order_status_histories_by_order_ids(
+            order_ids
+        )
+
+        if last_order_status_histories:
+
+            updated_last_order_status_histories = update_last_order_status_history(
+                last_order_status_histories, transformed_data, InternalUsers.ETL.value
             )
-            self.order_status_history_controller.add(postgres_order_status_history)
+            self.order_status_history_controller.insert_new_or_updated_batch_order_status_histories(
+                updated_last_order_status_histories
+            )
 
-        self.mongo_order_status_history_controller.update_batch_to_processed(mongo_uuids)
+        self.order_status_history_controller.insert_new_or_updated_batch_order_status_histories(
+            transformed_data
+        )
+
+        self.mongo_order_status_history_controller.update_batch_to_processed(
+            mongo_uuids
+        )

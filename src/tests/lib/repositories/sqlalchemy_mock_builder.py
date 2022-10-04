@@ -106,8 +106,12 @@ class QueryOperationsMock:
         mocked_order_by = mock.Mock()
         self.current_mock.return_value = mocked_order_by
         mocked_order_by.order_by = mock.Mock()
-        mocked_order_by.order_by.return_value = return_value or mocked_order_by.order_by.return_value
-        mocked_order_by.order_by.side_effect = side_effect_fn or mocked_order_by.order_by.side_effect
+        mocked_order_by.order_by.return_value = (
+            return_value or mocked_order_by.order_by.return_value
+        )
+        mocked_order_by.order_by.side_effect = (
+            side_effect_fn or mocked_order_by.order_by.side_effect
+        )
         self.current_mock = mocked_order_by.order_by
         return self
 
@@ -127,3 +131,11 @@ class QueryMock:
         self.current_mock.query = mocked_query
         self.current_mock = mocked_query
         return QueryOperationsMock(mocked_query)
+
+    def scalars(self, return_value=None, side_effect_fn=None):
+        mocked_scalars = mock.Mock()
+        mocked_scalars.return_value = return_value or mocked_scalars.return_value
+        mocked_scalars.side_effect = side_effect_fn or mocked_scalars.side_effect
+        self.current_mock.scalars = mocked_scalars
+        self.current_mock = mocked_scalars
+        return QueryOperationsMock(mocked_scalars)

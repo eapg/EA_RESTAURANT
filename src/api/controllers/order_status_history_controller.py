@@ -40,3 +40,15 @@ class OrderStatusHistoryController:
 
     def update_batch_to_processed(self, order_status_history_ids):
         self.update_batch_to_processed(order_status_history_ids)
+
+    def last_order_status_histories_by_order_ids(self, order_ids):
+        return self._order_status_history_repository.get_last_order_status_histories_by_order_ids(
+            self, order_ids
+        )
+
+    def insert_new_or_updated_batch_order_status_histories(
+        self, order_status_histories
+    ):
+        self._order_status_history_repository.insert_new_or_updated_batch_order_status_histories(
+            order_status_histories
+        )

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import desc, text
+from sqlalchemy import desc, select, text
 
 from src.constants.audit import Status
 from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory
@@ -8,10 +8,23 @@ from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
 )
 
-sql_query_to_update_etl_status = """
+SQL_QUERY_TO_UPDATE_ETL_STATUS = """
           UPDATE order_status_histories
-            SET etl_status = 'PROCESSED'
-            WHERE  id in :order_status_history_ids 
+             SET etl_status = 'PROCESSED'
+           WHERE  id in :order_status_history_ids 
+"""
+
+SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS = """
+        WITH latest_order_status_histories_cte AS (
+          SELECT osh.order_id, max(osh.from_time) AS max_from_time
+            FROM order_status_histories osh
+           WHERE osh.order_id IN :order_ids AND osh.entity_status = 'ACTIVE'
+           GROUP BY osh.order_id
+        )
+            SELECT osh.*
+              FROM order_status_histories AS osh
+        INNER JOIN latest_order_status_histories_cte loshcte
+                ON loshcte.order_id = osh.order_id AND loshcte.max_from_time = osh.from_time
 """
 
 
@@ -94,16 +107,20 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         )
         return list(order_status_histories)
 
-    def get_last_status_history_by_order_id(self, order_id):
-        last_status_history_by_order_id = (
-            self.session.query(OrderStatusHistory)
-            .filter(OrderStatusHistory.order_id == order_id)
-            .order_by(desc(OrderStatusHistory.from_time))
-            .limit(1)
-            .all()
-        )
+    def get_last_order_status_histories_by_order_ids(self, order_ids):
+        order_status_histories = []
 
-        return last_status_history_by_order_id[0]
+        with self.session.begin():
+            sql_text = text(
+                SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS
+            ).bindparams(order_ids=tuple(order_ids))
+            order_status_histories.extend(
+                self.session.scalars(
+                    select(OrderStatusHistory).from_statement(sql_text)
+                ).all()
+            )
+
+        return order_status_histories
 
     def set_next_status_history_by_order_id(self, order_id, new_status):
         with self.session.begin():
@@ -135,7 +152,16 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         with engine.begin() as conn:
 
             conn.execute(
-                text(sql_query_to_update_etl_status).bindparams(
+                text(SQL_QUERY_TO_UPDATE_ETL_STATUS).bindparams(
                     order_status_history_ids=tuple(order_status_history_ids)
                 )
             )
+
+    def insert_new_or_updated_batch_order_status_histories(
+        self, order_status_histories
+    ):
+        with self.session.begin():
+            self.session.bulk_save_objects(order_status_histories)
+
+    def get_last_status_history_by_order_id(self, order_id):
+        pass

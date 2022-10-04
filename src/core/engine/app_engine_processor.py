@@ -31,7 +31,7 @@ class AppEngineProcessor:
         )
         kitchen_simulator = KitchenSimulator(kitchen_simulator_config)
         self.app_context = AppEngineProcessorContext(
-            processors=[kitchen_simulator, mongo_to_postgres_etl], ioc=ioc
+            processors=[mongo_to_postgres_etl, kitchen_simulator], ioc=ioc
         )
 
         kitchen_simulator.set_app_context(self.app_context)

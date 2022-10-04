@@ -1,10 +1,8 @@
-from time import sleep
 from unittest import mock
 
 from src.constants.etl_status import EtlStatus
-from src.lib.entities.mongo_engine_odm_mapping import (
-    OrderStatusHistory as MongoOrderStatusHistory,
-)
+from src.constants.order_status import OrderStatus
+
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
 from src.tests.utils.fixtures.app_engine_processor_context_fixture import (
     build_app_engine_processor_context,
@@ -104,6 +102,7 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
 
         order_status_history = build_order_status_history()
         order_status_history.id = 5
+        order_status_history.from_status = OrderStatus.NEW_ORDER.name
         self.mongo_to_postgres_etl.extract_data.return_value = [
             mongo_order_status_history_1
         ]

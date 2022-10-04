@@ -2,17 +2,18 @@ from unittest import mock
 
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
-from src.lib.entities.sqlalchemy_orm_mapping import OrderStatusHistory, Order
-from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_order_status_history,
-    build_order_status_histories,
-)
+from src.lib.entities.sqlalchemy_orm_mapping import Order, OrderStatusHistory
 from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
+    SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS,
 )
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
+)
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_order_status_histories,
+    build_order_status_history,
 )
 
 
@@ -256,4 +257,56 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
                 0
             ],
             1,
+        )
+
+    @mock.patch(
+        "src.lib.repositories.impl_v2.order_status_history_repository_impl.text"
+    )
+    @mock.patch(
+        "src.lib.repositories.impl_v2.order_status_history_repository_impl.select"
+    )
+    def test_get_last_order_status_histories_by_order_ids(
+        self, mocked_select, mocked_text
+    ):
+        last_order_status_history_1 = build_order_status_history(order_id=1)
+        last_order_status_history_2 = build_order_status_history(order_id=2)
+
+        query_mock = (
+            QueryMock(self.mocked_sqlalchemy_session)
+            .scalars()
+            .all(
+                return_value=[last_order_status_history_1, last_order_status_history_2]
+            )
+            .get_mocked_query()
+        )
+
+        order_ids = [1, 2]
+
+        last_order_status_histories = self.order_status_history_repository.get_last_order_status_histories_by_order_ids(
+            order_ids
+        )
+
+        mocked_text.assert_called_with(
+            SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS
+        )
+        mocked_select.assert_called_with(OrderStatusHistory)
+        mocked_select().from_statement.assert_called_with(mocked_text().bindparams())
+
+        self.assertEqual(
+            last_order_status_histories,
+            [last_order_status_history_1, last_order_status_history_2],
+        )
+
+    def test_insert_new_or_updated_batch_order_status_histories(self):
+        order_status_history_1 = build_order_status_history()
+        order_status_history_1.order_id = 2
+        order_status_history_2 = build_order_status_history()
+        order_status_history_2.order_id = 2
+
+        self.order_status_history_repository.insert_new_or_updated_batch_order_status_histories(
+            [order_status_history_1, order_status_history_2]
+        )
+
+        self.mocked_sqlalchemy_session.bulk_save_objects.assert_called_with(
+            [order_status_history_1, order_status_history_2]
         )
