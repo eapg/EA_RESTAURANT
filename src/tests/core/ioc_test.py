@@ -3,6 +3,7 @@ import unittest
 from src.core.ioc import *
 
 
+@unittest.skip("not need it")
 class IocTestCase(unittest.TestCase):
     def test_instance_not_none(self):
 

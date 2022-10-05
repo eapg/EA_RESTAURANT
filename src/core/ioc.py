@@ -18,6 +18,9 @@ from src.api.controllers.product_ingredient_controller import (
 from src.core.mongo_engine_config import mongo_engine_connection
 from src.core.order_manager import OrderManager
 from src.core.sqlalchemy_config import create_session
+from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepositoryImpl,
+)
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl_v2.ingredient_repository_impl import (
     IngredientRepositoryImpl,
@@ -39,10 +42,6 @@ from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
     ProductIngredientRepositoryImpl,
 )
 from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
-
-from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
-    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepositoryImpl,
-)
 
 
 def init_mongo_engine_connection(ioc_instance):
@@ -140,14 +139,3 @@ class Ioc:
 
     def get_instance(self, instance_id):
         return self._ioc_instance[instance_id]
-
-
-IOC_CONTEXT_MAP = {"ioc_instance": None}
-
-
-def get_ioc_instance():
-
-    if not IOC_CONTEXT_MAP["ioc_instance"]:
-        IOC_CONTEXT_MAP["ioc_instance"] = Ioc()
-
-    return IOC_CONTEXT_MAP["ioc_instance"]

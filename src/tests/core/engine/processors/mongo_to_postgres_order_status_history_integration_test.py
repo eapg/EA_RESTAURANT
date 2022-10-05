@@ -2,8 +2,14 @@ from unittest import mock
 
 from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
-
-from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
+from src.core.engine.processors.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
+    MongoToPostgresqlOrderStatusHistory,
+)
+from src.core.ioc import Ioc
+from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
+    MongoEngineBaseRepositoryTestCase,
+)
 from src.tests.utils.fixtures.app_engine_processor_context_fixture import (
     build_app_engine_processor_context,
 )
@@ -13,14 +19,7 @@ from src.tests.utils.fixtures.app_processor_config_fixture import (
 from src.tests.utils.fixtures.mapping_odm_fixtures import (
     build_order_status_history as mongo_build_order_status_history,
 )
-from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
-    MongoToPostgresqlOrderStatusHistory,
-)
-from src.core.engine.processors.abstract_etl_processor import AbstractEtl
-from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
-    MongoEngineBaseRepositoryTestCase,
-)
-from src.core.ioc import get_ioc_instance
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
 
 
 class MongoToPostgresOrderStatusHistoryIntegrationTest(
@@ -38,15 +37,17 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
         self.mocked_sqlalchemy_session.begin.return_value.__enter__ = mock.Mock()
         self.mocked_sqlalchemy_session.begin.return_value.__exit__ = mock.Mock()
 
-        ioc = get_ioc_instance()
+        ioc = Ioc()
         self.app_config = build_app_processor_config()
         self.app_context = build_app_engine_processor_context()
-        self.app_context.ioc = ioc
+        self.app_config.ioc = ioc
 
-        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(AbstractEtl)
+        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(
+            app_processor_config=self.app_config
+        )
         self.mongo_to_postgres_etl.app_processor_config = self.app_config
 
-        self.mongo_to_postgres_etl.set_app_context(self.app_context)
+        self.mongo_to_postgres_etl.set_app_context = self.app_context
         self.mongo_to_postgres_etl.order_status_history_controller.session = (
             self.mocked_sqlalchemy_session
         )

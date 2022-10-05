@@ -28,13 +28,7 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
         super().__init__(
             app_processor_config=app_processor_config, app_context=app_context
         )
-
-        self.order_status_history_controller = None
-        self.mongo_order_status_history_controller = None
-
-    def set_app_context(self, app_context):
-        ioc = app_context.ioc
-
+        ioc = app_processor_config.ioc
         self.order_status_history_controller = ioc.get_instance(
             "order_status_history_repository"
         )

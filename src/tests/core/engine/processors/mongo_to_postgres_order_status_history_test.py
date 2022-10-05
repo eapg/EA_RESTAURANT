@@ -24,11 +24,13 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_his
 class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
     def after_base_setup(self):
         self.app_config = build_app_processor_config()
+        self.app_config.ioc = mock.Mock()
 
-        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(AbstractEtl)
+        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(
+            app_processor_config=self.app_config
+        )
 
         etl = self.mongo_to_postgres_etl
-        etl.app_processor_config = self.app_config
         etl.order_status_history_controller = mock.Mock()
         etl.order_status_history_controller.add = mock.Mock()
         etl.mongo_order_status_history_controller = mock.Mock()

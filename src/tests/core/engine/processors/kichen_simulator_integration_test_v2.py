@@ -1,28 +1,27 @@
 from datetime import datetime
-from unittest import TestCase, mock
+from unittest import mock
 
 from src.constants.cooking_type import CookingType
 from src.constants.order_status import OrderStatus
-from src.core.ioc import get_ioc_instance
-from src.tests.utils.fixtures.app_processor_config_fixture import (
-    build_app_processor_config,
-)
-
+from src.core.ioc import Ioc
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
+)
+from src.tests.utils.fixtures.app_processor_config_fixture import (
+    build_app_processor_config,
 )
 from src.tests.utils.fixtures.kitchen_simulator_fixture import (
     build_kitchen_simulator_running_once,
 )
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_chef,
     build_ingredient,
     build_inventory_ingredient,
-    build_product,
-    build_product_ingredient,
     build_order,
     build_order_detail,
-    build_chef,
     build_order_status_history,
+    build_product,
+    build_product_ingredient,
 )
 
 ITERATIONS = 0
@@ -31,7 +30,7 @@ ITERATIONS = 0
 class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
 
-        ioc = get_ioc_instance()
+        ioc = Ioc()
         self.order_detail_controller = ioc.get_instance("order_detail_controller")
         self.product_ingredient_controller = ioc.get_instance(
             "product_ingredient_controller"
@@ -40,6 +39,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             "inventory_ingredient_controller"
         )
         self.app_engine_config = build_app_processor_config()
+        self.app_engine_config.ioc = ioc
         self.kitchen_simulator = build_kitchen_simulator_running_once(
             self.app_engine_config
         )
@@ -74,7 +74,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             cooking_type=CookingType.FRYING.name,
         )
 
-        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
+        order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER.name)
         self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_1.id, order_1.status
         )
@@ -84,7 +84,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             order_detail_id=1, order_id=order_1.id, product_id=product_1.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_1)
-        order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER)
+        order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER.name)
         self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_2.id, order_2.status
         )
@@ -171,7 +171,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             cooking_type=CookingType.FRYING,
         )
 
-        order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
+        order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER.name)
         self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_3.id, order_3.status
         )
@@ -181,7 +181,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             order_detail_id=1, order_id=order_3.id, product_id=product_2.id, quantity=1
         )
         self.order_detail_controller.add(order_detail_1)
-        order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
+        order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER.name)
         self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_4.id, order_4.status
         )

@@ -10,7 +10,7 @@ from src.utils.time_util import get_unix_time_stamp_milliseconds
 
 
 def initialize_kitchen_simulator(app_processor_config, app_context):
-    ioc = app_context.ioc
+    ioc = app_processor_config.ioc
     order_controller = ioc.get_instance("order_controller")
     order_manager = app_processor_config.order_manager
 
@@ -46,20 +46,13 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         )
         self._process_clean_queues_delta_time_sum = 0  # float
         self._process_clean_queues_timeout = 60  # seconds
-        self.order_manager = None
-        self.chef_controller = None
-        self.mongo_order_status_history_controller = None
-        self.order_controller = None
-
-    def set_app_context(self, app_context):
-        ioc = app_context.ioc
-        self.order_controller = ioc.get_instance("order_controller")
+        ioc = self.app_processor_config.ioc
+        self.order_manager = self.app_processor_config.order_manager
+        self.chef_controller = ioc.get_instance("chef_controller")
         self.mongo_order_status_history_controller = ioc.get_instance(
             "mongo_order_status_history_controller"
         )
-        self.chef_controller = ioc.get_instance("chef_controller")
-        self.order_manager = self.app_processor_config.order_manager
-        self.app_context = app_context
+        self.order_controller = ioc.get_instance("order_controller")
 
     def process(self, delta_time):
         self.process_new_orders()
