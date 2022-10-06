@@ -4,8 +4,8 @@ from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import Order, OrderStatusHistory
 from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
-    OrderStatusHistoryRepositoryImpl,
     SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS,
+    OrderStatusHistoryRepositoryImpl,
 )
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
@@ -19,17 +19,20 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
 
 class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_status_history_repository = OrderStatusHistoryRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.order_status_history_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.order_status_history_repository = OrderStatusHistoryRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_order_status_history_successfully(self):
         order_status_history_1 = build_order_status_history()
 
         self.order_status_history_repository.add(order_status_history_1)
-        self.order_status_history_repository.session.add.assert_called_with(
-            order_status_history_1
-        )
+        self.mocked_sqlalchemy_session.add.assert_called_with(order_status_history_1)
 
     def test_get_order_status_history_successfully(self):
         order_status_history_1 = build_order_status_history()
@@ -159,7 +162,7 @@ class OrderStatusHistoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase)
             order_status_history_1.id,
         )
 
-        self.order_status_history_repository.session.add.assert_called_with(
+        self.mocked_sqlalchemy_session.add.assert_called_with(
             order_status_history_to_be_updated
         )
 

@@ -1,39 +1,44 @@
 from datetime import datetime
 
 from src.constants.audit import Status
+from src.core.sqlalchemy_config import create_session
 from src.lib.entities.sqlalchemy_orm_mapping import Product
 from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
-    def __init__(self, session):
+    def __init__(self, engine):
 
-        self.session = session
+        self.engine = engine
 
     def add(self, product):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             product.created_date = datetime.now()
             product.updated_by = product.created_by
             product.updated_date = product.created_date
-            self.session.add(product)
+            session.add(product)
 
     def get_by_id(self, product_id):
+        session = create_session(self.engine)
         return (
-            self.session.query(Product)
+            session.query(Product)
             .filter(Product.id == product_id)
             .filter(Product.entity_status == Status.ACTIVE.value)
             .first()
         )
 
     def get_all(self):
-        products = self.session.query(Product).filter(
+        session = create_session(self.engine)
+        products = session.query(Product).filter(
             Product.entity_status == Status.ACTIVE.value
         )
         return list(products)
 
     def delete_by_id(self, product_id, product):
-        with self.session.begin():
-            self.session.query(Product).filter(Product.id == product_id).update(
+        session = create_session(self.engine)
+        with session.begin():
+            session.query(Product).filter(Product.id == product_id).update(
                 {
                     Product.entity_status: Status.DELETED.value,
                     Product.updated_date: datetime.now(),
@@ -42,9 +47,10 @@ class ProductRepositoryImpl(ProductRepository):
             )
 
     def update_by_id(self, product_id, product):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             product_to_be_updated = (
-                self.session.query(Product).filter(Product.id == product_id).first()
+                session.query(Product).filter(Product.id == product_id).first()
             )
             product_to_be_updated.name = product.name or product_to_be_updated.name
             product_to_be_updated.description = (
@@ -52,4 +58,4 @@ class ProductRepositoryImpl(ProductRepository):
             )
             product_to_be_updated.updated_date = datetime.now()
             product_to_be_updated.updated_by = product.updated_by
-            self.session.add(product_to_be_updated)
+            session.add(product_to_be_updated)

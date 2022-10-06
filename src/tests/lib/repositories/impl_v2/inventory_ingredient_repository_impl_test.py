@@ -1,16 +1,9 @@
 from unittest import mock
 
-
 from src.constants.audit import Status
-
-from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-)
 from src.lib.entities.sqlalchemy_orm_mapping import (
-    InventoryIngredient,
     Ingredient,
+    InventoryIngredient,
     ProductIngredient,
 )
 from src.lib.repositories.impl_v2.inventory_ingredient_repository_impl import (
@@ -19,21 +12,29 @@ from src.lib.repositories.impl_v2.inventory_ingredient_repository_impl import (
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_inventory_ingredient,
+    build_inventory_ingredients,
+)
 
 
 class InventoryIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.inventory_ingredient_repository = InventoryIngredientRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.inventory_ingredient_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.inventory_ingredient_repository = InventoryIngredientRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_inventory_ingredient_successfully(self):
         inventory_ingredient_1 = build_inventory_ingredient()
 
         self.inventory_ingredient_repository.add(inventory_ingredient_1)
-        self.inventory_ingredient_repository.session.add.assert_called_with(
-            inventory_ingredient_1
-        )
+        self.mocked_sqlalchemy_session.add.assert_called_with(inventory_ingredient_1)
 
     def test_get_inventory_ingredient_successfully(self):
         inventory_ingredient_1 = build_inventory_ingredient()
@@ -164,7 +165,7 @@ class InventoryIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase
             inventory_ingredient_1.id,
         )
 
-        self.inventory_ingredient_repository.session.add.assert_called_with(
+        self.mocked_sqlalchemy_session.add.assert_called_with(
             inventory_ingredient_to_be_updated
         )
 

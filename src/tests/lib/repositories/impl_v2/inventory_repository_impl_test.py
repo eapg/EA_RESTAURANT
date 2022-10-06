@@ -1,7 +1,6 @@
 from unittest import mock
 
 from src.constants.audit import Status
-
 from src.lib.entities.sqlalchemy_orm_mapping import Inventory
 from src.lib.repositories.impl_v2.inventory_repository_impl import (
     InventoryRepositoryImpl,
@@ -9,18 +8,23 @@ from src.lib.repositories.impl_v2.inventory_repository_impl import (
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_inventory,
-    build_inventories,
-)
 from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_inventories,
+    build_inventory,
+)
 
 
 class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.inventory_repository = InventoryRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.inventory_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.inventory_repository = InventoryRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_inventory_successfully(self):
         inventory_1 = build_inventory(
@@ -28,7 +32,7 @@ class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
         self.inventory_repository.add(inventory_1)
-        self.inventory_repository.session.add.assert_called_with(inventory_1)
+        self.mocked_sqlalchemy_session.add.assert_called_with(inventory_1)
 
     def test_get_inventory_successfully(self):
         inventory_1 = build_inventory(
@@ -156,6 +160,4 @@ class InventoryRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             inventory_1.id,
         )
 
-        self.inventory_repository.session.add.assert_called_with(
-            inventory_to_be_updated
-        )
+        self.mocked_sqlalchemy_session.add.assert_called_with(inventory_to_be_updated)

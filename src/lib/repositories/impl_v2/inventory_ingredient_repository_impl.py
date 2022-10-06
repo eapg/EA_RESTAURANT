@@ -1,6 +1,9 @@
 from datetime import datetime
+
 from sqlalchemy.sql import func
+
 from src.constants.audit import Status
+from src.core.sqlalchemy_config import create_session
 from src.lib.entities.sqlalchemy_orm_mapping import (
     InventoryIngredient,
     ProductIngredient,
@@ -11,34 +14,38 @@ from src.lib.repositories.inventory_ingredient_repository import (
 
 
 class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
-    def __init__(self, session):
+    def __init__(self, engine):
 
-        self.session = session
+        self.engine = engine
 
     def add(self, inventory_ingredient):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             inventory_ingredient.created_date = datetime.now()
             inventory_ingredient.updated_by = inventory_ingredient.created_by
             inventory_ingredient.updated_date = inventory_ingredient.created_date
-            self.session.add(inventory_ingredient)
+            session.add(inventory_ingredient)
 
     def get_by_id(self, inventory_ingredient_id):
+        session = create_session(self.engine)
         return (
-            self.session.query(InventoryIngredient)
+            session.query(InventoryIngredient)
             .filter(InventoryIngredient.id == inventory_ingredient_id)
             .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
             .first()
         )
 
     def get_all(self):
-        inventory_ingredients = self.session.query(InventoryIngredient).filter(
+        session = create_session(self.engine)
+        inventory_ingredients = session.query(InventoryIngredient).filter(
             InventoryIngredient.entity_status == Status.ACTIVE.value
         )
         return list(inventory_ingredients)
 
     def delete_by_id(self, inventory_ingredient_id, inventory_ingredient):
-        with self.session.begin():
-            self.session.query(InventoryIngredient).filter(
+        session = create_session(self.engine)
+        with session.begin():
+            session.query(InventoryIngredient).filter(
                 InventoryIngredient.id == inventory_ingredient_id
             ).update(
                 {
@@ -49,9 +56,10 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             )
 
     def update_by_id(self, inventory_ingredient_id, inventory_ingredient):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             inventory_ingredient_to_be_updated = (
-                self.session.query(InventoryIngredient)
+                session.query(InventoryIngredient)
                 .filter(InventoryIngredient.id == inventory_ingredient_id)
                 .first()
             )
@@ -72,20 +80,21 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
             inventory_ingredient_to_be_updated.updated_by = (
                 inventory_ingredient.updated_by
             )
-            self.session.add(inventory_ingredient_to_be_updated)
+            session.add(inventory_ingredient_to_be_updated)
 
     def get_by_ingredient_id(self, ingredient_id):
+        session = create_session(self.engine)
         inventory_ingredients = (
-            self.session.query(InventoryIngredient)
+            session.query(InventoryIngredient)
             .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
             .filter(InventoryIngredient.ingredient_id == ingredient_id)
         )
         return list(inventory_ingredients)
 
     def get_final_product_qty_by_product_ids(self, product_ids):
-
+        session = create_session(self.engine)
         final_product_qty_by_product_ids_query_result = (
-            self.session.query(
+            session.query(
                 ProductIngredient.product_id,
                 func.min(InventoryIngredient.quantity / ProductIngredient.quantity),
             )
