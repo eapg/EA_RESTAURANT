@@ -17,9 +17,14 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
 
 class IngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.ingredient_repository = IngredientRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.ingredient_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.ingredient_repository = IngredientRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_ingredient_successfully(self):
         ingredient_1 = build_ingredient(
@@ -27,7 +32,7 @@ class IngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
         self.ingredient_repository.add(ingredient_1)
-        self.ingredient_repository.session.add.assert_called_with(ingredient_1)
+        self.mocked_sqlalchemy_session.add.assert_called_with(ingredient_1)
 
     def test_get_ingredient_successfully(self):
         ingredient_1 = build_ingredient(
@@ -155,6 +160,4 @@ class IngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             ingredient_1.id,
         )
 
-        self.ingredient_repository.session.add.assert_called_with(
-            ingredient_to_be_updated
-        )
+        self.mocked_sqlalchemy_session.add.assert_called_with(ingredient_to_be_updated)

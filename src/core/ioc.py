@@ -1,4 +1,5 @@
 # structure for the ioc to have just one instance
+from sqlalchemy import create_engine
 
 from src.api.controllers.chef_controller import ChefController
 from src.api.controllers.ingredient_controller import IngredientController
@@ -17,7 +18,9 @@ from src.api.controllers.product_ingredient_controller import (
 )
 from src.core.mongo_engine_config import mongo_engine_connection
 from src.core.order_manager import OrderManager
-from src.core.sqlalchemy_config import create_session
+from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepositoryImpl,
+)
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
 from src.lib.repositories.impl_v2.ingredient_repository_impl import (
     IngredientRepositoryImpl,
@@ -40,17 +43,14 @@ from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
 )
 from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
 
-from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
-    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepositoryImpl,
-)
-
 
 def init_mongo_engine_connection(ioc_instance):
     ioc_instance["mongo_engine_connection"] = mongo_engine_connection()
 
 
-def init_sqlalchemy_session(ioc_instance):
-    ioc_instance["sqlalchemy_session"] = create_session()
+def init_sqlalchemy_engine(ioc_instance):
+    engine = create_engine("postgresql://postgres:1234@localhost/ea_restaurant")
+    ioc_instance["sqlalchemy_engine"] = engine
 
 
 def init_order_manager(ioc_instance):
@@ -59,31 +59,31 @@ def init_order_manager(ioc_instance):
 
 def init_repositories(ioc_instance):
     ioc_instance["product_ingredient_repository"] = ProductIngredientRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["product_repository"] = ProductRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["ingredient_repository"] = IngredientRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["inventory_ingredient_repository"] = InventoryIngredientRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["order_detail_repository"] = OrderDetailRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["inventory_repository"] = InventoryRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["order_repository"] = OrderRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["chef_repository"] = ChefRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
     ioc_instance["order_status_history_repository"] = OrderStatusHistoryRepositoryImpl(
-        ioc_instance["sqlalchemy_session"]
+        ioc_instance["sqlalchemy_engine"]
     )
 
 
@@ -131,7 +131,7 @@ class Ioc:
     def __init__(self):
         self._ioc_instance = {}
         init_mongo_engine_connection(self._ioc_instance)
-        init_sqlalchemy_session(self._ioc_instance)
+        init_sqlalchemy_engine(self._ioc_instance)
         init_order_manager(self._ioc_instance)
         init_repositories(self._ioc_instance)
         init_controllers(self._ioc_instance)

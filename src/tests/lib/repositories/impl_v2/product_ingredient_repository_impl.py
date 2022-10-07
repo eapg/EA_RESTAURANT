@@ -1,33 +1,36 @@
 from unittest import mock
 
 from src.constants.audit import Status
-from src.lib.entities.sqlalchemy_orm_mapping import ProductIngredient, Product
+from src.lib.entities.sqlalchemy_orm_mapping import Product, ProductIngredient
 from src.lib.repositories.impl_v2.product_ingredient_repository_impl import (
     ProductIngredientRepositoryImpl,
 )
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_product_ingredient,
     build_product_ingredients,
 )
-from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class ProductIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.product_ingredient_repository = ProductIngredientRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.product_ingredient_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.product_ingredient_repository = ProductIngredientRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_product_ingredient_successfully(self):
         product_ingredient_1 = build_product_ingredient()
 
         self.product_ingredient_repository.add(product_ingredient_1)
-        self.product_ingredient_repository.session.add.assert_called_with(
-            product_ingredient_1
-        )
+        self.mocked_sqlalchemy_session.add.assert_called_with(product_ingredient_1)
 
     def test_get_product_ingredient_successfully(self):
         product_ingredient_1 = build_product_ingredient()
@@ -155,7 +158,7 @@ class ProductIngredientRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             product_ingredient_1.id,
         )
 
-        self.product_ingredient_repository.session.add.assert_called_with(
+        self.mocked_sqlalchemy_session.add.assert_called_with(
             product_ingredient_to_be_updated
         )
 

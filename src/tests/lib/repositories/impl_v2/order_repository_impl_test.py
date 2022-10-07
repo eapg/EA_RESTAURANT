@@ -3,32 +3,37 @@ from unittest import mock
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import (
+    InventoryIngredient,
     Order,
     OrderDetail,
     ProductIngredient,
-    InventoryIngredient,
 )
 from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_order,
     build_orders,
     build_product_ingredient,
 )
-from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_repository = OrderRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.order_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
+        )
+        self.order_repository = OrderRepositoryImpl(self.mocked_sqlalchemy_engine)
+        self.mocked_creation_session_path.start()
 
     def test_add_order_successfully(self):
         order_1 = build_order()
 
         self.order_repository.add(order_1)
-        self.order_repository.session.add.assert_called_with(order_1)
+        self.mocked_sqlalchemy_session.add.assert_called_with(order_1)
 
     def test_get_order_successfully(self):
         order_1 = build_order()
@@ -152,7 +157,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             order_1.id,
         )
 
-        self.order_repository.session.add.assert_called_with(order_to_be_updated)
+        self.mocked_sqlalchemy_session.add.assert_called_with(order_to_be_updated)
 
     def test_get_orders_by_status_successfully(self):
 
@@ -396,9 +401,9 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         self.order_repository.reduce_order_ingredients_from_inventory(order_1.id)
 
         self.assertEqual(
-            self.mocked_sqlalchemy_session.mock_calls[3].args[0], mocked_text()
+            self.mocked_sqlalchemy_engine.mock_calls[2].args[0], mocked_text()
         )
         self.assertEqual(
-            self.mocked_sqlalchemy_session.mock_calls[3].args[1],
+            self.mocked_sqlalchemy_engine.mock_calls[2].args[1],
             {"order_id": order_1.id},
         )

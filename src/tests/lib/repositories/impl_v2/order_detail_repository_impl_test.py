@@ -1,31 +1,36 @@
 from unittest import mock
 
 from src.constants.audit import Status
-from src.lib.entities.sqlalchemy_orm_mapping import OrderDetail, Order
+from src.lib.entities.sqlalchemy_orm_mapping import Order, OrderDetail
 from src.lib.repositories.impl_v2.order_detail_repository_impl import (
     OrderDetailRepositoryImpl,
 )
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
+from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_order_detail,
     build_order_details,
 )
-from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 
 
 class OrderDetailRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-        self.order_detail_repository = OrderDetailRepositoryImpl(
-            self.mocked_sqlalchemy_session
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.order_detail_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.order_detail_repository = OrderDetailRepositoryImpl(
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
     def test_add_order_detail_successfully(self):
         order_detail_1 = build_order_detail()
 
         self.order_detail_repository.add(order_detail_1)
-        self.order_detail_repository.session.add.assert_called_with(order_detail_1)
+        self.mocked_sqlalchemy_session.add.assert_called_with(order_detail_1)
 
     def test_get_order_detail_successfully(self):
         order_detail_1 = build_order_detail()
@@ -147,7 +152,7 @@ class OrderDetailRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             order_detail_1.id,
         )
 
-        self.order_detail_repository.session.add.assert_called_with(
+        self.mocked_sqlalchemy_session.add.assert_called_with(
             order_detail_to_be_updated
         )
 

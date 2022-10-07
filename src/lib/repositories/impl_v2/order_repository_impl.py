@@ -1,7 +1,10 @@
 from datetime import datetime
-from sqlalchemy.sql import text
+
 from sqlalchemy import case, func
+from sqlalchemy.sql import text
+
 from src.constants.audit import Status
+from src.core.sqlalchemy_config import create_session
 from src.lib.entities.sqlalchemy_orm_mapping import (
     InventoryIngredient,
     Order,
@@ -28,34 +31,36 @@ sql_query_to_reduce_ingredients_from_inventory = """
 
 
 class OrderRepositoryImpl(OrderRepository):
-    def __init__(self, session):
+    def __init__(self, engine):
 
-        self.session = session
+        self.engine = engine
 
     def add(self, order):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             order.created_date = datetime.now()
             order.updated_by = order.created_by
             order.updated_date = order.created_date
-            self.session.add(order)
+            session.add(order)
 
     def get_by_id(self, order_id):
+        session = create_session(self.engine)
         return (
-            self.session.query(Order)
+            session.query(Order)
             .filter(Order.id == order_id)
             .filter(Order.entity_status == Status.ACTIVE.value)
             .first()
         )
 
     def get_all(self):
-        orders = self.session.query(Order).filter(
-            Order.entity_status == Status.ACTIVE.value
-        )
+        session = create_session(self.engine)
+        orders = session.query(Order).filter(Order.entity_status == Status.ACTIVE.value)
         return list(orders)
 
     def delete_by_id(self, order_id, order):
-        with self.session.begin():
-            self.session.query(Order).filter(Order.id == order_id).update(
+        session = create_session(self.engine)
+        with session.begin():
+            session.query(Order).filter(Order.id == order_id).update(
                 {
                     Order.entity_status: Status.DELETED.value,
                     Order.updated_date: datetime.now(),
@@ -64,19 +69,26 @@ class OrderRepositoryImpl(OrderRepository):
             )
 
     def update_by_id(self, order_id, order):
-        with self.session.begin():
+        session = create_session(self.engine)
+        with session.begin():
             order_to_be_updated = (
-                self.session.query(Order).filter(Order.id == order_id).first()
+                session.query(Order).filter(Order.id == order_id).first()
             )
-            order_to_be_updated.user_id = order.user_id or order_to_be_updated.user_id
-            order_to_be_updated.skill = order.skill or order_to_be_updated.skill
+            order_to_be_updated.status = order.status or order_to_be_updated.status
+            order_to_be_updated.assigned_chef_id = (
+                order.assigned_chef_id or order_to_be_updated.assigned_chef_id
+            )
+            order_to_be_updated.client_id = (
+                order.client_id or order_to_be_updated.client_id
+            )
             order_to_be_updated.updated_date = datetime.now()
             order_to_be_updated.updated_by = order.updated_by
-            self.session.add(order_to_be_updated)
+            session.add(order_to_be_updated)
 
     def get_orders_by_status(self, order_status, order_limit=None):
+        session = create_session(self.engine)
         orders_by_status = (
-            self.session.query(Order)
+            session.query(Order)
             .filter(Order.entity_status == Status.ACTIVE.value)
             .filter(Order.status == order_status)
             .limit(order_limit)
@@ -86,9 +98,9 @@ class OrderRepositoryImpl(OrderRepository):
         return orders_by_status
 
     def get_order_ingredients_by_order_id(self, order_id):
-
+        session = create_session(self.engine)
         product_ingredients_by_order_id = (
-            self.session.query(ProductIngredient)
+            session.query(ProductIngredient)
             .filter(
                 ProductIngredient.entity_status == Status.ACTIVE.value,
                 OrderDetail.entity_status == Status.ACTIVE.value,
@@ -100,7 +112,7 @@ class OrderRepositoryImpl(OrderRepository):
         return list(product_ingredients_by_order_id)
 
     def get_validated_orders_map(self, orders_to_process):
-
+        session = create_session(self.engine)
         case_query = case(
             (
                 func.min(
@@ -115,7 +127,7 @@ class OrderRepositoryImpl(OrderRepository):
         )
 
         validation_orders = (
-            self.session.query(OrderDetail.order_id, case_query)
+            session.query(OrderDetail.order_id, case_query)
             .join(
                 ProductIngredient,
                 ProductIngredient.product_id == OrderDetail.product_id,
@@ -139,9 +151,8 @@ class OrderRepositoryImpl(OrderRepository):
         return validation_order_map
 
     def reduce_order_ingredients_from_inventory(self, order_id):
-        engine = self.session.get_bind()
 
-        with engine.begin() as conn:
+        with self.engine.begin() as conn:
 
             conn.execute(
                 text(sql_query_to_reduce_ingredients_from_inventory),

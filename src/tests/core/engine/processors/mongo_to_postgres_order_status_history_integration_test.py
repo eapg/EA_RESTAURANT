@@ -1,9 +1,16 @@
 from unittest import mock
 
+from src.constants.audit import InternalUsers
 from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
-
-from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
+from src.core.engine.processors.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
+    MongoToPostgresqlOrderStatusHistory,
+)
+from src.core.ioc import get_ioc_instance
+from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
+    MongoEngineBaseRepositoryTestCase,
+)
 from src.tests.utils.fixtures.app_engine_processor_context_fixture import (
     build_app_engine_processor_context,
 )
@@ -13,14 +20,7 @@ from src.tests.utils.fixtures.app_processor_config_fixture import (
 from src.tests.utils.fixtures.mapping_odm_fixtures import (
     build_order_status_history as mongo_build_order_status_history,
 )
-from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
-    MongoToPostgresqlOrderStatusHistory,
-)
-from src.core.engine.processors.abstract_etl_processor import AbstractEtl
-from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
-    MongoEngineBaseRepositoryTestCase,
-)
-from src.core.ioc import get_ioc_instance
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
 
 
 class MongoToPostgresOrderStatusHistoryIntegrationTest(
@@ -102,6 +102,7 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
 
         order_status_history = build_order_status_history()
         order_status_history.id = 5
+        order_status_history.updated_by = 2
         order_status_history.from_status = OrderStatus.NEW_ORDER.name
         self.mongo_to_postgres_etl.extract_data.return_value = [
             mongo_order_status_history_1
