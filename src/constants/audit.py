@@ -7,5 +7,6 @@ class Status(Enum):
 
 
 class InternalUsers(Enum):
-    SEEDER = -1
-    KITCHEN_SIMULATOR = -2
+    SEEDER = 1
+    KITCHEN_SIMULATOR = 2
+    ETL = 3

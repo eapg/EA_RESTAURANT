@@ -1,5 +1,6 @@
 # This file has the ingredient repository
 from datetime import datetime
+
 from src.constants.audit import Status
 from src.lib.repositories.ingredient_repository import IngredientRepository
 
@@ -12,9 +13,9 @@ class IngredientRepositoryImpl(IngredientRepository):
 
     def add(self, ingredient):
         ingredient.id = self._current_id
-        ingredient.create_date = datetime.now()
-        ingredient.update_by = ingredient.create_by
-        ingredient.update_date = ingredient.create_date
+        ingredient.created_date = datetime.now()
+        ingredient.updated_by = ingredient.created_by
+        ingredient.updated_date = ingredient.created_date
         self._ingredients[ingredient.id] = ingredient
         self._current_id += 1
 
@@ -41,8 +42,8 @@ class IngredientRepositoryImpl(IngredientRepository):
     def delete_by_id(self, ingredient_id, ingredient):
         ingredient_to_be_delete = self.get_by_id(ingredient_id)
         ingredient_to_be_delete.entity_status = Status.DELETED
-        ingredient_to_be_delete.update_date = datetime.now()
-        ingredient_to_be_delete.update_by = ingredient.update_by
+        ingredient_to_be_delete.updated_date = datetime.now()
+        ingredient_to_be_delete.updated_by = ingredient.updated_by
         self._update_by_id(
             ingredient_id, ingredient_to_be_delete, use_merge_with_existing=False
         )
@@ -58,9 +59,9 @@ class IngredientRepositoryImpl(IngredientRepository):
         current_ingredient.description = (
             ingredient.description or current_ingredient.description
         )
-        current_ingredient.update_date = datetime.now()
-        current_ingredient.update_by = (
-            ingredient.update_by or current_ingredient.update_by
+        current_ingredient.updated_date = datetime.now()
+        current_ingredient.updated_by = (
+            ingredient.updated_by or current_ingredient.updated_by
         )
         current_ingredient.entity_status = (
             ingredient.entity_status or current_ingredient.entity_status

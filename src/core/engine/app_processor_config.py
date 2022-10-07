@@ -7,6 +7,7 @@ class AppProcessorConfig:
         on_destroy=None,
         before_execute=None,
         after_execute=None,
+        order_manager=None,
     ):
         self.id = id
         self.interval = interval
@@ -14,3 +15,4 @@ class AppProcessorConfig:
         self.on_destroy = on_destroy
         self.before_execute = before_execute
         self.after_execute = after_execute
+        self.order_manager = order_manager

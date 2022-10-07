@@ -1,14 +1,12 @@
 # This file has the order repository
-from functools import reduce
 from datetime import datetime
+from functools import reduce
 
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.repositories.order_repository import OrderRepository
 from src.utils.order_util import (
-    array_chef_to_chef_assigned_orders_map_reducer,
-    setup_validated_orders_map,
-)
+    array_chef_to_chef_assigned_orders_map_reducer, setup_validated_orders_map)
 
 
 class OrderRepositoryImpl(OrderRepository):
@@ -26,9 +24,9 @@ class OrderRepositoryImpl(OrderRepository):
 
     def add(self, order):
         order.id = self._current_id
-        order.create_date = datetime.now()
-        order.update_by = order.create_by
-        order.update_date = order.create_date
+        order.created_date = datetime.now()
+        order.updated_by = order.created_by
+        order.updated_date = order.created_date
         self._orders[order.id] = order
         self._current_id += 1
 
@@ -52,8 +50,8 @@ class OrderRepositoryImpl(OrderRepository):
     def delete_by_id(self, order_id, order):
         order_to_be_delete = self.get_by_id(order_id)
         order_to_be_delete.entity_status = Status.DELETED
-        order_to_be_delete.update_date = datetime.now()
-        order_to_be_delete.update_by = order.update_by
+        order_to_be_delete.updated_date = datetime.now()
+        order_to_be_delete.updated_by = order.updated_by
         self._update_by_id(order_id, order_to_be_delete, use_merge_with_existing=False)
 
     def update_by_id(self, order_id, order):
@@ -65,8 +63,8 @@ class OrderRepositoryImpl(OrderRepository):
         current_order.assigned_chef_id = (
             order.assigned_chef_id or current_order.assigned_chef_id
         )
-        current_order.update_date = datetime.now()
-        current_order.update_by = order.update_by or current_order.update_by
+        current_order.updated_date = datetime.now()
+        current_order.updated_by = order.updated_by or current_order.updated_by
         current_order.entity_status = order.entity_status or current_order.entity_status
 
     def get_orders_by_status(self, order_status, order_limit=None):
@@ -118,7 +116,7 @@ class OrderRepositoryImpl(OrderRepository):
                 )
             )
             inventory_ingredient[0].ingredient_quantity = (
-                inventory_ingredient[0].ingredient_quantity
+                inventory_ingredient[0].quantity
                 - product_ingredient.quantity
             )
             self.inventory_ingredient_repository.update_by_id(

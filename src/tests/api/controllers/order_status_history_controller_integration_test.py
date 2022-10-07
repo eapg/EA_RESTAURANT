@@ -1,19 +1,15 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.order_status_history_controller import (
-    OrderStatusHistoryController,
-)
+from src.api.controllers.order_status_history_controller import \
+    OrderStatusHistoryController
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
-from src.lib.repositories.impl.order_status_history_repository_impl import (
-    OrderStatusHistoryRepositoryImpl,
-)
+from src.lib.repositories.impl.order_status_history_repository_impl import \
+    OrderStatusHistoryRepositoryImpl
 from src.tests.utils.fixtures.order_fixture import build_order
 from src.tests.utils.fixtures.order_status_history_fixture import (
-    build_order_status_histories,
-    build_order_status_history,
-)
+    build_order_status_histories, build_order_status_history)
 
 
 class OrderStatusHistoryRepositoryControllerIntegrationTestCase(unittest.TestCase):

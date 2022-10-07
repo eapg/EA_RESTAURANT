@@ -1,15 +1,12 @@
 import unittest
 
 from src.constants.audit import Status
-from src.lib.repositories.impl.product_ingredient_repository_impl import (
-    ProductIngredientRepositoryImpl,
-)
-from src.tests.utils.fixtures.product_ingredient_fixture import (
-    build_product_ingredient,
-    build_product_ingredients,
-)
-from src.tests.utils.fixtures.product_fixture import build_product
+from src.lib.repositories.impl.product_ingredient_repository_impl import \
+    ProductIngredientRepositoryImpl
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
+from src.tests.utils.fixtures.product_fixture import build_product
+from src.tests.utils.fixtures.product_ingredient_fixture import (
+    build_product_ingredient, build_product_ingredients)
 
 
 class ProductIngredientRepositoryImplTestCase(unittest.TestCase):

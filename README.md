@@ -49,11 +49,18 @@ Download and install the following tools:
 * Open `miniconda3`.
 * Go to the project path
 * Run `conda create --prefix=.venv python=3.10.0`
-
+* In order to active an enviroment run the following command: `conda activate .\venv\Scripts\activate.bat`
+* In order to update library dependency run the following command : `pip freeze > requirements.txt`
 ### Running tests
 
 This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
 run `python -m unittest discover --pattern=*_test.py`
+
+This project is using [coverage](https://coverage.readthedocs.io/en/latest/index.html) for coverage. To run test
+coverage just run the commands:
+* coverage run: `coverage run -m unittest discover --pattern=*test.py`
+* coverage report: `coverage report --include='src/tests/*'`
+* coverage html report: `coverage html --include='src/tests/*'`
 
 ### Linter and Formatter
 
@@ -68,3 +75,25 @@ Commands:
 * Format: `black .`
 * Sort imports: `isort .`
 * Lint file: `pylint [path-to-file.py]`
+
+### Migrations
+
+This project is Using [Alembic](https://alembic.sqlalchemy.org/en/latest/) for migrations. To
+install alembic in your project just run `pip install alembic`
+
+Commands to use alembic:
+
+* Initialize: `alembic init alembic`
+* Migration Script: `alembic revision -m "migration scrip name"` This script contains some header
+  information, identifiers for the current version and import a basic alembic directives, and empty
+  `upgrade()` and `downgrade()` functions.
+* Upgrade: `alembic upgrade <target-revision>`
+* Downgrade: `alembic downgrade <target-revision>`
+* Upgrade to head: `alembic upgrade head` This command executes all migrations from the current point to the last.
+
+Examples:
+
+![img.png](img.png)
+
+Executing `alembic upgrade head` in a clean database will execute all migrations
+in the orders that migrations were created. Like example image.

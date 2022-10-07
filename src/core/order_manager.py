@@ -1,6 +1,7 @@
 # order manager mechanism
 import queue
 from queue import PriorityQueue
+
 from src.constants.order_status import OrderStatus
 
 ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP = {
@@ -14,16 +15,16 @@ ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP = {
 class OrderManager:
     def __init__(self):
         self._order_status_to_order_queue_map = {
-            OrderStatus.NEW_ORDER: PriorityQueue(
+            OrderStatus.NEW_ORDER.name: PriorityQueue(
                 maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER]
             ),
-            OrderStatus.IN_PROCESS: PriorityQueue(
+            OrderStatus.IN_PROCESS.name: PriorityQueue(
                 maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.IN_PROCESS]
             ),
-            OrderStatus.CANCELLED: PriorityQueue(
+            OrderStatus.CANCELLED.name: PriorityQueue(
                 maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.CANCELLED]
             ),
-            OrderStatus.COMPLETED: PriorityQueue(
+            OrderStatus.COMPLETED.name: PriorityQueue(
                 maxsize=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.COMPLETED]
             ),
         }
@@ -47,7 +48,7 @@ class OrderManager:
 
     def clean_queues_with_full_storage(self, limit_value_before_clean=500):
 
-        for status in [OrderStatus.COMPLETED, OrderStatus.CANCELLED]:
+        for status in [OrderStatus.COMPLETED.name, OrderStatus.CANCELLED.name]:
             if self.get_queue_size(status) > limit_value_before_clean:
                 for _ in range(100):
                     deque_id = self.get_queue_from_status(status)

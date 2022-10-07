@@ -1,6 +1,6 @@
 # class for the ingredients of the product ; like pizza bread, cheese, sauce
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class Ingredient(AbstractEntity):

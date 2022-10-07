@@ -1,17 +1,16 @@
 import unittest
 from unittest.mock import Mock
+
 from src.constants.cooking_type import CookingType
 from src.tests.utils.fixtures.chef_fixture import build_chef
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 from src.utils.order_util import (
     array_chef_to_chef_assigned_orders_map_reducer,
-    order_products_validation_reducer,
-    validated_orders_reducer,
-    setup_validated_orders_map,
-    compute_order_estimated_time,
-)
+    compute_order_estimated_time, order_products_validation_reducer,
+    setup_validated_orders_map, validated_orders_reducer)
 
 
 def get_final_product_qty_by_product_ids_mock(product_ids):
@@ -93,10 +92,10 @@ class TestOrderUtil(unittest.TestCase):
         chef_1 = build_chef(chef_id=1, chef_skills=2)
         order_ingredients_list = [
             build_product_ingredient(
-                id=1, ingredient_type=CookingType.FRYING, quantity=2
+                product_ingredient_id=1, cooking_type=CookingType.FRYING.name, quantity=2
             ),
             build_product_ingredient(
-                id=2, ingredient_type=CookingType.BAKING, quantity=2
+                product_ingredient_id=2, cooking_type=CookingType.BAKING.name, quantity=2
             ),
         ]
         preparation_time = compute_order_estimated_time(order_ingredients_list, chef_1)
