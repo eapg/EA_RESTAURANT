@@ -1,7 +1,8 @@
-from src.constants.audit import Status
-from src.lib.entities.order_status_history import OrderStatusHistory
 from datetime import datetime
+
+from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
+from src.lib.entities.order_status_history import OrderStatusHistory
 
 
 def build_order_status_history(

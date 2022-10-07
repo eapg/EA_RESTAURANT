@@ -1,25 +1,27 @@
+import unittest
 from unittest import TestCase, mock
+
+from src.constants.cooking_type import CookingType
+from src.constants.order_status import OrderStatus
 from src.core.engine.processors.kitchen_simulator import KitchenSimulator
-from src.tests.utils.fixtures.app_processor_config_fixture import (
-    build_app_processor_config,
-)
+from src.core.ioc import get_ioc_instance
+from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
+from src.tests.utils.fixtures.app_processor_config_fixture import \
+    build_app_processor_config
+from src.tests.utils.fixtures.chef_fixture import build_chef
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-)
+from src.tests.utils.fixtures.inventory_ingredient_fixture import \
+    build_inventory_ingredient
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.order_fixture import build_order
-from src.tests.utils.fixtures.chef_fixture import build_chef
-from src.constants.order_status import OrderStatus
-from src.constants.cooking_type import CookingType
-from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
 from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
-from src.core.ioc import get_ioc_instance
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 ITERATIONS = 0
 
 
+@unittest.skip("Deprecated - Refer to version v2")
 class KitchenSimulatorIntegrationTest(TestCase):
     def setUp(self):
 
@@ -42,8 +44,8 @@ class KitchenSimulatorIntegrationTest(TestCase):
         self.kitchen_simulator.order_controller = mock.Mock(
             wraps=self.kitchen_simulator.order_controller
         )
-        self.kitchen_simulator.order_status_history_controller = mock.Mock(
-            wraps=self.kitchen_simulator.order_status_history_controller
+        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock(
+            wraps=self.kitchen_simulator.mongo_order_status_history_controller
         )
 
     def test_assign_orders_to_available_chefs(self):
@@ -52,7 +54,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
             ingredient_id=ingredient_1.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         product_1 = build_product(product_id=1, name="fries potatoes")
         product_ingredient_1 = build_product_ingredient(
@@ -60,11 +62,11 @@ class KitchenSimulatorIntegrationTest(TestCase):
             ingredient_id=ingredient_1.id,
             product_id=product_1.id,
             quantity=6,
-            ingredient_type=CookingType.FRYING,
+            cooking_type=CookingType.FRYING.name,
         )
 
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_1.id, order_1.status
         )
         self.kitchen_simulator.order_controller.add(order_1)
@@ -74,7 +76,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_2 = build_order(order_id=2, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_2.id, order_2.status
         )
         self.kitchen_simulator.order_controller.add(order_2)
@@ -147,7 +149,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         inventory_ingredient_2 = build_inventory_ingredient(
             inventory_ingredient_id=2,
             ingredient_id=ingredient_2.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         product_2 = build_product(product_id=2, name="fries potatoes")
         product_ingredient_2 = build_product_ingredient(
@@ -155,11 +157,11 @@ class KitchenSimulatorIntegrationTest(TestCase):
             ingredient_id=ingredient_2.id,
             product_id=product_2.id,
             quantity=1,
-            ingredient_type=CookingType.FRYING,
+            cooking_type=CookingType.FRYING,
         )
 
         order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_3.id, order_3.status
         )
         self.kitchen_simulator.order_controller.add(order_3)
@@ -169,7 +171,7 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         self.order_detail_controller.add(order_detail_1)
         order_4 = build_order(order_id=4, status=OrderStatus.NEW_ORDER)
-        self.kitchen_simulator.order_status_history_controller.set_next_status_history_by_order_id(
+        self.kitchen_simulator.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_4.id, order_4.status
         )
         self.kitchen_simulator.order_controller.add(order_4)
@@ -212,6 +214,6 @@ class KitchenSimulatorIntegrationTest(TestCase):
         )
         order_3_complete = self.kitchen_simulator.order_controller.get_by_id(order_3.id)
         order_4_complete = self.kitchen_simulator.order_controller.get_by_id(order_4.id)
-        self.kitchen_simulator.order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
+        self.kitchen_simulator.mongo_order_status_history_controller.get_last_status_history_by_order_id.assert_has_calls(
             [mock.call(order_3.id), mock.call(order_4.id)]
         )

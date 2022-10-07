@@ -1,5 +1,5 @@
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class OrderDetail(AbstractEntity):

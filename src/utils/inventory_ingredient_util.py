@@ -9,7 +9,7 @@ def products_qty_by_ingredients_qty_reducer(
     divided by the quantity that the product needs
     """
     quantity_ingredients_result.append(
-        inventory_ingredient[0].ingredient_quantity / product_ingredient.quantity
+        inventory_ingredient[0].quantity / product_ingredient.quantity
     )
     return quantity_ingredients_result
 

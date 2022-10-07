@@ -1,6 +1,6 @@
 from src.constants.audit import Status
-from src.lib.entities.order import Order
 from src.constants.order_status import OrderStatus
+from src.lib.entities.order import Order
 
 
 def build_order(

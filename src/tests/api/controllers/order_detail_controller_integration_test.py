@@ -1,17 +1,12 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.order_detail_controller import (
-    OrderDetailController,
-)
+from src.api.controllers.order_detail_controller import OrderDetailController
 from src.constants.audit import Status
-from src.lib.repositories.impl.order_detail_repository_impl import (
-    OrderDetailRepositoryImpl,
-)
-from src.tests.utils.fixtures.order_detail_fixture import (
-    build_order_detail,
-    build_order_details,
-)
+from src.lib.repositories.impl.order_detail_repository_impl import \
+    OrderDetailRepositoryImpl
+from src.tests.utils.fixtures.order_detail_fixture import (build_order_detail,
+                                                           build_order_details)
 from src.tests.utils.fixtures.order_fixture import build_order
 from src.tests.utils.fixtures.product_fixture import build_product
 

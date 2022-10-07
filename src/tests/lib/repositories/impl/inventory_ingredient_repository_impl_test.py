@@ -1,21 +1,19 @@
 import unittest
 from unittest import mock
+
 from src.constants.audit import Status
-from src.lib.repositories.impl.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
-from src.lib.repositories.impl.product_ingredient_repository_impl import (
-    ProductIngredientRepositoryImpl,
-)
-from src.tests.utils.fixtures.inventory_ingredient_fixture import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-)
+from src.lib.repositories.impl.inventory_ingredient_repository_impl import \
+    InventoryIngredientRepositoryImpl
+from src.lib.repositories.impl.product_ingredient_repository_impl import \
+    ProductIngredientRepositoryImpl
 from src.tests.utils.fixtures.ingredient_fixture import build_ingredient
 from src.tests.utils.fixtures.inventory_fixture import build_inventory
+from src.tests.utils.fixtures.inventory_ingredient_fixture import (
+    build_inventory_ingredient, build_inventory_ingredients)
 from src.tests.utils.fixtures.order_detail_fixture import build_order_detail
 from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import build_product_ingredient
+from src.tests.utils.fixtures.product_ingredient_fixture import \
+    build_product_ingredient
 
 
 class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
@@ -121,7 +119,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_repository.add(inventory_ingredients_to_insert[1])
 
         inventory_ingredient_to_update = build_inventory_ingredient(
-            ingredient_quantity=2
+            quantity=2
         )
 
         inventory_ingredient_repository.update_by_id(2, inventory_ingredient_to_update)
@@ -130,15 +128,15 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
 
         self.assertEqual(len(inventory_ingredients), 2)
         self.assertEqual(
-            updated_inventory_ingredient.ingredient_quantity,
-            inventory_ingredient_to_update.ingredient_quantity,
+            updated_inventory_ingredient.quantity,
+            inventory_ingredient_to_update.quantity,
         )
 
     def test_get_by_ingredient_id_successfully(self):
         inventory_ingredient_repository = InventoryIngredientRepositoryImpl()
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient_id=ingredient_1.id, ingredient_quantity=10
+            ingredient_id=ingredient_1.id, quantity=10
         )
         inventory_ingredient_2 = build_inventory_ingredient()
 
@@ -158,7 +156,7 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             ingredient_id=ingredient_1.id,
             inventory_id=inventory_1.id,
-            ingredient_quantity=10,
+            quantity=10,
         )
         inventory_ingredient_repository.add(inventory_ingredient_1)
         self.assertTrue(
@@ -181,11 +179,14 @@ class InventoryIngredientRepositoryImplTestCase(unittest.TestCase):
         inventory_ingredient_1 = build_inventory_ingredient(
             inventory_ingredient_id=1,
             ingredient_id=ingredient_1.id,
-            ingredient_quantity=20,
+            quantity=20,
         )
         product_1 = build_product(product_id=1)
         product_ingredient_1 = build_product_ingredient(
-            id=1, ingredient_id=ingredient_1.id, product_id=product_1.id, quantity=2
+            product_ingredient_id=1,
+            ingredient_id=ingredient_1.id,
+            product_id=product_1.id,
+            quantity=2,
         )
         order_detail_1 = build_order_detail(
             order_detail_id=1, product_id=product_1.id, quantity=1

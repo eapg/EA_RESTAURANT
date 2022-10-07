@@ -1,8 +1,10 @@
-from src.lib.entities.product import Product
 from src.constants.audit import Status
+from src.lib.entities.product import Product
 
 
-def build_product(product_id=None, name=None, description=None, entity_status=None, create_by=None):
+def build_product(
+    product_id=None, name=None, description=None, entity_status=None, create_by=None
+):
 
     product = Product()
     product.id = product_id

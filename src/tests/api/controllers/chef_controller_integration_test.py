@@ -118,7 +118,7 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
         self.chef_repository.update_by_id.assert_called_once_with(2, chef_to_update)
 
         self.assertEqual(len(chefs), 2)
-        self.assertEqual(updated_chef.chef_skills, chef_to_update.chef_skills)
+        self.assertEqual(updated_chef.skill, chef_to_update.skill)
 
     def test_get_available_chefs_from_repository_using_controller(self):
 
@@ -126,7 +126,9 @@ class ChefRepositoryControllerIntegrationTestCase(unittest.TestCase):
         chef_intermediate = build_chef(chef_id=2, name="Andres p", chef_skills=3)
         chef_basic = build_chef(chef_id=3, name="Juan p", chef_skills=1)
 
-        order_1 = build_order(assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS)
+        order_1 = build_order(
+            assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS
+        )
         order_2 = build_order(assigned_chef_id=None)
         order_3 = build_order(assigned_chef_id=None)
 

@@ -3,10 +3,8 @@ from unittest import mock
 
 from src.api.controllers.inventory_controller import InventoryController
 from src.constants.audit import Status
-from src.tests.utils.fixtures.inventory_fixture import (
-    build_inventories,
-    build_inventory,
-)
+from src.tests.utils.fixtures.inventory_fixture import (build_inventories,
+                                                        build_inventory)
 
 
 class InventoryRepositoryControllerTestCase(unittest.TestCase):
@@ -46,7 +44,9 @@ class InventoryRepositoryControllerTestCase(unittest.TestCase):
         inventory_to_delete = build_inventory(entity_status=Status.DELETED)
         self.inventory_controller.delete_by_id(2, inventory_to_delete)
 
-        self.inventory_repository.delete_by_id.assert_called_with(2, inventory_to_delete)
+        self.inventory_repository.delete_by_id.assert_called_with(
+            2, inventory_to_delete
+        )
 
     def test_update_an_inventory_successfully(self):
         inventory = build_inventory()

@@ -1,6 +1,6 @@
 # class to process the clients orders
-from src.utils.utils import equals
 from src.lib.entities.abstract_entity import AbstractEntity
+from src.utils.utils import equals
 
 
 class Order(AbstractEntity):

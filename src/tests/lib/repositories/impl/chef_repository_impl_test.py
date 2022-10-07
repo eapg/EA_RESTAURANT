@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl.chef_repository_impl import ChefRepositoryImpl
@@ -105,7 +106,7 @@ class ChefRepositoryImplTestCase(unittest.TestCase):
         chefs = chef_repository.get_all()
 
         self.assertEqual(len(chefs), 2)
-        self.assertEqual(updated_chef.chef_skills, chef_to_update.chef_skills)
+        self.assertEqual(updated_chef.skill, chef_to_update.skill)
 
     def test_get_available_chefs(self):
 

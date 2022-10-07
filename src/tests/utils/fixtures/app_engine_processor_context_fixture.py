@@ -1,4 +1,5 @@
-from src.core.engine.app_engine_processor_context import AppEngineProcessorContext
+from src.core.engine.app_engine_processor_context import \
+    AppEngineProcessorContext
 
 
 def build_app_engine_processor_context(processors=None):

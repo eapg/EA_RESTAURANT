@@ -1,12 +1,42 @@
 from abc import ABCMeta
-from src.core.engine.processors.abstract_processor import AbstractProcessor
-from src.core.ioc import get_ioc_instance
-from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
+from datetime import datetime, timedelta
+
+from src.constants.audit import InternalUsers
 from src.constants.order_status import OrderStatus
+from src.core.engine.processors.abstract_processor import AbstractProcessor
+from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
 from src.utils.order_util import compute_order_estimated_time
 from src.utils.time_util import get_unix_time_stamp_milliseconds
-from datetime import datetime, timedelta
-from src.constants.audit import InternalUsers
+
+
+def initialize_kitchen_simulator(app_processor_config, app_context):
+    ioc = app_context.ioc
+    order_controller = ioc.get_instance("order_controller")
+    order_manager = app_processor_config.order_manager
+
+    load_order_into_order_manager(
+        order_manager, order_controller, OrderStatus.NEW_ORDER
+    )
+    load_order_into_order_manager(
+        order_manager, order_controller, OrderStatus.IN_PROCESS
+    )
+    load_order_into_order_manager(
+        order_manager, order_controller, OrderStatus.COMPLETED
+    )
+    load_order_into_order_manager(
+        order_manager, order_controller, OrderStatus.CANCELLED
+    )
+
+
+def load_order_into_order_manager(order_manager, order_controller, order_status):
+    orders = order_controller.get_orders_by_status(
+        order_status.name,
+        order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[order_status],
+    )
+
+    if orders:
+        for order in orders:
+            order_manager.add_to_queue(order)
 
 
 class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
@@ -14,19 +44,24 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         super().__init__(
             app_processor_config=app_processor_config, app_context=app_context
         )
+        self._process_clean_queues_delta_time_sum = 0  # float
+        self._process_clean_queues_timeout = 60  # seconds
+        self.order_manager = None
+        self.chef_controller = None
+        self.mongo_order_status_history_controller = None
+        self.order_controller = None
 
-        ioc = get_ioc_instance()
+    def set_app_context(self, app_context):
+        ioc = app_context.ioc
         self.order_controller = ioc.get_instance("order_controller")
-        self.order_status_history_controller = ioc.get_instance(
-            "order_status_history_controller"
+        self.mongo_order_status_history_controller = ioc.get_instance(
+            "mongo_order_status_history_controller"
         )
         self.chef_controller = ioc.get_instance("chef_controller")
-        self.order_manager = ioc.get_instance("order_manager")
-        self._process_clean_queues_timeout = 60  # seconds
-        self._process_clean_queues_delta_time_sum = 0  # float
+        self.order_manager = self.app_processor_config.order_manager
+        self.app_context = app_context
 
     def process(self, delta_time):
-
         self.process_new_orders()
         self.process_orders_in_process()
         self.process_clean_queues(delta_time)
@@ -34,7 +69,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def process_new_orders(self):
 
         orders_to_process = self.order_controller.get_orders_by_status(
-            OrderStatus.NEW_ORDER,
+            OrderStatus.NEW_ORDER.name,
             order_limit=ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP[OrderStatus.NEW_ORDER],
         )
         orders_validation_map = self.order_controller.get_validated_orders_map(
@@ -45,7 +80,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         if available_chef_ids:
 
             order_in_turn_id = self.order_manager.get_queue_from_status(
-                OrderStatus.NEW_ORDER
+                OrderStatus.NEW_ORDER.name
             )
 
             if order_in_turn_id:
@@ -66,14 +101,14 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def process_orders_in_process(self):
 
         order_id_to_be_checked = self.order_manager.get_queue_from_status(
-            OrderStatus.IN_PROCESS
+            OrderStatus.IN_PROCESS.name
         )
 
         if order_id_to_be_checked:
             order_to_be_checked = self.order_controller.get_by_id(
                 order_id_to_be_checked
             )
-            last_order_status_history = self.order_status_history_controller.get_last_status_history_by_order_id(
+            last_order_status_history = self.mongo_order_status_history_controller.get_last_status_history_by_order_id(
                 order_id_to_be_checked
             )
             chef_assigned = self.chef_controller.get_by_id(
@@ -112,33 +147,33 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     ):
         order_to_be_assign.assigned_chef_id = available_chef_id
         print(f"chef {available_chef_id} assigned to order {order_to_be_assign.id}")
-        order_to_be_assign.status = OrderStatus.IN_PROCESS
+        order_to_be_assign.status = OrderStatus.IN_PROCESS.name
         self.order_controller.reduce_order_ingredients_from_inventory(
             order_to_be_assign.id
         )
         order_to_be_assign.update_by = InternalUsers.KITCHEN_SIMULATOR
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
         )
         self.order_manager.add_to_queue(order_to_be_assign)
         print(f"order {order_to_be_assign.id} in process at {datetime.now()}")
 
     def _order_send_to_cancel(self, order_to_be_cancel):
-        order_to_be_cancel.status = OrderStatus.CANCELLED
+        order_to_be_cancel.status = OrderStatus.CANCELLED.name
         self.order_controller.update_by_id(order_to_be_cancel.id, order_to_be_cancel)
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_cancel.id, order_to_be_cancel.status
         )
         self.order_manager.add_to_queue(order_to_be_cancel)
         print(f"order {order_to_be_cancel.id} cancelled at {datetime.now()}")
 
     def _order_send_to_complete(self, order_to_be_complete):
-        order_to_be_complete.status = OrderStatus.COMPLETED
+        order_to_be_complete.status = OrderStatus.COMPLETED.name
         self.order_controller.update_by_id(
             order_to_be_complete.id, order_to_be_complete
         )
-        self.order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
             order_to_be_complete.id, order_to_be_complete.status
         )
         self.order_manager.add_to_queue(order_to_be_complete)
