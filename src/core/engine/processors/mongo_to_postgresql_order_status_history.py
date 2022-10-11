@@ -1,11 +1,7 @@
 from bson import ObjectId
 
 from src.constants.audit import InternalUsers
-from src.constants.etl_status import EtlStatus
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl
-from src.lib.entities.mongo_engine_odm_mapping import (
-    OrderStatusHistory as MongoOrderStatusHistory,
-)
 from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderStatusHistory as SqlalchemyOrderStatusHistory,
 )
@@ -44,8 +40,8 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
 
     def extract_data(self):
 
-        order_status_histories_from_mongo = MongoOrderStatusHistory.objects(
-            etl_status=EtlStatus.UNPROCESSED.value
+        order_status_histories_from_mongo = (
+            self.mongo_order_status_history_controller.get_unprocessed_order_status_histories()
         )
 
         return order_status_histories_from_mongo
