@@ -13,10 +13,16 @@ from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
+
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_order,
     build_orders,
     build_product_ingredient,
+)
+from src.tests.utils.test_util import (
+    assert_filter_entity_status_active,
+    assert_filter_id,
+    assert_filter_filter_id, build_update_mock_query,
 )
 
 
@@ -30,14 +36,17 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         self.mocked_creation_session_path.start()
 
     def test_add_order_successfully(self):
+
         order_1 = build_order()
 
         self.order_repository.add(order_1)
         self.mocked_sqlalchemy_session.add.assert_called_with(order_1)
 
     def test_get_order_successfully(self):
-        order_1 = build_order()
 
+        order_1 = build_order(order_id=1)
+
+        # pylint: disable=R0801
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
             .query()
@@ -46,32 +55,14 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .first(return_value=order_1)
             .get_mocked_query()
         )
-        order_1.id = 5
-        result = self.order_repository.get_by_id(order_1.id)
 
-        mocked_query.assert_called_with(Order)
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key, "id"
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            order_1.id,
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .right.value,
-            Status.ACTIVE.value,
-        )
+        result = self.order_repository.get_by_id(order_1.id)
+        assert_filter_entity_status_active(self, mocked_query)
+        assert_filter_filter_id(self, mocked_query)
         self.assertEqual(result, order_1)
 
     def test_get_all_successfully(self):
+
         orders = build_orders(count=4)
 
         mocked_query = (
@@ -84,44 +75,22 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         returned_orders = self.order_repository.get_all()
 
         mocked_query.assert_called_with(Order)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_query)
         self.assertEqual(orders, returned_orders)
 
     @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.datetime")
     def test_delete_by_id_successfully(self, mocked_datetime):
-        order_1 = build_order()
+
+        order_1 = build_order(order_id=1)
 
         order_1.updated_by = 1
 
-        mocked_query = (
-            QueryMock(self.mocked_sqlalchemy_session)
-            .query()
-            .filter()
-            .update()
-            .get_mocked_query()
-        )
+        mocked_query = build_update_mock_query(self.mocked_sqlalchemy_session)
 
-        order_1.id = 5
         self.order_repository.delete_by_id(order_1.id, order_1)
 
         mocked_query.assert_called_with(Order)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            order_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         mocked_query.return_value.filter.return_value.update.assert_called_with(
             {
@@ -132,9 +101,9 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
     def test_update_by_id_successfully(self):
-        order_1 = build_order()
 
-        order_1.id = 5
+        order_1 = build_order(order_id=1)
+
         order_to_be_updated = build_order()
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
@@ -147,15 +116,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         self.order_repository.update_by_id(order_1.id, order_1)
 
         mocked_query.assert_called_with(Order)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            order_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         self.mocked_sqlalchemy_session.add.assert_called_with(order_to_be_updated)
 
@@ -167,7 +128,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             QueryMock(self.mocked_sqlalchemy_session)
             .query()
             .filter()
-            .filter()
+            .filter()  # pylint: disable=R0801
             .limit()
             .all(return_value=[order_1])
             .get_mocked_query()
@@ -179,20 +140,20 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
         mocked_query.assert_called_with(Order)
 
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_query)
 
         self.assertEqual(
             mocked_query.return_value.filter.return_value.filter.mock_calls[0]
             .args[0]
             .left.key,
             "status",
+        )
+
+        self.assertEqual(
+            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
+            .args[0]
+            .right.value,
+            OrderStatus.IN_PROCESS.name,
         )
 
         self.assertEqual(
@@ -207,8 +168,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
     def test_get_order_ingredients_by_order_id(self):
 
-        order_1 = build_order()
-        order_1.id = 5
+        order_1 = build_order(order_id=1)
 
         product_ingredient_1 = build_product_ingredient(product_id=1)
         product_ingredient_2 = build_product_ingredient(product_id=2)
@@ -222,27 +182,10 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .get_mocked_query()
         )
 
-        order_ingredients = self.order_repository.get_order_ingredients_by_order_id(5)
+        order_ingredients = self.order_repository.get_order_ingredients_by_order_id(1)
 
         mocked_query.assert_called_with(ProductIngredient)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[1].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[1].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_query)
 
         self.assertEqual(
             mocked_query.return_value.filter.return_value.join.mock_calls[0].args[0],
@@ -285,6 +228,7 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
     @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.case")
     def test_get_validated_orders_map(self, mocked_case):
+
         order_1 = build_order(order_id=1)
         order_2 = build_order(order_id=2)
 
@@ -395,8 +339,8 @@ class OrderRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
     @mock.patch("src.lib.repositories.impl_v2.order_repository_impl.text")
     def test_reduce_order_ingredients_from_inventory(self, mocked_text):
-        order_1 = build_order()
-        order_1.id = 5
+
+        order_1 = build_order(order_id=1)
 
         self.order_repository.reduce_order_ingredients_from_inventory(order_1.id)
 

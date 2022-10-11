@@ -14,13 +14,13 @@ class OrderRepository(GenericRepository, metaclass=ABCMeta):
         pass
 
     @staticmethod
-    def get_order_ingredients_by_order_id(self, order_id):
+    def get_order_ingredients_by_order_id(order_id):
         pass
 
     @staticmethod
-    def get_validated_orders_map(self, orders_to_process):
+    def get_validated_orders_map(orders_to_process):
         pass
 
     @staticmethod
-    def reduce_order_ingredients_from_inventory(self, order_id):
+    def reduce_order_ingredients_from_inventory(order_id):
         pass

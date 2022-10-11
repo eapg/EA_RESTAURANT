@@ -1,10 +1,11 @@
 from unittest import mock
 
 from src.api.controllers.order_controller import OrderController
-from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
-
 from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
+    SqlAlchemyBaseRepositoryTestCase,
+)
 
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_ingredient,
@@ -13,17 +14,19 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_product,
     build_product_ingredient,
 )
-from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
-    SqlAlchemyBaseRepositoryTestCase,
-)
 
 
 class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-
-        self.order_repository = mock.Mock(
-            wraps=OrderRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.order_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.order_repository = mock.Mock(
+            wraps=OrderRepositoryImpl(self.mocked_sqlalchemy_engine)
+        )
+        self.mocked_creation_session_path.start()
+
         self.order_controller = OrderController(self.order_repository)
 
     def test_add_order_to_repository_using_controller(self):
@@ -33,6 +36,7 @@ class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestC
         self.order_repository.add.assert_called_with(order)
 
     def test_get_order_from_repository_using_controller(self):
+
         orders = build_orders(count=3)
 
         self.order_controller.add(orders[0])
@@ -75,8 +79,9 @@ class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestC
         self.assertEqual(orders, [])
 
     def test_delete_an_order_from_repository_using_controller(self):
+
         orders_to_insert = build_orders(count=4)
-        order_to_delete = build_order(entity_status=Status.DELETED)
+        order_to_delete = build_order()
         self.order_controller.add(orders_to_insert[0])
         self.order_controller.add(orders_to_insert[1])
         self.order_controller.add(orders_to_insert[2])
@@ -102,6 +107,7 @@ class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestC
         )
 
     def test_update_order_from_repository_using_controller(self):
+
         orders_to_insert = build_orders(count=2)
 
         self.order_controller.add(orders_to_insert[0])
@@ -126,7 +132,8 @@ class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestC
 
         order_1 = build_order()
         order_2 = build_order()
-        order_3 = build_order(status=OrderStatus.COMPLETED)
+
+        order_3 = build_order()
 
         self.order_controller.add(order_1)
         self.order_controller.add(order_2)
@@ -145,18 +152,17 @@ class OrderRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestC
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient_1")
         ingredient_2 = build_ingredient(ingredient_id=2, name="ingredient_2")
         product_1 = build_product(product_id=1, name="product_1")
+
         product_ingredient_1 = build_product_ingredient(
             product_ingredient_id=1,
             product_id=product_1.id,
             ingredient_id=ingredient_1.id,
-            quantity=2,
         )
 
         product_ingredient_2 = build_product_ingredient(
             product_ingredient_id=2,
             product_id=product_1.id,
             ingredient_id=ingredient_2.id,
-            quantity=2,
         )
 
         order_1 = build_order(order_id=1)

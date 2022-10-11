@@ -1,18 +1,15 @@
-import unittest
 from unittest import mock
 
 from src.api.controllers.inventory_controller import InventoryController
-from src.constants.audit import Status
 from src.lib.repositories.impl_v2.inventory_repository_impl import (
     InventoryRepositoryImpl,
 )
-
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_inventory,
-    build_inventories,
-)
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
+)
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_inventories,
+    build_inventory,
 )
 
 
@@ -20,19 +17,26 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
     SqlAlchemyBaseRepositoryTestCase
 ):
     def after_base_setup(self):
-
-        self.inventory_repository = mock.Mock(
-            wraps=InventoryRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.inventory_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.inventory_repository = mock.Mock(
+            wraps=InventoryRepositoryImpl(self.mocked_sqlalchemy_engine)
+        )
+        self.mocked_creation_session_path.start()
+
         self.inventory_controller = InventoryController(self.inventory_repository)
 
     def test_add_inventory_to_repository_using_controller(self):
+
         inventory = build_inventory()
 
         self.inventory_controller.add(inventory)
         self.inventory_repository.add.assert_called_with(inventory)
 
     def test_get_inventory_from_repository_using_controller(self):
+
         inventories = build_inventories(count=3)
 
         self.inventory_controller.add(inventories[0])
@@ -76,8 +80,9 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         self.assertEqual(inventories, [])
 
     def test_delete_an_inventory_from_repository_using_controller(self):
+
         inventories_to_insert = build_inventories(count=4)
-        inventory_to_delete = build_inventory(entity_status=Status.DELETED)
+        inventory_to_delete = build_inventory()
         self.inventory_controller.add(inventories_to_insert[0])
         self.inventory_controller.add(inventories_to_insert[1])
         self.inventory_controller.add(inventories_to_insert[2])
@@ -105,12 +110,13 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         )
 
     def test_update_inventory_from_repository_using_controller(self):
+
         inventories_to_insert = build_inventories(count=2)
 
         self.inventory_controller.add(inventories_to_insert[0])
         self.inventory_controller.add(inventories_to_insert[1])
 
-        inventory_to_update = build_inventory(update_by="test")
+        inventory_to_update = build_inventory()
         self.inventory_controller.update_by_id(2, inventory_to_update)
         self.inventory_repository.get_by_id.return_value = inventory_to_update
         updated_inventory = self.inventory_controller.get_by_id(2)

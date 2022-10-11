@@ -1,7 +1,9 @@
-from mongoengine import Document, IntField, DateTimeField, StringField
+from mongoengine import Document, IntField, DateTimeField, StringField, QuerySetManager
 
 
 class BaseEntity(Document):
+
+    objects = QuerySetManager()
     entity_status = StringField()
     created_date = DateTimeField()
     updated_date = DateTimeField()

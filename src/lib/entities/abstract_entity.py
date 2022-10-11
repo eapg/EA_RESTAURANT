@@ -12,3 +12,9 @@ class AbstractEntity:
 
     def __eq__(self, other):
         return equals(self, other)
+
+
+class AbstractCommonAttributesEntity:
+    id = None
+    name = None
+    description = None

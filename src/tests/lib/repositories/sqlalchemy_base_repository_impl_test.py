@@ -26,6 +26,7 @@ class SqlAlchemyBaseRepositoryTestCase(unittest.TestCase):
         mocked_init_sqlalchemy_engine.return_value = mock.Mock()
         mocked_init_sqlalchemy_engine.side_effect = mocked_init_sqlalchemy_session_impl
         self.mocked_init_sqlalchemy_engine = mocked_init_sqlalchemy_engine
+        self.mocked_sqlalchemy_not = mocked_sqlalchemy_not
 
         self.after_base_setup()
 

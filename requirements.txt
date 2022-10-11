@@ -39,3 +39,4 @@ userpath==1.7.0
 virtualenv==20.16.5
 wincertstore==0.2
 wrapt==1.14.0
+autoflake==1.7.5

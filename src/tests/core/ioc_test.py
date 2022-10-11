@@ -1,6 +1,6 @@
 import unittest
 
-from src.core.ioc import *
+from src.core.ioc import get_ioc_instance
 
 
 class IocTestCase(unittest.TestCase):

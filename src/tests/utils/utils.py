@@ -1,7 +1,6 @@
 import unittest
 
-from src.tests.utils.fixtures.ingredient_fixture import (build_ingredient,
-                                                         build_ingredients)
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_ingredient
 from src.utils.utils import equals
 
 

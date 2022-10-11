@@ -1,12 +1,14 @@
 import unittest
 from unittest import mock
 
-from src.api.controllers.product_ingredient_controller import \
-    ProductIngredientController
-from src.constants.audit import Status
-from src.tests.utils.fixtures.product_fixture import build_product
-from src.tests.utils.fixtures.product_ingredient_fixture import (
-    build_product_ingredient, build_product_ingredients)
+from src.api.controllers.product_ingredient_controller import (
+    ProductIngredientController,
+)
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_product_ingredient,
+    build_product_ingredients,
+    build_product,
+)
 
 
 class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
@@ -17,6 +19,7 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_add_product_ingredient_successfully(self):
+
         product_ingredient = build_product_ingredient()
 
         self.product_ingredient_controller.add(product_ingredient)
@@ -24,7 +27,8 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         self.product_ingredient_repository.add.assert_called_with(product_ingredient)
 
     def test_get_product_ingredient_successfully(self):
-        product_ingredient = build_product_ingredient()
+
+        product_ingredient = build_product_ingredient(quantity=5)
 
         self.product_ingredient_repository.get_by_id.return_value = product_ingredient
 
@@ -38,6 +42,7 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(expected_product_ingredient.id, product_ingredient.id)
 
     def test_get_all_product_ingredients_successfully(self):
+
         product_ingredients = build_product_ingredients(count=3)
 
         self.product_ingredient_repository.get_all.return_value = product_ingredients
@@ -49,9 +54,8 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_product_ingredients), 3)
 
     def test_delete_an_product_ingredient_successfully(self):
-        product_ingredient_to_delete = build_product_ingredient(
-            entity_status=Status.DELETED
-        )
+
+        product_ingredient_to_delete = build_product_ingredient()
         self.product_ingredient_controller.delete_by_id(2, product_ingredient_to_delete)
 
         self.product_ingredient_repository.delete_by_id.assert_called_with(
@@ -59,6 +63,7 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_update_an_product_ingredient_successfully(self):
+
         product_ingredient = build_product_ingredient()
 
         self.product_ingredient_controller.update_by_id(1, product_ingredient)
@@ -68,6 +73,7 @@ class ProductIngredientRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_get_by_product_id_successfully(self):
+
         product_ingredient = build_product_ingredient()
         product_1 = build_product()
 

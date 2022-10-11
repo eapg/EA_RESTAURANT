@@ -23,8 +23,8 @@ class InventoryRepositoryImpl(InventoryRepository):
         session = create_session(self.engine)
         return (
             session.query(Inventory)
-            .filter(Inventory.id == inventory_id)
             .filter(Inventory.entity_status == Status.ACTIVE.value)
+            .filter(Inventory.id == inventory_id)
             .first()
         )
 

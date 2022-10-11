@@ -5,6 +5,10 @@ disable=
     C0116, # missing-function-docstring
     R0903, # Too few public methods (0/2) (too-few-public-methods)
     W0221, # Parameters differ from overridden
+    W0237, # Parameter has been renamed to.. in overridden
 good-names=
     id,
 
+[SIMILARITIES]
+
+ignore-imports=yes

@@ -1,21 +1,19 @@
-import unittest
-from unittest import mock
 
 from src.api.controllers.inventory_ingredient_controller import (
     InventoryIngredientController,
 )
-from src.constants.audit import Status
-from src.lib.repositories.impl_v2.inventory_ingredient_repository_impl import (
-    InventoryIngredientRepositoryImpl,
-)
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_inventory_ingredient,
-    build_inventory_ingredients,
-    build_inventory,
-    build_ingredient,
-)
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
+)
+
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_ingredient,
+    build_inventory,
+    build_inventory_ingredient,
+    build_inventory_ingredients,
+)
+from src.tests.utils.test_util import (
+    get_inventory_ingredient_repository_with_session_patched,
 )
 
 
@@ -23,16 +21,16 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
     SqlAlchemyBaseRepositoryTestCase
 ):
     def after_base_setup(self):
-
-        self.inventory_ingredient_repository = mock.Mock(
-            wraps=InventoryIngredientRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.inventory_ingredient_repository = (
+            get_inventory_ingredient_repository_with_session_patched(self)
         )
         self.inventory_ingredient_controller = InventoryIngredientController(
             self.inventory_ingredient_repository
         )
 
     def test_add_inventory_ingredient_to_repository_using_controller(self):
-        inventory_ingredient = build_inventory_ingredient()
+
+        inventory_ingredient = build_inventory_ingredient(quantity=5)
 
         self.inventory_ingredient_controller.add(inventory_ingredient)
         self.inventory_ingredient_repository.add.assert_called_with(
@@ -40,6 +38,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         )
 
     def test_get_inventory_ingredient_from_repository_using_controller(self):
+
         inventory_ingredients = build_inventory_ingredients(count=3)
 
         self.inventory_ingredient_controller.add(inventory_ingredients[0])
@@ -87,10 +86,9 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         self.assertEqual(inventory_ingredients, [])
 
     def test_delete_an_inventory_ingredient_from_repository_using_controller(self):
+
         inventory_ingredients_to_insert = build_inventory_ingredients(count=4)
-        inventory_ingredient_to_delete = build_inventory_ingredient(
-            entity_status=Status.DELETED
-        )
+        inventory_ingredient_to_delete = build_inventory_ingredient()
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[0])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[1])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[2])
@@ -120,12 +118,13 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         )
 
     def test_update_inventory_ingredient_from_repository_using_controller(self):
+
         inventory_ingredients_to_insert = build_inventory_ingredients(count=2)
 
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[0])
         self.inventory_ingredient_controller.add(inventory_ingredients_to_insert[1])
 
-        inventory_ingredient_to_update = build_inventory_ingredient(quantity=2)
+        inventory_ingredient_to_update = build_inventory_ingredient()
 
         self.inventory_ingredient_controller.update_by_id(
             2, inventory_ingredient_to_update
@@ -150,9 +149,10 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         )
 
     def test_get_by_ingredient_id_from_repository_using_controller(self):
+
         ingredient_1 = build_ingredient(ingredient_id=1, name="ingredient test")
         inventory_ingredient_1 = build_inventory_ingredient(
-            ingredient_id=ingredient_1.id, quantity=10
+            ingredient_id=ingredient_1.id, quantity=5
         )
         inventory_ingredient_2 = build_inventory_ingredient()
 
@@ -161,7 +161,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         self.inventory_ingredient_repository.get_by_ingredient_id.return_value = (
             inventory_ingredient_1
         )
-        inventory_ingredient_returned = (
+        _inventory_ingredient_returned = (
             self.inventory_ingredient_controller.get_by_ingredient_id(ingredient_1)
         )
         self.inventory_ingredient_repository.get_by_ingredient_id.assert_called_with(
@@ -176,7 +176,7 @@ class InventoryIngredientRepositoryControllerIntegrationTestCase(
         inventory_ingredient_1 = build_inventory_ingredient(
             ingredient_id=ingredient_1.id,
             inventory_id=inventory_1.id,
-            quantity=10,
+            quantity=5,
         )
         self.inventory_ingredient_controller.add(inventory_ingredient_1)
         self.inventory_ingredient_controller.validate_ingredient_availability(

@@ -1,5 +1,5 @@
-from abc import ABCMeta
 import unittest
+from abc import ABCMeta
 from unittest import mock
 
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl

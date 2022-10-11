@@ -23,8 +23,8 @@ class IngredientRepositoryImpl(IngredientRepository):
         session = create_session(self.engine)
         return (
             session.query(Ingredient)
-            .filter(Ingredient.id == ingredient_id)
             .filter(Ingredient.entity_status == Status.ACTIVE.value)
+            .filter(Ingredient.id == ingredient_id)
             .first()
         )
 
