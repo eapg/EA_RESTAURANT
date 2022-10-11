@@ -52,3 +52,8 @@ class OrderStatusHistoryController:
         self._order_status_history_repository.insert_new_or_updated_batch_order_status_histories(
             order_status_histories
         )
+
+    def get_unprocessed_order_status_histories(self):
+        return (
+            self._order_status_history_repository.get_unprocessed_order_status_histories()
+        )

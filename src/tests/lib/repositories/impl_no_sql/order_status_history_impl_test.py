@@ -1,17 +1,18 @@
 from unittest import mock
 
-from src.constants.audit import Status, InternalUsers
+from src.constants.audit import InternalUsers, Status
+from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl,
 )
+from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
+    MongoEngineBaseRepositoryTestCase,
+)
 from src.tests.utils.fixtures.mapping_odm_fixtures import (
     build_order_status_histories,
     build_order_status_history,
-)
-from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
-    MongoEngineBaseRepositoryTestCase,
 )
 
 
@@ -158,3 +159,21 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
                 }
             },
         )
+
+    @mock.patch.object(OrderStatusHistory, "objects")
+    def test_get_unprocessed_order_status_histories(self, mocked_objects):
+        order_status_history_1 = build_order_status_history()
+        order_status_history_1.etl_status = EtlStatus.UNPROCESSED.value
+        order_status_history_2 = build_order_status_history()
+        order_status_history_2.etl_status = EtlStatus.UNPROCESSED.value
+
+        mocked_objects.return_value = [order_status_history_1, order_status_history_2]
+
+        unprocessed_order_status_histories = (
+            self.order_status_history_repository.get_unprocessed_order_status_histories()
+        )
+        self.assertEqual(
+            unprocessed_order_status_histories,
+            [order_status_history_1, order_status_history_2],
+        )
+        mocked_objects.assert_called_with(etl_status=EtlStatus.UNPROCESSED.value)

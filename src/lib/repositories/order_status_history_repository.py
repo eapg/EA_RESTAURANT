@@ -16,3 +16,7 @@ class OrderStatusHistoryRepository(GenericRepository, metaclass=ABCMeta):
     @abstractmethod
     def set_next_status_history_by_order_id(self, order_id, new_status):
         pass
+
+    @abstractmethod
+    def get_unprocessed_order_status_histories(self):
+        pass

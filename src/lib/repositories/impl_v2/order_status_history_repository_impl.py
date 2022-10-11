@@ -174,3 +174,6 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def get_last_status_history_by_order_id(self, order_id):
         pass
+
+    def get_unprocessed_order_status_histories(self):
+        pass

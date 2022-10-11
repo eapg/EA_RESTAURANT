@@ -119,5 +119,11 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             },
         )
 
+    def get_unprocessed_order_status_histories(self):
+        order_status_histories_from_mongo = OrderStatusHistory.objects(
+            etl_status=EtlStatus.UNPROCESSED.value
+        )
+        return order_status_histories_from_mongo
+
     def get_last_order_status_histories_by_order_ids(self, order_id):
         pass
