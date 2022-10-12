@@ -36,18 +36,19 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
             mock.Mock()
         )
 
-    @mock.patch.object(MongoOrderStatusHistory, "objects")
-    def test_extract_data_successfully(self, mocked_objects):
-        self.mongo_to_postgres_etl.transform_data = mock.Mock()
-        self.mongo_to_postgres_etl.load_data = mock.Mock()
+    def test_extract_data_successfully(self):
+        etl = self.mongo_to_postgres_etl
+        etl.transform_data = mock.Mock()
+        etl.load_data = mock.Mock()
 
         def after_execute(_app_processor_config, _app_context):
-            self.mongo_to_postgres_etl.destroyed = True
+            etl.destroyed = True
 
-        self.mongo_to_postgres_etl.app_processor_config.after_execute = after_execute
+        etl.app_processor_config.after_execute = after_execute
 
-        self.mongo_to_postgres_etl.start()
-        mocked_objects.assert_called_with(etl_status=EtlStatus.UNPROCESSED.value)
+        etl.start()
+        mongo_controller = etl.mongo_order_status_history_controller
+        mongo_controller.get_unprocessed_order_status_histories.assert_called()
 
     @mock.patch(
         "src.core.engine.processors.mongo_to_postgresql_order_status_history."

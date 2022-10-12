@@ -1,6 +1,5 @@
 from unittest import mock
 
-from src.constants.audit import InternalUsers
 from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl
@@ -11,6 +10,7 @@ from src.core.ioc import get_ioc_instance
 from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
     MongoEngineBaseRepositoryTestCase,
 )
+
 from src.tests.utils.fixtures.app_engine_processor_context_fixture import (
     build_app_engine_processor_context,
 )
@@ -27,7 +27,9 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
     MongoEngineBaseRepositoryTestCase
 ):
     def after_base_setup(self):
+
         self.mocked_sqlalchemy_session = mock.Mock()
+
         self.mocked_sqlalchemy_session.get_bind.return_value.begin.return_value.__enter__ = (
             mock.Mock()
         )
@@ -38,6 +40,8 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
         self.mocked_sqlalchemy_session.begin.return_value.__enter__ = mock.Mock()
         self.mocked_sqlalchemy_session.begin.return_value.__exit__ = mock.Mock()
 
+        self.mocked_sqlalchemy_engine = mock.Mock()
+
         ioc = get_ioc_instance()
         self.app_config = build_app_processor_config()
         self.app_context = build_app_engine_processor_context()
@@ -47,9 +51,15 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
         self.mongo_to_postgres_etl.app_processor_config = self.app_config
 
         self.mongo_to_postgres_etl.set_app_context(self.app_context)
-        self.mongo_to_postgres_etl.order_status_history_controller.session = (
-            self.mocked_sqlalchemy_session
+
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.order_status_history_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.mongo_to_postgres_etl.order_status_history_controller.session = (
+            self.mocked_sqlalchemy_engine
+        )
+        self.mocked_creation_session_path.start()
 
         self.mongo_to_postgres_etl.extract_data = mock.Mock(
             wraps=self.mongo_to_postgres_etl.extract_data
