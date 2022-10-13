@@ -1,17 +1,22 @@
 from abc import ABCMeta
 from datetime import datetime, timedelta
 
+from src.api.controllers.chef_controller import ChefController
+from src.api.controllers.order_controller import OrderController
 from src.constants.audit import InternalUsers
 from src.constants.order_status import OrderStatus
 from src.core.engine.processors.abstract_processor import AbstractProcessor
 from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
+from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
+)
 from src.utils.order_util import compute_order_estimated_time
 from src.utils.time_util import get_unix_time_stamp_milliseconds
 
 
 def initialize_kitchen_simulator(app_processor_config, app_context):
     ioc = app_context.ioc
-    order_controller = ioc.get_instance("order_controller")
+    order_controller = ioc.get(OrderController)
     order_manager = app_processor_config.order_manager
 
     load_order_into_order_manager(
@@ -48,16 +53,16 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self._process_clean_queues_timeout = 60  # seconds
         self.order_manager = None
         self.chef_controller = None
-        self.mongo_order_status_history_controller = None
+        self.mongo_order_status_history_repository = None
         self.order_controller = None
 
     def set_app_context(self, app_context):
         ioc = app_context.ioc
-        self.order_controller = ioc.get_instance("order_controller")
-        self.mongo_order_status_history_controller = ioc.get_instance(
-            "mongo_order_status_history_controller"
+        self.order_controller = ioc.get(OrderController)
+        self.mongo_order_status_history_repository = ioc.get(
+            MongoOrderStatusHistoryRepository
         )
-        self.chef_controller = ioc.get_instance("chef_controller")
+        self.chef_controller = ioc.get(ChefController)
         self.order_manager = self.app_processor_config.order_manager
         self.app_context = app_context
 
@@ -108,7 +113,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             order_to_be_checked = self.order_controller.get_by_id(
                 order_id_to_be_checked
             )
-            last_order_status_history = self.mongo_order_status_history_controller.get_last_status_history_by_order_id(
+            last_order_status_history = self.mongo_order_status_history_repository.get_last_status_history_by_order_id(
                 order_id_to_be_checked
             )
             chef_assigned = self.chef_controller.get_by_id(
@@ -153,7 +158,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         )
         order_to_be_assign.update_by = InternalUsers.KITCHEN_SIMULATOR
         self.order_controller.update_by_id(order_to_be_assign.id, order_to_be_assign)
-        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_repository.set_next_status_history_by_order_id(
             order_to_be_assign.id, order_to_be_assign.status
         )
         self.order_manager.add_to_queue(order_to_be_assign)
@@ -162,7 +167,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
     def _order_send_to_cancel(self, order_to_be_cancel):
         order_to_be_cancel.status = OrderStatus.CANCELLED.name
         self.order_controller.update_by_id(order_to_be_cancel.id, order_to_be_cancel)
-        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_repository.set_next_status_history_by_order_id(
             order_to_be_cancel.id, order_to_be_cancel.status
         )
         self.order_manager.add_to_queue(order_to_be_cancel)
@@ -173,7 +178,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         self.order_controller.update_by_id(
             order_to_be_complete.id, order_to_be_complete
         )
-        self.mongo_order_status_history_controller.set_next_status_history_by_order_id(
+        self.mongo_order_status_history_repository.set_next_status_history_by_order_id(
             order_to_be_complete.id, order_to_be_complete.status
         )
         self.order_manager.add_to_queue(order_to_be_complete)

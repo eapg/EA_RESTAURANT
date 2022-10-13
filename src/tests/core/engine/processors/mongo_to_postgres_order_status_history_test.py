@@ -27,8 +27,8 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         etl.app_processor_config = self.app_config
         etl.order_status_history_controller = mock.Mock()
         etl.order_status_history_controller.add = mock.Mock()
-        etl.mongo_order_status_history_controller = mock.Mock()
-        etl.mongo_order_status_history_controller.update_batch_to_processed = (
+        etl.mongo_order_status_history_repository = mock.Mock()
+        etl.mongo_order_status_history_repository.update_batch_to_processed = (
             mock.Mock()
         )
 
@@ -43,8 +43,8 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         etl.app_processor_config.after_execute = after_execute
 
         etl.start()
-        mongo_controller = etl.mongo_order_status_history_controller
-        mongo_controller.get_unprocessed_order_status_histories.assert_called()
+        mongo_repository = etl.mongo_order_status_history_repository
+        mongo_repository.get_unprocessed_order_status_histories.assert_called()
 
     @mock.patch(
         "src.core.engine.processors.mongo_to_postgresql_order_status_history."
@@ -99,7 +99,7 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
 
         etl = self.mongo_to_postgres_etl
         controller = etl.order_status_history_controller
-        controller.get_last_order_status_histories_by_order_ids.return_value = [
+        controller.last_order_status_histories_by_order_ids.return_value = [
             last_order_status_history_1,
             last_order_status_history_2,
         ]
@@ -123,12 +123,12 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
             ],
             InternalUsers.ETL.value,
         )
-        self.mongo_to_postgres_etl.order_status_history_controller.add.has_called_with(
+        self.mongo_to_postgres_etl.mongo_order_status_history_repository.add.has_called_with(
             [mock.call(order_status_history_1), mock.call(order_status_history_2)]
         )
 
         etl = self.mongo_to_postgres_etl
-        controller = etl.mongo_order_status_history_controller
-        controller.update_batch_to_processed.has_called_with(
+        repository = etl.mongo_order_status_history_repository
+        repository.update_batch_to_processed.has_called_with(
             mock.call("632b1cbdd411e2e0c2ac80e6"), mock.call("632b1cbdd411e2e0c2ac80e7")
         )

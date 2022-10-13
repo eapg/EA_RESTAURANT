@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from injector import inject
 from sqlalchemy import case, func
+from sqlalchemy.engine.base import Engine
 from sqlalchemy.sql import text
 
 from src.constants.audit import Status
@@ -31,7 +33,8 @@ SQL_QUERY_TO_REDUCE_INGREDIENTS_FROM_INVENTORY = """
 
 
 class OrderRepositoryImpl(OrderRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 

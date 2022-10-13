@@ -1,5 +1,7 @@
 # thread manager
+from injector import Injector
 
+from src.core.di_config import DiProviders
 from src.core.engine.app_engine_processor_context import AppEngineProcessorContext
 from src.core.engine.app_processor_config import AppProcessorConfig
 from src.core.engine.processors.kitchen_simulator import (
@@ -9,13 +11,12 @@ from src.core.engine.processors.kitchen_simulator import (
 from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
     MongoToPostgresqlOrderStatusHistory,
 )
-from src.core.ioc import get_ioc_instance
 from src.core.order_manager import OrderManager
 
 
 class AppEngineProcessor:
     def __init__(self):
-        ioc = get_ioc_instance()
+        ioc = Injector(DiProviders)
         mongo_to_postgres_etl_config = AppProcessorConfig(
             id="mongo_to_postgres_etl",
             interval=60,

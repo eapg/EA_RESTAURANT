@@ -1,5 +1,15 @@
-class OrderStatusHistoryController:
-    def __init__(self, order_status_history_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl,
+)
+
+
+class OrderStatusHistoryController(Module):
+    @inject
+    def __init__(
+        self, order_status_history_repository: OrderStatusHistoryRepositoryImpl
+    ):
         self._order_status_history_repository = (
             order_status_history_repository  # order_status_historyRepository
         )
@@ -43,7 +53,7 @@ class OrderStatusHistoryController:
 
     def last_order_status_histories_by_order_ids(self, order_ids):
         return self._order_status_history_repository.get_last_order_status_histories_by_order_ids(
-            self, order_ids
+            order_ids
         )
 
     def insert_new_or_updated_batch_order_status_histories(

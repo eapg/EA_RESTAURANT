@@ -22,4 +22,3 @@ class DependencyInjectionTest(unittest.TestCase):
         injector = Injector(DiProviders)
         chef_repository = injector.get(ChefRepositoryImpl)
         self.assertEqual(mocked_get_engine(), chef_repository.engine)
-

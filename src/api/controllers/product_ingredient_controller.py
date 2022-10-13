@@ -1,5 +1,13 @@
-class ProductIngredientController:
-    def __init__(self, product_ingredient_repository):
+from injector import Module, inject
+
+from src.lib.repositories.product_ingredient_repository import (
+    ProductIngredientRepository,
+)
+
+
+class ProductIngredientController(Module):
+    @inject
+    def __init__(self, product_ingredient_repository: ProductIngredientRepository):
         self._product_ingredient_repository = (
             product_ingredient_repository  # ProductIngredientRepository
         )

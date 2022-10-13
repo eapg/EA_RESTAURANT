@@ -11,8 +11,8 @@ from src.tests.utils.fixtures.app_processor_config_fixture import (
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_chef,
     build_order,
-    build_product_ingredient,
     build_order_status_history,
+    build_product_ingredient,
 )
 
 
@@ -23,7 +23,7 @@ class KitchenSimulatorTest(unittest.TestCase):
         self.kitchen_simulator.order_manager = mock.Mock()
         self.kitchen_simulator.chef_controller = mock.Mock()
         self.kitchen_simulator.order_controller = mock.Mock()
-        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock()
+        self.kitchen_simulator.mongo_order_status_history_repository = mock.Mock()
 
     @mock.patch(
         "src.core.engine.processors.kitchen_simulator.compute_order_estimated_time"
@@ -118,7 +118,7 @@ class KitchenSimulatorTest(unittest.TestCase):
     ):
 
         kitchen_simulator = self.kitchen_simulator
-        mongo_controller = kitchen_simulator.mongo_order_status_history_controller
+        mongo_controller = kitchen_simulator.mongo_order_status_history_repository
         kitchen_simulator.assign_orders_to_available_chefs = mock.Mock()
         chef_1 = build_chef(chef_id=1)
         kitchen_simulator.chef_controller.get_by_id.return_value = chef_1
