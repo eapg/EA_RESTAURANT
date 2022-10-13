@@ -1,6 +1,7 @@
 from datetime import datetime
-
+from injector import inject
 from sqlalchemy import not_
+from sqlalchemy.engine.base import Engine
 
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
@@ -10,7 +11,8 @@ from src.lib.repositories.chef_repository import ChefRepository
 
 
 class ChefRepositoryImpl(ChefRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 
