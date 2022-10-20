@@ -13,7 +13,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
 )
 from src.lib.repositories.order_repository import OrderRepository
 
-sql_query_to_reduce_ingredients_from_inventory = """
+SQL_QUERY_TO_REDUCE_INGREDIENTS_FROM_INVENTORY = """
                 with order_ingredients_cte as (
                       select product_ingredients.id
                         from product_ingredients
@@ -47,8 +47,8 @@ class OrderRepositoryImpl(OrderRepository):
         session = create_session(self.engine)
         return (
             session.query(Order)
-            .filter(Order.id == order_id)
             .filter(Order.entity_status == Status.ACTIVE.value)
+            .filter(Order.id == order_id)
             .first()
         )
 
@@ -155,6 +155,6 @@ class OrderRepositoryImpl(OrderRepository):
         with self.engine.begin() as conn:
 
             conn.execute(
-                text(sql_query_to_reduce_ingredients_from_inventory),
+                text(SQL_QUERY_TO_REDUCE_INGREDIENTS_FROM_INVENTORY),
                 {"order_id": order_id},
             )

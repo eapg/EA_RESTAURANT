@@ -23,8 +23,8 @@ class ProductRepositoryImpl(ProductRepository):
         session = create_session(self.engine)
         return (
             session.query(Product)
-            .filter(Product.id == product_id)
             .filter(Product.entity_status == Status.ACTIVE.value)
+            .filter(Product.id == product_id)
             .first()
         )
 

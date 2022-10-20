@@ -1,13 +1,9 @@
 from unittest import mock
 
 from src.constants.audit import InternalUsers
-from src.constants.etl_status import EtlStatus
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl
 from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
     MongoToPostgresqlOrderStatusHistory,
-)
-from src.lib.entities.mongo_engine_odm_mapping import (
-    OrderStatusHistory as MongoOrderStatusHistory,
 )
 from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
     MongoEngineBaseRepositoryTestCase,
@@ -55,6 +51,7 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         + "convert_mongo_order_status_history_to_postgres_order_status_history"
     )
     def test_transform_data_successfully(self, mocked_convert_mongo_to_postgres):
+
         self.mongo_to_postgres_etl.load_data = mock.Mock()
         self.mongo_to_postgres_etl.extract_data = mock.Mock()
 
@@ -82,6 +79,7 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         + "update_last_order_status_history"
     )
     def test_load_data_successfully(self, mocked_update_last_order_status_history):
+
         last_order_status_history_1 = build_order_status_history()
         last_order_status_history_2 = build_order_status_history()
 

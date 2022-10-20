@@ -25,8 +25,8 @@ class ProductIngredientRepositoryImpl(ProductIngredientRepository):
         session = create_session(self.engine)
         return (
             session.query(ProductIngredient)
-            .filter(ProductIngredient.id == product_ingredient_id)
             .filter(ProductIngredient.entity_status == Status.ACTIVE.value)
+            .filter(ProductIngredient.id == product_ingredient_id)
             .first()
         )
 

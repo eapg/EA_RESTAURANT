@@ -10,7 +10,6 @@ from src.core.ioc import get_ioc_instance
 from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
     MongoEngineBaseRepositoryTestCase,
 )
-
 from src.tests.utils.fixtures.app_engine_processor_context_fixture import (
     build_app_engine_processor_context,
 )

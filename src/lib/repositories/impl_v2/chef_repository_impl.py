@@ -26,8 +26,8 @@ class ChefRepositoryImpl(ChefRepository):
         session = create_session(self.engine)
         return (
             session.query(Chef)
-            .filter(Chef.id == chef_id)
             .filter(Chef.entity_status == Status.ACTIVE.value)
+            .filter(Chef.id == chef_id)
             .first()
         )
 

@@ -23,8 +23,8 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
         session = create_session(self.engine)
         return (
             session.query(OrderDetail)
-            .filter(OrderDetail.id == order_detail_id)
             .filter(OrderDetail.entity_status == Status.ACTIVE.value)
+            .filter(OrderDetail.id == order_detail_id)
             .first()
         )
 

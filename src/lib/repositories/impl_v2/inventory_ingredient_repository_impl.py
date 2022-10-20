@@ -30,8 +30,8 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
         session = create_session(self.engine)
         return (
             session.query(InventoryIngredient)
-            .filter(InventoryIngredient.id == inventory_ingredient_id)
             .filter(InventoryIngredient.entity_status == Status.ACTIVE.value)
+            .filter(InventoryIngredient.id == inventory_ingredient_id)
             .first()
         )
 

@@ -46,8 +46,8 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         session = create_session(self.engine)
         return (
             session.query(OrderStatusHistory)
-            .filter(OrderStatusHistory.id == order_status_history_id)
             .filter(OrderStatusHistory.entity_status == Status.ACTIVE.value)
+            .filter(OrderStatusHistory.id == order_status_history_id)
             .first()
         )
 

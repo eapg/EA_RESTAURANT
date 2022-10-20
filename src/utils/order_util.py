@@ -30,8 +30,9 @@ def order_products_validation_reducer(
     quantity_product_that_can_be_made_map,
 ):
     """
-    This function will return a list that will contain true if there is availability to make a product and false
-    if not, we this list we will determinate if an order can be assigned to a chef or cancelled.
+    This function will return a list that will contain true if there is availability to
+    make a product and false if not, with this list we will determinate if an order can be
+    assigned to a chef or cancelled.
     """
 
     if (
@@ -62,8 +63,9 @@ def setup_validated_orders_map(
             order_detail.product_id
             for order_detail in get_order_details_by_order_id(order.id)
         ]
+        reducer = order_products_validation_reducer
         return reduce(
-            lambda order_products_validation_result, order_detail: order_products_validation_reducer(
+            lambda order_products_validation_result, order_detail: reducer(
                 order_products_validation_result,
                 order_detail,
                 get_final_product_qty_by_product_ids(product_ids),
@@ -90,7 +92,10 @@ def compute_order_estimated_time(order_ingredient_list, chef):
 
     order_estimated_time = reduce(
         lambda estimated_time_result, product_ingredient: estimated_time_result
-        + (CookingType[product_ingredient.cooking_type].value * product_ingredient.quantity),
+        + (
+            CookingType[product_ingredient.cooking_type].value
+            * product_ingredient.quantity
+        ),
         order_ingredient_list,
         0,
     )

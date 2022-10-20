@@ -34,7 +34,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         return order_status_histories
 
     def delete_by_id(self, order_status_history_id, order_status_history):
-        order_status_history_to_delete = OrderStatusHistory.objects(
+        _order_status_history_to_delete = OrderStatusHistory.objects(
             id=order_status_history_id
         ).update_one(
             entity_status=Status.DELETED.value,
@@ -106,8 +106,8 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def update_batch_to_processed(self, order_status_history_ids):
 
-        db = self.mongo_client["ea_restaurant"]
-        collection = db["order_status_histories"]
+        db_client = self.mongo_client["ea_restaurant"]
+        collection = db_client["order_status_histories"]
         collection.update_many(
             {"_id": {"$in": order_status_history_ids}},
             {

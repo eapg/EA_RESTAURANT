@@ -51,6 +51,6 @@ class OrderManager:
         for status in [OrderStatus.COMPLETED.name, OrderStatus.CANCELLED.name]:
             if self.get_queue_size(status) > limit_value_before_clean:
                 for _ in range(100):
-                    deque_id = self.get_queue_from_status(status)
+                    self.get_queue_from_status(status)
             else:
                 self._order_status_to_order_queue_map[status].queue.clear()

@@ -1,13 +1,18 @@
 import unittest
+
 from unittest import mock
 
-from src.api.controllers.order_status_history_controller import \
-    OrderStatusHistoryController
-from src.constants.audit import Status
+from src.api.controllers.order_status_history_controller import (
+    OrderStatusHistoryController,
+)
+
 from src.constants.order_status import OrderStatus
-from src.tests.utils.fixtures.order_fixture import build_order
-from src.tests.utils.fixtures.order_status_history_fixture import (
-    build_order_status_histories, build_order_status_history)
+
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_order_status_history,
+    build_order_status_histories,
+    build_order,
+)
 
 
 class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
@@ -18,6 +23,7 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_add_order_status_history_successfully(self):
+
         order_status_history = build_order_status_history()
 
         self.order_status_history_controller.add(order_status_history)
@@ -27,6 +33,7 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_get_order_status_history_successfully(self):
+
         order_status_history = build_order_status_history()
 
         self.order_status_history_repository.get_by_id.return_value = (
@@ -43,6 +50,7 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(expected_order_status_history.id, order_status_history.id)
 
     def test_get_all_order_status_histories_successfully(self):
+
         order_status_histories = build_order_status_histories(count=3)
 
         self.order_status_history_repository.get_all.return_value = (
@@ -56,9 +64,8 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_order_status_histories), 3)
 
     def test_delete_an_order_status_history_successfully(self):
-        order_status_history_to_delete = build_order_status_history(
-            entity_status=Status.DELETED
-        )
+
+        order_status_history_to_delete = build_order_status_history()
         self.order_status_history_controller.delete_by_id(
             2, order_status_history_to_delete
         )
@@ -68,6 +75,7 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_update_an_order_status_history_successfully(self):
+
         order_status_history = build_order_status_history()
 
         self.order_status_history_controller.update_by_id(1, order_status_history)
@@ -77,6 +85,7 @@ class OrderStatusHistoryRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_get_by_order_id_successfully(self):
+
         order_status_history = build_order_status_history()
         order_1 = build_order()
         self.order_status_history_repository.get_by_order_id.return_value = (

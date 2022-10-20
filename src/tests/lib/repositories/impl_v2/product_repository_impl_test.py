@@ -8,6 +8,11 @@ from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
 )
 from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_product, build_products
+from src.tests.utils.test_util import (
+    assert_filter_id,
+    assert_filter_filter_id,
+    assert_filter_entity_status_active,
+)
 
 
 class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -20,17 +25,15 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         self.mocked_creation_session_path.start()
 
     def test_add_product_successfully(self):
-        product_1 = build_product(
-            name="product_1", entity_status=Status.ACTIVE.value, create_by=1
-        )
+
+        product_1 = build_product(name="product_1")
 
         self.product_repository.add(product_1)
         self.mocked_sqlalchemy_session.add.assert_called_with(product_1)
 
     def test_get_product_successfully(self):
-        product_1 = build_product(
-            name="product_1", entity_status=Status.ACTIVE.value, create_by=1
-        )
+
+        product_1 = build_product(product_id=1, name="product_1")
 
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
@@ -40,32 +43,15 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .first(return_value=product_1)
             .get_mocked_query()
         )
-        product_1.id = 5
-        result = self.product_repository.get_by_id(product_1.id)
 
-        mocked_query.assert_called_with(Product)
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key, "id"
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            product_1.id,
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .right.value,
-            Status.ACTIVE.value,
-        )
+        result = self.product_repository.get_by_id(product_1.id)
+        assert_filter_entity_status_active(self, mocked_query)
+        assert_filter_filter_id(self, mocked_query)
+
         self.assertEqual(result, product_1)
 
     def test_get_all_successfully(self):
+
         products = build_products(count=4)
 
         mocked_query = (
@@ -78,22 +64,13 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         returned_products = self.product_repository.get_all()
 
         mocked_query.assert_called_with(Product)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_query)
         self.assertEqual(products, returned_products)
 
     @mock.patch("src.lib.repositories.impl_v2.product_repository_impl.datetime")
     def test_delete_by_id_successfully(self, mocked_datetime):
-        product_1 = build_product(
-            name="product_1", entity_status=Status.ACTIVE.value, create_by=1
-        )
+
+        product_1 = build_product(product_id=1, name="product_1")
 
         product_1.updated_by = 2
 
@@ -105,19 +82,9 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .get_mocked_query()
         )
 
-        product_1.id = 5
         self.product_repository.delete_by_id(product_1.id, product_1)
 
-        mocked_query.assert_called_with(Product)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            product_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         mocked_query.return_value.filter.return_value.update.assert_called_with(
             {
@@ -128,10 +95,9 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
     def test_update_by_id_successfully(self):
-        product_1 = build_product(
-            name="product_1", entity_status=Status.ACTIVE.value, create_by=1
-        )
-        product_1.id = 5
+
+        product_1 = build_product(product_id=1, name="product_1")
+
         product_to_be_updated = build_product()
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
@@ -143,15 +109,6 @@ class ProductRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
         self.product_repository.update_by_id(product_1.id, product_1)
 
-        mocked_query.assert_called_with(Product)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            product_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         self.mocked_sqlalchemy_session.add.assert_called_with(product_to_be_updated)

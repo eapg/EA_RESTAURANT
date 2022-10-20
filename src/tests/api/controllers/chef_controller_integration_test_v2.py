@@ -1,40 +1,37 @@
-import unittest
 from unittest import mock
 
 from src.api.controllers.chef_controller import ChefController
-from src.constants.audit import Status
-from src.constants.order_status import OrderStatus
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
-from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_chef,
-    build_chefs,
-    build_order,
-)
+
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_chef, build_chefs
 
 
 class ChefRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
 
-        self.order_repository = mock.Mock(
-            wraps=OrderRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.chef_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
         self.chef_repository = mock.Mock(
-            wraps=ChefRepositoryImpl(self.mocked_sqlalchemy_session)
+            wraps=ChefRepositoryImpl(self.mocked_sqlalchemy_engine)
         )
+        self.mocked_creation_session_path.start()
+
         self.chef_controller = ChefController(self.chef_repository)
 
     def test_add_chef_to_repository_using_controller(self):
+
         chef = build_chef()
 
         self.chef_controller.add(chef)
         self.chef_repository.add.assert_called_with(chef)
 
-
     def test_get_chef_from_repository_using_controller(self):
+
         chefs = build_chefs(count=3)
 
         self.chef_repository.get_by_id.return_value = chefs[2]
@@ -80,8 +77,8 @@ class ChefRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCa
 
     def test_delete_an_chef_from_repository_using_controller(self):
 
+        chef_to_delete = build_chef()
         chefs_to_insert = build_chefs(count=4)
-        chef_to_delete = build_chef(entity_status=Status.DELETED)
         self.chef_controller.add(chefs_to_insert[0])
         self.chef_controller.add(chefs_to_insert[1])
         self.chef_controller.add(chefs_to_insert[2])
@@ -108,6 +105,7 @@ class ChefRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCa
         )
 
     def test_update_chef_from_repository_using_controller(self):
+
         chefs_to_insert = build_chefs(count=2)
 
         self.chef_controller.add(chefs_to_insert[0])
@@ -128,19 +126,13 @@ class ChefRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCa
 
     def test_get_available_chefs_from_repository_using_controller(self):
 
-        chef_principal = build_chef(chef_id=1, name="Elido p", skill=5)
-        chef_intermediate = build_chef(chef_id=2, name="Andres p", skill=3)
-        chef_basic = build_chef(chef_id=3, name="Juan p", skill=1)
-
-        order_1 = build_order(
-            assigned_chef_id=chef_intermediate.id, status=OrderStatus.IN_PROCESS
+        chef_principal = build_chef(
+            chef_id=1, name="Elido p", skill=5
         )
-        order_2 = build_order(assigned_chef_id=None)
-        order_3 = build_order(assigned_chef_id=None)
-
-        self.order_repository.add(order_1)
-        self.order_repository.add(order_2)
-        self.order_repository.add(order_3)
+        chef_intermediate = build_chef(
+            chef_id=2, name="Andres p", skill=3
+        )
+        chef_basic = build_chef(chef_id=3, name="Juan p", skill=1)
 
         self.chef_controller.add(chef_principal)
         self.chef_controller.add(chef_intermediate)
