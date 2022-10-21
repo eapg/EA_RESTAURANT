@@ -1,5 +1,10 @@
-class ChefController:
-    def __init__(self, chef_repository):
+from injector import Module, inject
+from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
+
+
+class ChefController(Module):
+    @inject
+    def __init__(self, chef_repository: ChefRepositoryImpl):
         self._chef_repository = chef_repository  # chefRepository
 
     def add(self, chef):
