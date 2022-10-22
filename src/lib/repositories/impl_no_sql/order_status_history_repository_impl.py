@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from injector import inject
 from pymongo import MongoClient
 
 from src.constants.audit import InternalUsers, Status
@@ -11,9 +12,9 @@ from src.lib.repositories.order_status_history_repository import (
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
-    def __init__(self, mongo_engine_connection):
-        self.mongo_engine_connection = mongo_engine_connection
-        self.mongo_client = MongoClient("mongodb://localhost")
+    @inject
+    def __init__(self, mongo_client: MongoClient):
+        self.mongo_client = mongo_client
 
     def add(self, order_status_history):
         order_status_history.created_date = datetime.now()

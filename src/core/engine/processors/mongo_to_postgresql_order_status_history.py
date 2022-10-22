@@ -1,9 +1,15 @@
 from bson import ObjectId
 
+from src.api.controllers.order_status_history_controller import (
+    OrderStatusHistoryController,
+)
 from src.constants.audit import InternalUsers
 from src.core.engine.processors.abstract_etl_processor import AbstractEtl
 from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderStatusHistory as SqlalchemyOrderStatusHistory,
+)
+from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
 )
 from src.utils.etl_util import (
     convert_mongo_order_status_history_to_postgres_order_status_history,
@@ -26,22 +32,20 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
         )
 
         self.order_status_history_controller = None
-        self.mongo_order_status_history_controller = None
+        self.mongo_order_status_history_repository = None
 
     def set_app_context(self, app_context):
         ioc = app_context.ioc
 
-        self.order_status_history_controller = ioc.get_instance(
-            "order_status_history_repository"
-        )
-        self.mongo_order_status_history_controller = ioc.get_instance(
-            "mongo_order_status_history_repository"
+        self.order_status_history_controller = ioc.get(OrderStatusHistoryController)
+        self.mongo_order_status_history_repository = ioc.get(
+            MongoOrderStatusHistoryRepository
         )
 
     def extract_data(self):
 
         order_status_histories_from_mongo = (
-            self.mongo_order_status_history_controller.get_unprocessed_order_status_histories()
+            self.mongo_order_status_history_repository.get_unprocessed_order_status_histories()
         )
 
         return order_status_histories_from_mongo
@@ -71,7 +75,7 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
             for order_status_history_1 in transformed_data
         ]
 
-        last_order_status_histories = self.order_status_history_controller.get_last_order_status_histories_by_order_ids(
+        last_order_status_histories = self.order_status_history_controller.last_order_status_histories_by_order_ids(
             order_ids
         )
 
@@ -88,6 +92,6 @@ class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
             transformed_data
         )
 
-        self.mongo_order_status_history_controller.update_batch_to_processed(
+        self.mongo_order_status_history_repository.update_batch_to_processed(
             mongo_uuids
         )

@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from injector import inject
 from sqlalchemy import desc, select, text
+from sqlalchemy.engine.base import Engine
 
 from src.constants.audit import Status
 from src.core.sqlalchemy_config import create_session
@@ -30,7 +32,8 @@ SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS = """
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 

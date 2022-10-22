@@ -1,5 +1,13 @@
-class IngredientController:
-    def __init__(self, ingredient_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.ingredient_repository_impl import (
+    IngredientRepositoryImpl,
+)
+
+
+class IngredientController(Module):
+    @inject
+    def __init__(self, ingredient_repository: IngredientRepositoryImpl):
         self._ingredient_repository = ingredient_repository  # IngredientRepository
 
     def add(self, ingredient):

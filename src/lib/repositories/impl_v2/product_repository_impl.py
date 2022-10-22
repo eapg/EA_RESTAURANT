@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from injector import inject
+from sqlalchemy.engine.base import Engine
+
 from src.constants.audit import Status
 from src.core.sqlalchemy_config import create_session
 from src.lib.entities.sqlalchemy_orm_mapping import Product
@@ -7,7 +10,8 @@ from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 

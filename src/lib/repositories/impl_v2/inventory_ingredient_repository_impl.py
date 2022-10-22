@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from injector import inject
+from sqlalchemy.engine.base import Engine
 from sqlalchemy.sql import func
 
 from src.constants.audit import Status
@@ -14,7 +16,8 @@ from src.lib.repositories.inventory_ingredient_repository import (
 
 
 class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 

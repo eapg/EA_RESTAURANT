@@ -1,5 +1,13 @@
-class OrderDetailController:
-    def __init__(self, order_detail_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.order_detail_repository_impl import (
+    OrderDetailRepositoryImpl,
+)
+
+
+class OrderDetailController(Module):
+    @inject
+    def __init__(self, order_detail_repository: OrderDetailRepositoryImpl):
         self._order_detail_repository = (
             order_detail_repository  # order_detailRepository
         )

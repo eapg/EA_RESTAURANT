@@ -11,7 +11,6 @@ from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
     MongoEngineBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.fixture_args import BaseEntityArgs
-
 from src.tests.utils.fixtures.mapping_odm_fixtures import (
     build_order_status_histories,
     build_order_status_history,
@@ -21,7 +20,7 @@ from src.tests.utils.fixtures.mapping_odm_fixtures import (
 class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
     def after_base_setup(self):
         self.order_status_history_repository = OrderStatusHistoryRepositoryImpl(
-            self.mocked_mongo_engine_connection
+            self.mocked_mongo_client
         )
 
     @mock.patch.object(OrderStatusHistory, "save")
@@ -145,19 +144,23 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
     @mock.patch(
         "src.lib.repositories.impl_no_sql.order_status_history_repository_impl.datetime"
     )
-    @mock.patch("pymongo.collection.Collection.update_many")
-    def test_update_batch_processed(self, mocked_update_many, mocked_datetime):
+    def test_update_batch_processed(self, mocked_datetime):
         postgresql_ids = [1, 2]
 
         self.order_status_history_repository.update_batch_to_processed(postgresql_ids)
-
         self.assertEqual(
-            mocked_update_many.mock_calls[0].args[0],
+            self.mocked_mongo_client.mock_calls[0].args[0], "ea_restaurant"
+        )
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[1].args[0], "order_status_histories"
+        )
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[2].args[0],
             {"_id": {"$in": postgresql_ids}},
         )
 
         self.assertEqual(
-            mocked_update_many.mock_calls[0].args[1],
+            self.mocked_mongo_client.mock_calls[2].args[1],
             {
                 "$set": {
                     "etl_status": "PROCESSED",

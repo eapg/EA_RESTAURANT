@@ -8,16 +8,13 @@ from src.api.controllers.order_detail_controller import OrderDetailController
 from src.api.controllers.product_ingredient_controller import (
     ProductIngredientController,
 )
-
 from src.constants.order_status import OrderStatus
-
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 from src.tests.utils.fixtures.app_processor_config_fixture import (
     build_app_processor_config,
 )
-
 from src.tests.utils.fixtures.kitchen_simulator_fixture import (
     build_kitchen_simulator_running_once,
 )
@@ -32,9 +29,9 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_product_ingredient,
 )
 from src.tests.utils.test_util import (
-    get_product_ingredient_repository_with_session_pathed,
-    get_order_detail_repository_with_session_patched,
     get_inventory_ingredient_repository_with_session_patched,
+    get_order_detail_repository_with_session_patched,
+    get_product_ingredient_repository_with_session_pathed,
 )
 
 
@@ -65,8 +62,8 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         self.kitchen_simulator.order_controller = mock.Mock(
             wraps=self.kitchen_simulator.order_controller
         )
-        self.kitchen_simulator.mongo_order_status_history_controller = mock.Mock(
-            wraps=self.kitchen_simulator.mongo_order_status_history_controller
+        self.kitchen_simulator.mongo_order_status_history_repository = mock.Mock(
+            wraps=self.kitchen_simulator.mongo_order_status_history_repository
         )
 
     def test_assign_orders_to_available_chefs(self):
@@ -87,7 +84,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         )
 
         order_1 = build_order(order_id=1, status=OrderStatus.NEW_ORDER)
-        mongo_controller = self.kitchen_simulator.mongo_order_status_history_controller
+        mongo_controller = self.kitchen_simulator.mongo_order_status_history_repository
 
         mongo_controller.set_next_status_history_by_order_id(order_1.id, order_1.status)
         self.kitchen_simulator.order_controller.add(order_1)
@@ -173,7 +170,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             product_ingredient_id=2, ingredient_id=ingredient_2.id
         )
 
-        mongo_controller = self.kitchen_simulator.mongo_order_status_history_controller
+        mongo_controller = self.kitchen_simulator.mongo_order_status_history_repository
         order_3 = build_order(order_id=3, status=OrderStatus.NEW_ORDER)
         mongo_controller.set_next_status_history_by_order_id(order_3.id, order_3.status)
         self.kitchen_simulator.order_controller.add(order_3)
