@@ -17,6 +17,7 @@ def get_postgres_db_uri(
     return f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}/{postgres_db_name}"
 
 
+# pylint: disable=R0902
 class EnvConfig:
     def __init__(self):
         # postgresql config

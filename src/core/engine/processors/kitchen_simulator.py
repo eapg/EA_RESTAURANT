@@ -80,9 +80,9 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
         orders_validation_map = self.order_controller.get_validated_orders_map(
             orders_to_process
         )
-        available_chef_ids = self.chef_controller.get_available_chefs()
+        available_chef = self.chef_controller.get_available_chefs()
 
-        if available_chef_ids:
+        if available_chef:
 
             order_in_turn_id = self.order_manager.get_queue_from_status(
                 OrderStatus.NEW_ORDER.name
@@ -97,7 +97,7 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
 
                 if orders_validation_map[order_to_be_assigned[0].id]:
                     self._assign_to_chef_and_send_to_in_process(
-                        order_to_be_assigned[0], available_chef_ids[0]
+                        order_to_be_assigned[0], available_chef[0]
                     )
 
                 else:
@@ -148,10 +148,10 @@ class KitchenSimulator(AbstractProcessor, metaclass=ABCMeta):
             self._process_clean_queues_delta_time_sum = 0
 
     def _assign_to_chef_and_send_to_in_process(
-        self, order_to_be_assign, available_chef_id
+        self, order_to_be_assign, available_chef
     ):
-        order_to_be_assign.assigned_chef_id = available_chef_id
-        print(f"chef {available_chef_id} assigned to order {order_to_be_assign.id}")
+        order_to_be_assign.assigned_chef_id = available_chef.id
+        print(f"chef {available_chef.id} assigned to order {order_to_be_assign.id}")
         order_to_be_assign.status = OrderStatus.IN_PROCESS.name
         self.order_controller.reduce_order_ingredients_from_inventory(
             order_to_be_assign.id

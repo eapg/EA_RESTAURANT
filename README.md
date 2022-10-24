@@ -58,8 +58,13 @@ Download and install the following tools:
   * - Run the script that you want to run under chosen environment.
 ### Running tests
 
-This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
-run `python -m unittest discover --pattern=*_test.py`
+This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing: 
+* In order to set enviroment to run test:
+  * create a test database example: `ea_restaurant_test`
+  * set in console test ENV using `set ENV=test`
+  * run migrations in test database using `alembic upgrade head`
+
+To run tests just  run `python -m unittest discover --pattern=*_test.py`
 
 This project is using [coverage](https://coverage.readthedocs.io/en/latest/index.html) for coverage. To run test
 coverage just run the commands:

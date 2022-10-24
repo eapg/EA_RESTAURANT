@@ -1,5 +1,4 @@
 import time
-import unittest
 from abc import ABCMeta
 from unittest import mock
 

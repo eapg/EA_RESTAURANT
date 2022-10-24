@@ -19,10 +19,14 @@ class ChefRepositoryImpl(ChefRepository):
     def add(self, chef):
         session = create_session(self.engine)
         with session.begin():
+            chef.entity_status = Status.ACTIVE.value
             chef.created_date = datetime.now()
             chef.updated_by = chef.created_by
             chef.updated_date = chef.created_date
             session.add(chef)
+            session.flush()
+            session.refresh(chef)
+            return chef
 
     def get_by_id(self, chef_id):
         session = create_session(self.engine)
@@ -62,7 +66,7 @@ class ChefRepositoryImpl(ChefRepository):
     def get_available_chefs(self):
         session = create_session(self.engine)
         available_chef_ids = (
-            session.query(Chef.id)
+            session.query(Chef)
             .filter(Chef.entity_status == Status.ACTIVE.value)
             .filter(
                 not_(
@@ -74,5 +78,4 @@ class ChefRepositoryImpl(ChefRepository):
                 )
             )
         )
-
-        return [chef_id[0] for chef_id in available_chef_ids]
+        return list(available_chef_ids)
