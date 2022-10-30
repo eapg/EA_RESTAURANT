@@ -49,8 +49,13 @@ Download and install the following tools:
 * Open `miniconda3`.
 * Go to the project path
 * Run `conda create --prefix=.venv python=3.10.0`
-* In order to active an enviroment run the following command: `conda activate .\venv\Scripts\activate.bat`
+* In order to activate an environment run the following command: `conda activate .\venv\Scripts\activate.bat`
 * In order to update library dependency run the following command : `pip freeze > requirements.txt`
+* In order to set Environment variables file :
+  * - Use `.env.local.example` file to create the different environment files: local, dev, test. 
+  * - choose under which environment you are going to work using command: `SET ENV=local` for local, `SET ENV=test` for
+      testing.
+  * - Run the script that you want to run under chosen environment.
 ### Running tests
 
 This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
