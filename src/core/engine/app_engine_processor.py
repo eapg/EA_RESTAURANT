@@ -12,18 +12,21 @@ from src.core.engine.processors.mongo_to_postgresql_order_status_history import 
     MongoToPostgresqlOrderStatusHistory,
 )
 from src.core.order_manager import OrderManager
+from src.env_config import get_env_config_instance
 
 
 class AppEngineProcessor:
     def __init__(self):
+
+        env_config = get_env_config_instance()
         ioc = Injector(DiProviders)
         mongo_to_postgres_etl_config = AppProcessorConfig(
             id="mongo_to_postgres_etl",
-            interval=60,
+            interval=env_config.etl_interval,
         )
         kitchen_simulator_config = AppProcessorConfig(
             id="kitchen_simulator_test",
-            interval=0.2,
+            interval=env_config.kitchen_simulator_interval,
             order_manager=OrderManager(),
             on_start=initialize_kitchen_simulator,
         )

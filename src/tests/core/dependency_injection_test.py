@@ -6,9 +6,10 @@ from injector import Injector
 from src.api.controllers.chef_controller import ChefController
 from src.core.di_config import DiProviders
 from src.lib.repositories.impl_v2.chef_repository_impl import ChefRepositoryImpl
+from src.tests.base_env_config_test import BaseEnvConfigTest
 
 
-class DependencyInjectionTest(unittest.TestCase):
+class DependencyInjectionTest(BaseEnvConfigTest):
 
     def test_dependency_injection_single_instance(self):
         injector = Injector(DiProviders)

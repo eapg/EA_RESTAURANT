@@ -2,11 +2,13 @@ import unittest
 
 from src.constants.order_status import OrderStatus
 from src.core.order_manager import OrderManager
+from src.tests.base_env_config_test import BaseEnvConfigTest
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_order
 
 
-class OrderManagerTestCase(unittest.TestCase):
+class OrderManagerTestCase(BaseEnvConfigTest):
     def setUp(self):
+        super().setUp()
         self.order_manager = OrderManager()
 
     def test_get_from_order_storage(self):

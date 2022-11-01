@@ -30,6 +30,10 @@ class EnvConfig:
         self.mongo_port = int(os.environ.get("MONGO_PORT"))
         self.mongo_db_name = os.environ.get("MONGO_DB_NAME")
 
+        # process config
+        self.kitchen_simulator_interval = float(os.environ.get("KITCHEN_SIMULATOR_INTERVAL"))
+        self.etl_interval = int(os.environ.get("ETL_INTERVAL"))
+
     def get_postgres_db_uri(self):
         return get_postgres_db_uri(
             self.postgres_user,
