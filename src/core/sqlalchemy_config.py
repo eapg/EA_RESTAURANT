@@ -1,10 +1,12 @@
 # ORM sqlalchemy session creation
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from src.env_config import get_env_config_instance
 
 
 def get_engine():
-    return create_engine("postgresql://postgres:1234@localhost/ea_restaurant")
+    env_config = get_env_config_instance()
+    return create_engine(env_config.get_postgres_db_uri())
 
 
 def create_session(engine: object):

@@ -25,7 +25,6 @@ from src.tests.utils.fixtures.mapping_odm_fixtures import (
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_order_status_history
 
 
-@unittest.skip("skipped")
 class MongoToPostgresOrderStatusHistoryIntegrationTest(
     MongoEngineBaseRepositoryTestCase
 ):

@@ -49,3 +49,4 @@ Werkzeug==2.2.2
 wincertstore==0.2
 wrapt==1.14.0
 autoflake==1.7.5
+python-dotenv~=0.21.0

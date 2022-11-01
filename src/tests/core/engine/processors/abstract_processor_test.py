@@ -4,6 +4,7 @@ from abc import ABCMeta
 from unittest import mock
 
 from src.core.engine.processors.abstract_processor import AbstractProcessor
+from src.tests.base_env_config_test import BaseEnvConfigTest
 from src.tests.utils.fixtures.app_processor_config_fixture import \
     build_app_processor_config
 
@@ -18,7 +19,7 @@ class TestProcessor(AbstractProcessor, metaclass=ABCMeta):
         print(f"Process executed - Testing {self.app_processor_config.id}")
 
 
-class TestAbstractProcessor(unittest.TestCase):
+class TestAbstractProcessor(BaseEnvConfigTest):
     @mock.patch("threading.Thread.__init__")
     def test_processor_default_parameters(self, test_thread_init):
         app_processor_config = build_app_processor_config(on_start=None)

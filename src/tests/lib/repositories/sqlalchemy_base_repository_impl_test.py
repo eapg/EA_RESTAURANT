@@ -1,14 +1,15 @@
 import unittest
 from abc import abstractmethod
 from unittest import mock
-
+from src.tests.base_env_config_test import BaseEnvConfigTest
 mocked_sqlalchemy_session = mock.Mock()
 
 
-class SqlAlchemyBaseRepositoryTestCase(unittest.TestCase):
+class SqlAlchemyBaseRepositoryTestCase(BaseEnvConfigTest):
     @mock.patch("sqlalchemy.not_")
     @mock.patch("src.core.di_config.get_engine")
     def setUp(self, mocked_sqlalchemy_engine, mocked_sqlalchemy_not):
+        super().setUp()
         self.mocked_sqlalchemy_session = mocked_sqlalchemy_session
         self.mocked_sqlalchemy_engine = mocked_sqlalchemy_engine
 

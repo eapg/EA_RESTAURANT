@@ -5,6 +5,7 @@ from unittest import mock
 from src.constants.order_status import OrderStatus
 from src.core.engine.processors.kitchen_simulator import KitchenSimulator
 from src.core.order_manager import ORDER_QUEUE_STATUS_TO_CHUNK_LIMIT_MAP
+from src.tests.base_env_config_test import BaseEnvConfigTest
 from src.tests.utils.fixtures.app_processor_config_fixture import (
     build_app_processor_config,
 )
@@ -16,8 +17,9 @@ from src.tests.utils.fixtures.mapping_orm_fixtures import (
 )
 
 
-class KitchenSimulatorTest(unittest.TestCase):
+class KitchenSimulatorTest(BaseEnvConfigTest):
     def setUp(self):
+        super().setUp()
         self.app_engine_config = build_app_processor_config()
         self.kitchen_simulator = KitchenSimulator(self.app_engine_config)
         self.kitchen_simulator.order_manager = mock.Mock()
