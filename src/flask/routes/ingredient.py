@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response, Response
 from src.api.controllers.ingredient_controller import IngredientController
 from src.flask.schemas.ingredient_schema import IngredientSchema
 
@@ -15,17 +15,20 @@ def setup_ingredient_routes(ioc):
         json_ingredient_data = request.get_json()
         ingredient = ingredient_schema.load(json_ingredient_data)
         ingredient_added = ingredient_controller.add(ingredient)
-        return ingredient_schema.dump(ingredient_added)
+        add_response = make_response(ingredient_schema.dump(ingredient_added), 201)
+        return add_response
 
     @ingredient_blueprint.route("/ingredients/<ingredient_id>", methods=["GET"])
     def get_by_id(ingredient_id):
         ingredient = ingredient_controller.get_by_id(ingredient_id)
-        return ingredient_schema.dump(ingredient)
+        get_response = make_response(ingredient_schema.dump(ingredient))
+        return get_response
 
     @ingredient_blueprint.route("/ingredients", methods=["GET"])
     def get_all():
         ingredients = ingredient_controller.get_all()
-        return ingredient_schemas.dump(ingredients)
+        get_all_response = make_response(ingredient_schemas.dump(ingredients))
+        return get_all_response
 
     @ingredient_blueprint.route("/ingredients/<ingredient_id>", methods=["PUT"])
     def update_ingredient_by_id(ingredient_id):
@@ -33,13 +36,15 @@ def setup_ingredient_routes(ioc):
         ingredient = ingredient_schema.load(json_ingredient_data)
         ingredient_controller.update_by_id(ingredient_id, ingredient)
         ingredient_updated = ingredient_controller.get_by_id(ingredient_id)
-        return ingredient_schema.dump(ingredient_updated)
+        update_response = make_response(ingredient_schema.dump(ingredient_updated))
+        return update_response
 
     @ingredient_blueprint.route("/ingredients/<ingredient_id>", methods=["DELETE"])
     def delete_ingredient_by_id(ingredient_id):
         json_ingredient_data = request.get_json()
         ingredient = ingredient_schema.load(json_ingredient_data)
         ingredient_controller.delete_by_id(ingredient_id, ingredient)
-        return f"ingredient {ingredient_id} Deleted"
+        delete_response = make_response("", 200)
+        return delete_response
 
     return ingredient_blueprint
