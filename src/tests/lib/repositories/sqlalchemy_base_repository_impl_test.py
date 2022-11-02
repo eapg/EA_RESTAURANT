@@ -1,4 +1,3 @@
-import unittest
 from abc import abstractmethod
 from unittest import mock
 from src.tests.base_env_config_test import BaseEnvConfigTest

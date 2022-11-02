@@ -105,13 +105,14 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         self.inventory_ingredient_controller.add(inventory_ingredient_1)
 
         chef_1 = build_chef(chef_id=1, skill=2)
+        chef_2 = build_chef(chef_id=2, skill=2)
         self.kitchen_simulator.chef_controller.add(chef_1)
 
         def after_execute(_app_processor_config, _app_context):
             self.kitchen_simulator.destroyed = True
 
         self.kitchen_simulator.app_processor_config.after_execute = after_execute
-        self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [1, 2]
+        self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [chef_1, chef_2]
         self.kitchen_simulator.order_controller.get_orders_by_status.return_value = [
             order_1,
             order_2,
@@ -191,6 +192,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
         self.inventory_ingredient_controller.add(inventory_ingredient_2)
 
         chef_3 = build_chef(chef_id=3, skill=10)
+        chef_4 = build_chef(chef_id=4, skill=10)
         self.kitchen_simulator.chef_controller.add(chef_3)
 
         def after_execute(_app_processor_config, _app_context):
@@ -210,7 +212,7 @@ class KitchenSimulatorIntegrationTest(SqlAlchemyBaseRepositoryTestCase):
             order_3.id
         )
         self.kitchen_simulator.app_processor_config.after_execute = after_execute
-        self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [3, 4]
+        self.kitchen_simulator.chef_controller.get_available_chefs.return_value = [chef_3, chef_4]
         self.kitchen_simulator.order_controller.get_orders_by_status.return_value = [
             order_3,
             order_4,

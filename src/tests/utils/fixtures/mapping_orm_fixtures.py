@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from sqlalchemy import text
+
 from src.constants.audit import Status
 from src.constants.cooking_type import CookingType
 from src.constants.order_status import OrderStatus
@@ -242,3 +244,15 @@ def build_order(
 
 def build_orders(count=1):
     return [build_order(order_id=n) for n in range(count)]
+
+
+def create_order_with_procedure(engine, assigned_chef_id=None, order_status=None):
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """CALL insert_order_with_defaults(
+                     order_assigned_chef_id:= :assigned_chef_id, 
+                       order_status:= :order_status);"""
+            ),
+            {"assigned_chef_id": assigned_chef_id, "order_status": order_status},
+        )

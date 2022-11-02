@@ -116,13 +116,13 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         chef_1 = build_chef(chef_id=1)
         chef_2 = build_chef(chef_id=2)
         chef_3 = build_chef(chef_id=3)
-        available_chef_ids = [(chef_1.id,), (chef_2.id,), (chef_3.id,)]
+        available_chef = [chef_1, chef_2, chef_3]
 
         mocked_chefs_query = (
             QueryMock()
             .query()
             .filter()
-            .filter(return_value=available_chef_ids)
+            .filter(return_value=available_chef)
             .get_mocked_query()
         )
 
@@ -133,7 +133,7 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         def mock_query_side_effect(param):
             return (
                 mocked_chefs_query.return_value
-                if param == Chef.id
+                if param is Chef
                 else mocked_orders_query.return_value
             )
 
@@ -167,4 +167,4 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             mocked_filter_filter.return_value.filter.mock_calls[0].args[0].right.value,
             OrderStatus.IN_PROCESS.name,
         )
-        self.assertEqual(result, [chef_id[0] for chef_id in available_chef_ids])
+        self.assertEqual(result, available_chef)
