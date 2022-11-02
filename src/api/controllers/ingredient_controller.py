@@ -11,7 +11,8 @@ class IngredientController(Module):
         self._ingredient_repository = ingredient_repository  # IngredientRepository
 
     def add(self, ingredient):
-        self._ingredient_repository.add(ingredient)
+        ingredient_added = self._ingredient_repository.add(ingredient)
+        return ingredient_added
 
     def get_by_id(self, ingredient_id):
         return self._ingredient_repository.get_by_id(ingredient_id)

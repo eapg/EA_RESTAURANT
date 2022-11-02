@@ -18,10 +18,14 @@ class IngredientRepositoryImpl(IngredientRepository):
     def add(self, ingredient):
         session = create_session(self.engine)
         with session.begin():
+            ingredient.entity_status = Status.ACTIVE.value
             ingredient.created_date = datetime.now()
             ingredient.updated_by = ingredient.created_by
             ingredient.updated_date = ingredient.created_date
             session.add(ingredient)
+            session.flush()
+            session.refresh(ingredient)
+            return ingredient
 
     def get_by_id(self, ingredient_id):
         session = create_session(self.engine)
@@ -56,11 +60,11 @@ class IngredientRepositoryImpl(IngredientRepository):
             ingredient_to_be_updated = (
                 session.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
             )
-            ingredient_to_be_updated.user_id = (
-                ingredient.user_id or ingredient_to_be_updated.user_id
+            ingredient_to_be_updated.name = (
+                ingredient.name or ingredient_to_be_updated.name
             )
-            ingredient_to_be_updated.skill = (
-                ingredient.skill or ingredient_to_be_updated.skill
+            ingredient_to_be_updated.description = (
+                ingredient.description or ingredient_to_be_updated.description
             )
             ingredient_to_be_updated.updated_date = datetime.now()
             ingredient_to_be_updated.updated_by = ingredient.updated_by
