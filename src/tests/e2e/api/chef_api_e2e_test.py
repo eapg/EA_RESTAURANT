@@ -48,7 +48,7 @@ class ChefApiE2ETest(BaseFlaskSetupTest):
         json_chef = build_chef()
         self.client.post("/chefs", json=json_chef)
         request = self.client.delete("/chefs/1", json={"updated_by": 3})
-        self.assertEqual(request.get_data(as_text=True), "Chef 1 Deleted")
+        self.assertEqual(request.status_code, 200)
 
     def test_get_available_chef_request_successfully(self):
         json_chef_1 = build_chef(chef_id=1)
