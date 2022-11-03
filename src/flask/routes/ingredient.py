@@ -1,4 +1,4 @@
-from flask import Blueprint, request, make_response, Response
+from flask import Blueprint, request, make_response
 from src.api.controllers.ingredient_controller import IngredientController
 from src.flask.schemas.ingredient_schema import IngredientSchema
 

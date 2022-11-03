@@ -24,10 +24,14 @@ class InventoryIngredientRepositoryImpl(InventoryIngredientRepository):
     def add(self, inventory_ingredient):
         session = create_session(self.engine)
         with session.begin():
+            inventory_ingredient.entity_status = Status.ACTIVE.value
             inventory_ingredient.created_date = datetime.now()
             inventory_ingredient.updated_by = inventory_ingredient.created_by
             inventory_ingredient.updated_date = inventory_ingredient.created_date
             session.add(inventory_ingredient)
+            session.flush()
+            session.refresh(inventory_ingredient)
+            return inventory_ingredient
 
     def get_by_id(self, inventory_ingredient_id):
         session = create_session(self.engine)
