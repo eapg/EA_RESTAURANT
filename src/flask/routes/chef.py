@@ -1,5 +1,6 @@
-from flask import Blueprint, request, make_response
+from flask import Blueprint, make_response, request
 from src.api.controllers.chef_controller import ChefController
+from src.constants.http_status_code import HttpStatus
 from src.flask.schemas.chef_schema import ChefSchema
 
 
@@ -15,7 +16,9 @@ def setup_chef_routes(ioc):
         json_chef_data = request.get_json()
         chef = chef_schema.load(json_chef_data)
         chef_added = chef_controller.add(chef)
-        add_response = make_response(chef_schema.dump(chef_added), 201)
+        add_response = make_response(
+            chef_schema.dump(chef_added), HttpStatus.CREATED.value
+        )
         return add_response
 
     @chef_blueprint.route("/chefs/<chef_id>", methods=["GET"])
@@ -44,7 +47,7 @@ def setup_chef_routes(ioc):
         json_chef_data = request.get_json()
         chef = chef_schema.load(json_chef_data)
         chef_controller.delete_by_id(chef_id, chef)
-        delete_response = make_response("", 200)
+        delete_response = make_response("", HttpStatus.OK.value)
         return delete_response
 
     @chef_blueprint.route("/chefs/available", methods=["GET"])

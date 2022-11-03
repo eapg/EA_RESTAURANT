@@ -1,7 +1,8 @@
-from flask import Blueprint, request, make_response
+from flask import Blueprint, make_response, request
 from src.api.controllers.inventory_ingredient_controller import (
     InventoryIngredientController,
 )
+from src.constants.http_status_code import HttpStatus
 from src.flask.schemas.inventory_ingredient_schema import InventoryIngredientSchema
 
 
@@ -22,7 +23,8 @@ def setup_inventory_ingredient_routes(ioc):
             inventory_ingredient
         )
         add_response = make_response(
-            inventory_ingredient_schema.dump(inventory_ingredient_added), 201
+            inventory_ingredient_schema.dump(inventory_ingredient_added),
+            HttpStatus.CREATED.value,
         )
         return add_response
 
@@ -76,7 +78,7 @@ def setup_inventory_ingredient_routes(ioc):
         inventory_ingredient_controller.delete_by_id(
             inventory_ingredient_id, inventory_ingredient
         )
-        delete_response = make_response("", 200)
+        delete_response = make_response("", HttpStatus.OK.value)
         return delete_response
 
     @inventory_ingredient_blueprint.route(
