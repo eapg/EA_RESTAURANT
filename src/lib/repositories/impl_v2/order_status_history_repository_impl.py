@@ -40,10 +40,14 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
     def add(self, order_status_history):
         session = create_session(self.engine)
         with session.begin():
+            order_status_history.entity_status = Status.ACTIVE.value
             order_status_history.created_date = datetime.now()
             order_status_history.updated_by = order_status_history.created_by
             order_status_history.updated_date = order_status_history.created_date
             session.add(order_status_history)
+            session.flush()
+            session.refresh(order_status_history)
+            return order_status_history
 
     def get_by_id(self, order_status_history_id):
         session = create_session(self.engine)

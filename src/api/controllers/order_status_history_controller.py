@@ -15,7 +15,8 @@ class OrderStatusHistoryController(Module):
         )
 
     def add(self, order_status_history):
-        self._order_status_history_repository.add(order_status_history)
+        order_status_history_added = self._order_status_history_repository.add(order_status_history)
+        return order_status_history_added
 
     def get_by_id(self, order_status_history_id):
         return self._order_status_history_repository.get_by_id(order_status_history_id)
