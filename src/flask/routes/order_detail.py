@@ -82,11 +82,11 @@ def setup_order_detail_routes(ioc):
         return delete_response
 
     @order_detail_blueprint.route(
-        "/order_details/by_order_id/<ingredient_id>", methods=["GET"]
+        "/order_details/by_order_id/<order_id>", methods=["GET"]
     )
-    def get_by_order_id(ingredient_id):
+    def get_by_order_id(order_id):
         order_details = order_detail_controller.get_by_order_id(
-            ingredient_id
+            order_id
         )
         get_by_ingredient_id_response = make_response(
             order_detail_schemas.dump(order_details)
