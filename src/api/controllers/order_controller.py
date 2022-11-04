@@ -9,7 +9,8 @@ class OrderController(Module):
         self._order_repository = order_repository  # orderRepository
 
     def add(self, order):
-        self._order_repository.add(order)
+        order_added = self._order_repository.add(order)
+        return order_added
 
     def get_by_id(self, order_id):
         return self._order_repository.get_by_id(order_id)
