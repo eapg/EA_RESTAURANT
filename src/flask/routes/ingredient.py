@@ -1,5 +1,6 @@
-from flask import Blueprint, request, make_response, Response
+from flask import Blueprint, make_response, request
 from src.api.controllers.ingredient_controller import IngredientController
+from src.constants.http_status_code import HttpStatus
 from src.flask.schemas.ingredient_schema import IngredientSchema
 
 
@@ -15,7 +16,9 @@ def setup_ingredient_routes(ioc):
         json_ingredient_data = request.get_json()
         ingredient = ingredient_schema.load(json_ingredient_data)
         ingredient_added = ingredient_controller.add(ingredient)
-        add_response = make_response(ingredient_schema.dump(ingredient_added), 201)
+        add_response = make_response(
+            ingredient_schema.dump(ingredient_added), HttpStatus.CREATED.value
+        )
         return add_response
 
     @ingredient_blueprint.route("/ingredients/<ingredient_id>", methods=["GET"])
@@ -44,7 +47,7 @@ def setup_ingredient_routes(ioc):
         json_ingredient_data = request.get_json()
         ingredient = ingredient_schema.load(json_ingredient_data)
         ingredient_controller.delete_by_id(ingredient_id, ingredient)
-        delete_response = make_response("", 200)
+        delete_response = make_response("", HttpStatus.OK.value)
         return delete_response
 
     return ingredient_blueprint

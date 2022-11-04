@@ -18,10 +18,14 @@ class InventoryRepositoryImpl(InventoryRepository):
     def add(self, inventory):
         session = create_session(self.engine)
         with session.begin():
+            inventory.entity_status = Status.ACTIVE.value
             inventory.created_date = datetime.now()
             inventory.updated_by = inventory.created_by
             inventory.updated_date = inventory.created_date
             session.add(inventory)
+            session.flush()
+            session.refresh(inventory)
+            return inventory
 
     def get_by_id(self, inventory_id):
         session = create_session(self.engine)
@@ -56,11 +60,8 @@ class InventoryRepositoryImpl(InventoryRepository):
             inventory_to_be_updated = (
                 session.query(Inventory).filter(Inventory.id == inventory_id).first()
             )
-            inventory_to_be_updated.user_id = (
-                inventory.user_id or inventory_to_be_updated.user_id
-            )
-            inventory_to_be_updated.skill = (
-                inventory.skill or inventory_to_be_updated.skill
+            inventory_to_be_updated.name = (
+                inventory.name or inventory_to_be_updated.name
             )
             inventory_to_be_updated.updated_date = datetime.now()
             inventory_to_be_updated.updated_by = inventory.updated_by

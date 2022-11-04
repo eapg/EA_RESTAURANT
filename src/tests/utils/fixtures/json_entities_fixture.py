@@ -28,3 +28,41 @@ def build_ingredient(
     }
 
     return ingredient
+
+
+def build_inventory_ingredient(
+    inventory_ingredient_id=None,
+    ingredient_id=None,
+    inventory_id=None,
+    quantity=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    inventory_ingredient = {
+        "id": inventory_ingredient_id or 1,
+        "ingredient_id": ingredient_id or 1,
+        "inventory_id": inventory_id or 1,
+        "quantity": quantity or 5,
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return inventory_ingredient
+
+
+def build_inventory(
+    inventory_id=None,
+    name=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    inventory = {
+        "id": inventory_id or 1,
+        "name": name or "inventory 1",
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return inventory

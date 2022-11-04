@@ -1,8 +1,7 @@
+from src.constants.http_status_code import HttpStatus
 from src.tests.e2e.base_flask_setup_test import BaseFlaskSetupTest
 from src.tests.utils.fixtures.json_entities_fixture import build_chef
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    create_order_with_procedure,
-)
+from src.tests.utils.fixtures.mapping_orm_fixtures import create_order_with_procedure
 
 
 class ChefApiE2ETest(BaseFlaskSetupTest):
@@ -48,7 +47,7 @@ class ChefApiE2ETest(BaseFlaskSetupTest):
         json_chef = build_chef()
         self.client.post("/chefs", json=json_chef)
         request = self.client.delete("/chefs/1", json={"updated_by": 3})
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, HttpStatus.OK.value)
 
     def test_get_available_chef_request_successfully(self):
         json_chef_1 = build_chef(chef_id=1)

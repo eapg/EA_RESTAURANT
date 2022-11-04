@@ -15,7 +15,8 @@ class InventoryIngredientController(Module):
         )
 
     def add(self, inventory_ingredient):
-        self._inventory_ingredient_repository.add(inventory_ingredient)
+        inventory_ingredient_added = self._inventory_ingredient_repository.add(inventory_ingredient)
+        return inventory_ingredient_added
 
     def get_by_id(self, inventory_ingredient_id):
         return self._inventory_ingredient_repository.get_by_id(inventory_ingredient_id)

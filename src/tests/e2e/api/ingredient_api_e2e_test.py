@@ -1,3 +1,4 @@
+from src.constants.http_status_code import HttpStatus
 from src.tests.e2e.base_flask_setup_test import BaseFlaskSetupTest
 from src.tests.utils.fixtures.json_entities_fixture import build_ingredient
 
@@ -47,4 +48,4 @@ class IngredientApiE2ETest(BaseFlaskSetupTest):
         json_ingredient = build_ingredient()
         self.client.post("/ingredients", json=json_ingredient)
         request = self.client.delete("/ingredients/1", json={"updated_by": 3})
-        self.assertEqual(request.status_code, 200)
+        self.assertEqual(request.status_code, HttpStatus.OK.value)

@@ -11,7 +11,8 @@ class InventoryController(Module):
         self._inventory_repository = inventory_repository  # inventoryRepository
 
     def add(self, inventory):
-        self._inventory_repository.add(inventory)
+        inventory_added = self._inventory_repository.add(inventory)
+        return inventory_added
 
     def get_by_id(self, inventory_id):
         return self._inventory_repository.get_by_id(inventory_id)
