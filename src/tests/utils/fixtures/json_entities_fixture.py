@@ -66,3 +66,24 @@ def build_inventory(
     }
 
     return inventory
+
+
+def build_order_detail(
+    order_detail_id=None,
+    order_id=None,
+    product_id=None,
+    quantity=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    order_detail = {
+        "id": order_detail_id or 1,
+        "order_id": order_id or 1,
+        "product_id": product_id or 1,
+        "quantity": quantity or 10,
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return order_detail
