@@ -49,3 +49,20 @@ def build_inventory_ingredient(
     }
 
     return inventory_ingredient
+
+
+def build_inventory(
+    inventory_id=None,
+    name=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    inventory = {
+        "id": inventory_id or 1,
+        "name": name or "inventory 1",
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return inventory
