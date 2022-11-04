@@ -256,3 +256,26 @@ def create_order_with_procedure(engine, assigned_chef_id=None, order_status=None
             ),
             {"assigned_chef_id": assigned_chef_id, "order_status": order_status},
         )
+
+
+def create_order_detail_with_procedure(engine, order_id=None, product_id=None):
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """CALL insert_order_detail_with_defaults(
+                     order_detail_order_id:= :order_id, 
+                       order_detail_product_id:= :product_id);"""
+            ),
+            {"order_id": order_id, "product_id": product_id},
+        )
+
+
+def create_product_ingredient_with_procedure(engine, product_id=None):
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """CALL insert_product_ingredient_with_defaults(
+                     product_ingredient_product_id:= :product_id);"""
+            ),
+            {"product_id": product_id},
+        )

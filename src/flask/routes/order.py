@@ -52,17 +52,17 @@ def setup_order_routes(ioc):
         delete_response = make_response("", HttpStatus.OK.value)
         return delete_response
 
-    @order_blueprint.route(
-        "/orders/by_order_status/<order_status>/<order_limit>", methods=["GET"]
-    )
-    def get_orders_by_status(order_status, order_limit):
+    @order_blueprint.route("/orders/by_order_status/<order_status>", methods=["GET"])
+    def get_orders_by_status(order_status):
+        args = request.args
+        order_limit = args["limit"]
         orders_by_status = order_controller.get_orders_by_status(
             order_status=order_status, order_limit=order_limit
         )
-        get__by_status_response = make_response(order_schemas.dump(orders_by_status))
-        return get__by_status_response
+        get_by_status_response = make_response(order_schemas.dump(orders_by_status))
+        return get_by_status_response
 
-    @order_blueprint.route("/orders/order_ingredients/<order_id>", methods=["GET"])
+    @order_blueprint.route("/orders/<order_id>/ingredients", methods=["GET"])
     def get_order_ingredients_by_order_id(order_id):
         order_ingredients = order_controller.get_order_ingredients_by_order_id(order_id)
         get_order_ingredients_response = make_response(
