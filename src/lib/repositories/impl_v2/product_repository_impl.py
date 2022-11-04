@@ -18,10 +18,14 @@ class ProductRepositoryImpl(ProductRepository):
     def add(self, product):
         session = create_session(self.engine)
         with session.begin():
+            product.entity_status = Status.ACTIVE.value
             product.created_date = datetime.now()
             product.updated_by = product.created_by
             product.updated_date = product.created_date
             session.add(product)
+            session.flush()
+            session.refresh(product)
+            return product
 
     def get_by_id(self, product_id):
         session = create_session(self.engine)
