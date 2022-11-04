@@ -150,3 +150,31 @@ def build_product(
     }
 
     return product_ingredient
+
+
+def build_order_status_history(
+    order_status_history_id=None,
+    order_id=None,
+    from_time=None,
+    to_time=None,
+    to_status=None,
+    mongo_order_status_history_uuid=None,
+    etl_status=None,
+    from_status=None,
+    updated_by=None,
+):
+
+    order_status_history = {
+        "id": order_status_history_id or 1,
+        "order_id": order_id or 1,
+        "from_time": from_time or "2022-11-04T15:59:59.163000",
+        "from_status": from_status or "NEW_ORDER",
+        "to_time": to_time or "2022-11-04T15:59:59.163000",
+        "to_status": to_status or "IN_PROCESS",
+        "mongo_order_status_history_uuid": mongo_order_status_history_uuid or "test uuid",
+        "etl_status": etl_status or "PROCESSED",
+        "created_by": 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return order_status_history
