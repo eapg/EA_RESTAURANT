@@ -13,7 +13,8 @@ class OrderDetailController(Module):
         )
 
     def add(self, order_detail):
-        self._order_detail_repository.add(order_detail)
+        order_detail_added = self._order_detail_repository.add(order_detail)
+        return order_detail_added
 
     def get_by_id(self, order_detail_id):
         return self._order_detail_repository.get_by_id(order_detail_id)

@@ -18,10 +18,14 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
     def add(self, order_detail):
         session = create_session(self.engine)
         with session.begin():
+            order_detail.entity_status = Status.ACTIVE.value
             order_detail.created_date = datetime.now()
             order_detail.updated_by = order_detail.created_by
             order_detail.updated_date = order_detail.created_date
             session.add(order_detail)
+            session.flush()
+            session.refresh(order_detail)
+            return order_detail
 
     def get_by_id(self, order_detail_id):
         session = create_session(self.engine)
@@ -58,11 +62,14 @@ class OrderDetailRepositoryImpl(OrderDetailRepository):
                 .filter(OrderDetail.id == order_detail_id)
                 .first()
             )
-            order_detail_to_be_updated.user_id = (
-                order_detail.user_id or order_detail_to_be_updated.user_id
+            order_detail_to_be_updated.order_id = (
+                order_detail.order_id or order_detail_to_be_updated.order_id
             )
-            order_detail_to_be_updated.skill = (
-                order_detail.skill or order_detail_to_be_updated.skill
+            order_detail_to_be_updated.product_id = (
+                order_detail.product_id or order_detail_to_be_updated.product_id
+            )
+            order_detail_to_be_updated.quantity = (
+                order_detail.quantity or order_detail_to_be_updated.quantity
             )
             order_detail_to_be_updated.updated_date = datetime.now()
             order_detail_to_be_updated.updated_by = order_detail.updated_by
