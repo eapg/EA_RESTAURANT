@@ -131,3 +131,22 @@ def build_product_ingredient(
     }
 
     return product_ingredient
+
+
+def build_product(
+    product_id=None,
+    name=None,
+    description=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    product_ingredient = {
+        "id": product_id or 1,
+        "name": name or "product 1",
+        "description": description or "product 1 description",
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return product_ingredient

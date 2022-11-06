@@ -9,7 +9,8 @@ class ProductController(Module):
         self._product_repository = product_repository  # productRepository
 
     def add(self, product):
-        self._product_repository.add(product)
+        product_added = self._product_repository.add(product)
+        return product_added
 
     def get_by_id(self, product_id):
         return self._product_repository.get_by_id(product_id)
