@@ -6,6 +6,7 @@ from src.flask.routes.ingredient import setup_ingredient_routes
 from src.flask.routes.inventory_ingredient import setup_inventory_ingredient_routes
 from src.flask.routes.inventory import setup_inventory_routes
 from src.flask.routes.order_detail import setup_order_detail_routes
+from src.flask.routes.order import setup_order_routes
 
 
 def setup_api(app):
@@ -18,6 +19,7 @@ def setup_api(app):
     inventory_ingredient_blueprint = setup_inventory_ingredient_routes(ioc)
     inventory_blueprint = setup_inventory_routes(ioc)
     order_detail_blueprint = setup_order_detail_routes(ioc)
+    order_blueprint = setup_order_routes(ioc)
 
     # register blueprints
     app.register_blueprint(chef_blueprint)
@@ -25,5 +27,6 @@ def setup_api(app):
     app.register_blueprint(inventory_ingredient_blueprint)
     app.register_blueprint(inventory_blueprint)
     app.register_blueprint(order_detail_blueprint)
+    app.register_blueprint(order_blueprint)
 
     return app

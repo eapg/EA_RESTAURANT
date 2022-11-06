@@ -41,10 +41,14 @@ class OrderRepositoryImpl(OrderRepository):
     def add(self, order):
         session = create_session(self.engine)
         with session.begin():
+            order.entity_status = Status.ACTIVE.value
             order.created_date = datetime.now()
             order.updated_by = order.created_by
             order.updated_date = order.created_date
             session.add(order)
+            session.flush()
+            session.refresh(order)
+            return order
 
     def get_by_id(self, order_id):
         session = create_session(self.engine)

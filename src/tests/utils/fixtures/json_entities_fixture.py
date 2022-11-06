@@ -87,3 +87,24 @@ def build_order_detail(
     }
 
     return order_detail
+
+
+def build_order(
+    order_id=None,
+    status=None,
+    assigned_chef_id=None,
+    client_id=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    order = {
+        "id": order_id or 1,
+        "status": status or "NEW_ORDER",
+        "assigned_chef_id": assigned_chef_id or 1,
+        "client_id": client_id or 1,
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return order
