@@ -108,3 +108,26 @@ def build_order(
     }
 
     return order
+
+
+def build_product_ingredient(
+    product_ingredient_id=None,
+    product_id=None,
+    ingredient_id=None,
+    quantity=None,
+    cooking_type=None,
+    created_by=None,
+    updated_by=None,
+):
+
+    product_ingredient = {
+        "id": product_ingredient_id or 1,
+        "product_id": product_id or 1,
+        "ingredient_id": ingredient_id or 1,
+        "quantity": quantity or 5,
+        "cooking_type": cooking_type or "ADDING",
+        "created_by": created_by or 1,
+        "updated_by": updated_by or 1,
+    }
+
+    return product_ingredient
