@@ -35,6 +35,8 @@ class EnvConfig:
         self.kitchen_simulator_interval = float(os.environ.get("KITCHEN_SIMULATOR_INTERVAL"))
         self.etl_interval = int(os.environ.get("ETL_INTERVAL"))
 
+        self.oauth2_secret_key = os.environ.get("OAUTH2_SECRET_KEY")
+
     def get_postgres_db_uri(self):
         return get_postgres_db_uri(
             self.postgres_user,
