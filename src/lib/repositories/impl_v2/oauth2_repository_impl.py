@@ -25,7 +25,7 @@ from src.utils.sql_oath2_queries import (
 )
 
 
-class Oauth2Repository:
+class Oauth2RepositoryImpl:
     @inject
     def __init__(self, engine: Engine):
         self.engine = engine

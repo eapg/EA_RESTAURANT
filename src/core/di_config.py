@@ -23,7 +23,7 @@ from src.lib.repositories.chef_repository import ChefRepository
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
 )
-from src.lib.repositories.impl_oauth2.oauth2_repository_impl import Oauth2Repository
+from src.lib.repositories.impl_v2.oauth2_repository_impl import Oauth2RepositoryImpl
 from src.lib.repositories.ingredient_repository import IngredientRepository
 from src.lib.repositories.inventory_ingredient_repository import (
     InventoryIngredientRepository,
@@ -56,7 +56,7 @@ class DiProviders(Module):
     def configure(self, binder):
 
         # Repositories
-        binder.bind(Oauth2Repository, scope=singleton)
+        binder.bind(Oauth2RepositoryImpl, scope=singleton)
         binder.bind(ChefRepository, scope=singleton)
         binder.bind(IngredientRepository, scope=singleton)
         binder.bind(InventoryIngredientRepository, scope=singleton)
