@@ -140,7 +140,7 @@ class Oauth2Repository:
         with self.engine.begin() as conn:
             user = conn.execute(
                 text(SQL_QUERY_TO_GET_USER_BY_USERNAME),
-                {"user_name": username},
+                {"username": username},
             )
             user_as_dict = user.mappings().first()
 
@@ -203,7 +203,7 @@ class Oauth2Repository:
         with self.engine.begin() as conn:
             client_user = conn.execute(
                 text(SQL_QUERY_TO_GET_CLIENT_USER_BY_USERNAME_AND_CLIENT_ID),
-                {"user_name": username, "app_client_id": app_client_id},
+                {"username": username, "app_client_id": app_client_id},
             )
             client_user_as_dict = client_user.mappings().first()
 

@@ -3,7 +3,7 @@
 SQL_QUERY_TO_GET_USER_BY_USERNAME = """
 SELECT *
   FROM users
-  where user_name = :user_name
+  where username = :username
 """
 
 SQL_QUERY_TO_GET_CLIENT_BY_CLIENT_ID = """
@@ -33,7 +33,7 @@ SELECT scope
 SQL_QUERY_TO_GET_CLIENT_USER_BY_USERNAME_AND_CLIENT_ID = """
 SELECT *
   FROM app_client_users
-  WHERE user_name = :user_name and app_client_id = :app_client_id
+  WHERE username = :username and app_client_id = :app_client_id
 """
 
 # queries to add data to db

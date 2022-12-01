@@ -208,7 +208,7 @@ class User(AbstractEntity, UserBase):
     id = Column(Integer(), primary_key=True, nullable=False)
     name = Column(String(length=50), nullable=False)
     last_name = Column(String(length=50), nullable=False)
-    user_name = Column(String(length=50), nullable=False)
+    username = Column(String(length=50), nullable=False)
     password = Column(String(length=500), nullable=False)
     role = Column(
         postgresql.ENUM(
