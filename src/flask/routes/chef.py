@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, request
 from src.api.controllers.chef_controller import ChefController
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
 from src.flask.schemas.chef_schema import ChefSchema
 
 

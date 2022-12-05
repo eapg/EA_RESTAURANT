@@ -1,6 +1,6 @@
 import unittest
 
-from src.constants.oauth2 import GranType
+from src.constants.oauth2 import GranTypes
 from src.env_config import get_env_config_instance
 from src.exceptions.exceptions import BcryptException
 from src.lib.repositories.impl_v2.oauth2_repository_impl import Oauth2RepositoryImpl
@@ -94,7 +94,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         app_refresh_token = build_refresh_token(
             id=1,
             token=client_refresh_token,
-            grant_type=GranType.CLIENT_CREDENTIALS.value,
+            grant_type=GranTypes.CLIENT_CREDENTIALS.value,
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
 
@@ -116,7 +116,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         )
 
         mocked_oauth2_repository._add_refresh_token.assert_called_with(
-            tokens["refresh_token"], client.id, GranType.CLIENT_CREDENTIALS.value
+            tokens["refresh_token"], client.id, GranTypes.CLIENT_CREDENTIALS.value
         )
 
         mocked_oauth2_repository._add_access_token.assert_called_with(
@@ -155,7 +155,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         app_refresh_token = build_refresh_token(
             id=1,
             token=user_refresh_token,
-            grant_type=GranType.PASSWORD.value,
+            grant_type=GranTypes.PASSWORD.value,
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
 
@@ -180,10 +180,10 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         )
 
         mocked_oauth2_repository._add_refresh_token(
-            tokens["refresh_token"], client.id, GranType.CLIENT_CREDENTIALS.value
+            tokens["refresh_token"], client.id, GranTypes.CLIENT_CREDENTIALS.value
         )
         mocked_oauth2_repository._add_refresh_token.assert_called_with(
-            tokens["refresh_token"], client.id, GranType.CLIENT_CREDENTIALS.value
+            tokens["refresh_token"], client.id, GranTypes.CLIENT_CREDENTIALS.value
         )
 
         mocked_oauth2_repository._add_access_token.assert_called_with(
@@ -228,7 +228,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         app_refresh_token = build_refresh_token(
             id=1,
             token=client_refresh_token,
-            grant_type=GranType.CLIENT_CREDENTIALS.value,
+            grant_type=GranTypes.CLIENT_CREDENTIALS.value,
         )
 
         mocked_oauth2_repository = mock_oauth2_repository(

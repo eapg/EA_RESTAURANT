@@ -2,7 +2,7 @@ from flask import Blueprint, make_response, request
 from src.api.controllers.inventory_ingredient_controller import (
     InventoryIngredientController,
 )
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
 from src.flask.schemas.inventory_ingredient_schema import InventoryIngredientSchema
 
 

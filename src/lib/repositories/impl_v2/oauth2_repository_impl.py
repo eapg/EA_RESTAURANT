@@ -11,7 +11,7 @@ from src.utils.oauth2_util import (
     build_user_credential_access_token,
     build_user_credential_refresh_token,
 )
-from src.constants.oauth2 import GranType
+from src.constants.oauth2 import GranTypes
 from src.utils.sql_oath2_queries import (
     SQL_QUERY_TO_GET_USER_BY_USERNAME,
     SQL_QUERY_TO_GET_CLIENT_BY_CLIENT_ID,
@@ -36,7 +36,7 @@ class Oauth2RepositoryImpl:
         return self._login(
             client_id=client_id,
             client_secret=client_secret,
-            grant_type=GranType.CLIENT_CREDENTIALS,
+            grant_type=GranTypes.CLIENT_CREDENTIALS,
         )
 
     def login_user(self, client_id, client_secret, username, password):
@@ -45,7 +45,7 @@ class Oauth2RepositoryImpl:
             password=password,
             client_id=client_id,
             client_secret=client_secret,
-            grant_type=GranType.PASSWORD,
+            grant_type=GranTypes.PASSWORD,
         )
 
     def _login(
@@ -62,7 +62,7 @@ class Oauth2RepositoryImpl:
 
         client_scopes = self._get_scope_by_app_client_id(client.id)
 
-        if grant_type == GranType.CLIENT_CREDENTIALS:
+        if grant_type == GranTypes.CLIENT_CREDENTIALS:
 
             access_token = build_client_credentials_access_token(
                 client, client_scopes, self.env_config.oauth2_secret_key
@@ -71,7 +71,7 @@ class Oauth2RepositoryImpl:
                 client, client_scopes, self.env_config.oauth2_secret_key
             )
 
-        elif grant_type == GranType.PASSWORD:
+        elif grant_type == GranTypes.PASSWORD:
             self._validate_user_credentials(client, username, password)
 
             user = self._get_user_by_username(username)
@@ -103,7 +103,7 @@ class Oauth2RepositoryImpl:
             app_refresh_token.app_client_id
         )
 
-        if app_refresh_token.grant_type == GranType.CLIENT_CREDENTIALS.value:
+        if app_refresh_token.grant_type == GranTypes.CLIENT_CREDENTIALS.value:
 
             new_access_token = build_client_credentials_access_token(
                 client, client_scopes, self.env_config.oauth2_secret_key

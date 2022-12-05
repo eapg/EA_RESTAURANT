@@ -2,7 +2,7 @@ from flask import Blueprint, make_response, request
 from src.api.controllers.order_detail_controller import (
     OrderDetailController,
 )
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
 from src.flask.schemas.order_detail_schema import OrderDetailSchema
 
 

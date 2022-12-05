@@ -1,4 +1,4 @@
-from src.constants.oauth2 import GranType
+from src.constants.oauth2 import GranTypes
 from src.lib.entities.abstract_entity import AbstractEntity
 from src.utils.oauth2_util import encrypt_password
 
@@ -84,7 +84,7 @@ def build_refresh_token(id=None, token=None, grant_type=None, app_client_id=None
     refresh_token = RefreshToken()
     refresh_token.id = id or 1
     refresh_token.token = token or "this_is_a_refresh_token"
-    refresh_token.grant_type = grant_type or GranType.CLIENT_CREDENTIALS.value
+    refresh_token.grant_type = grant_type or GranTypes.CLIENT_CREDENTIALS.value
     refresh_token.app_client_id = app_client_id or 1
 
     return refresh_token

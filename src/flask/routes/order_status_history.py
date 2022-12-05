@@ -2,7 +2,7 @@ from flask import Blueprint, make_response, request
 from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
 from src.flask.schemas.order_status_history_schema import OrderStatusHistorySchema
 
 

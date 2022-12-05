@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, request
 from src.api.controllers.order_controller import OrderController
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
 from src.flask.schemas.order_schema import OrderSchema
 from src.flask.schemas.product_ingredient_schema import ProductIngredientSchema
 
