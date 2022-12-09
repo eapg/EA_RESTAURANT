@@ -19,4 +19,3 @@ class Roles(Enum):
 class Scopes(Enum):
     WRITE = "WRITE"
     READ = "READ"
-    READ_WRITE = "READ/WRITE"

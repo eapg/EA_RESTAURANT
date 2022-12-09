@@ -21,14 +21,14 @@ def setup_security_route_middleware(ioc):
 
     @security_route_middleware_blueprint.before_app_request
     def before_request_middleware():
-
         env_config = get_env_config_instance()
         endpoint_protected = is_endpoint_protected(request)
 
         if endpoint_protected:
             try:
-
-                access_token = request.args.get("access_token")
+                authorization_header = request.headers.get("Authorization")
+                authorization_header_split = authorization_header.split(" ")
+                access_token = authorization_header_split[1]
                 oauth2_repository.validate_token(access_token)
                 validate_roles_and_scopes(env_config.oauth2_secret_key, request)
 

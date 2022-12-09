@@ -3,33 +3,54 @@ from datetime import datetime, timedelta
 from src.constants.oauth2 import Roles, Scopes
 from src.constants.http import HttpMethods
 from src.lib.entities.secured_http_request_uri import SecuredHttpRequestUrl
-
+from src.lib.entities.secured_http_request_Url_permissions import (
+    SecuredHttpRequestUrlPermissions,
+)
 import bcrypt
 import jwt
 
 from src.exceptions.exceptions import UnAuthorizedEndpoint
 
 ENDPOINT_ROLES_MAP = {
-    SecuredHttpRequestUrl(path="/chefs", method=HttpMethods.GET.value): [
-        Roles.ADMINISTRATOR.value,
-        Scopes.WRITE.value,
-    ],
-    SecuredHttpRequestUrl(path="/chefs/<chef_id>", method=HttpMethods.GET.value): [
-        Roles.ADMINISTRATOR.value
-    ],
-    SecuredHttpRequestUrl(path="/chefs, POST", method=HttpMethods.POST.value): [
-        Roles.ADMINISTRATOR.value
-    ],
-    SecuredHttpRequestUrl(path="/chefs/<chef_id>", method=HttpMethods.DELETE.value): [
-        Roles.ADMINISTRATOR.value
-    ],
-    SecuredHttpRequestUrl(path="/chefs/<chef_id>", method=HttpMethods.PUT.value): [
-        Roles.ADMINISTRATOR.value
-    ],
-    SecuredHttpRequestUrl(path="/chefs/available", method=HttpMethods.GET.value): [
-        Roles.ADMINISTRATOR.value
-    ],
+    SecuredHttpRequestUrl(
+        path="/chefs", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/chefs/<chef_id>", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/chefs", method=HttpMethods.POST.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/chefs/<chef_id>", method=HttpMethods.DELETE.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/chefs/<chef_id>", method=HttpMethods.PUT.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/chefs/available", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
 }
+
+
+def get_endpoint_permissions(secured_http_request_url):
+
+    return ENDPOINT_ROLES_MAP[secured_http_request_url]
 
 
 def build_client_credentials_access_token(client, scopes, secret_key):
@@ -62,12 +83,13 @@ def build_client_credentials_refresh_token(client, scopes, secret_key):
 
 
 def build_user_credential_access_token(user, client, secret_key, scopes):
+    roles = user.roles
     token = jwt.encode(
         {
             "username": user.username,
             "name": user.name,
             "last_name": user.last_name,
-            "roles": user.roles,
+            "roles": roles.split(","),
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.access_token_expiration_time),
@@ -80,13 +102,13 @@ def build_user_credential_access_token(user, client, secret_key, scopes):
 
 
 def build_user_credential_refresh_token(user, client, secret_key, scopes):
-
+    roles = user.roles
     token = jwt.encode(
         {
             "username": user.username,
             "name": user.name,
             "last_name": user.last_name,
-            "roles": user.roles,
+            "roles": roles.split(","),
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.refresh_token_expiration_time),
@@ -107,32 +129,51 @@ def encrypt_password(password):
     return decode_hash_password
 
 
+def validate_scopes(scopes, secured_http_request_url):
+
+    endpoint_permissions = get_endpoint_permissions(secured_http_request_url)
+    if scopes:
+        for scope in scopes:
+            if scope in endpoint_permissions.scopes:
+                return
+
+    raise UnAuthorizedEndpoint("Unauthorized Endpoint Access")
+
+
+def validate_roles(roles, secured_http_request_url):
+    endpoint_permissions = get_endpoint_permissions(secured_http_request_url)
+    if roles:
+        for role in roles:
+            if role in endpoint_permissions.roles:
+                return
+
+    raise UnAuthorizedEndpoint("Unauthorized Endpoint Access")
+
+
 def validate_roles_and_scopes(secret_key, endpoint_request):
 
-    token = endpoint_request.args.get("access_token")
+    authorization_header = endpoint_request.headers.get("Authorization")
+    authorization_header_split = authorization_header.split(" ")
+    token = authorization_header_split[1]
     token_decode = jwt.decode(token, secret_key, algorithms="HS256")
-    roles = token_decode.get("roles")
-    scopes = token_decode.get("scopes")
+    access_token_roles = token_decode.get("roles")
+    access_token_scopes = token_decode.get("scopes")
     secured_http_request_url = SecuredHttpRequestUrl(
-        path=endpoint_request.path, method=endpoint_request.method
+        path=str(endpoint_request.url_rule), method=endpoint_request.method
     )
-    unauthorized_exception = UnAuthorizedEndpoint("Unauthorized Endpoint Access")
-    if roles and roles not in ENDPOINT_ROLES_MAP[secured_http_request_url]:
-        raise unauthorized_exception
+    endpoint_permissions = get_endpoint_permissions(secured_http_request_url)
+    validate_scopes(access_token_scopes, secured_http_request_url)
 
-    if not roles and all(
-            scope not in ENDPOINT_ROLES_MAP[secured_http_request_url] for scope in scopes
-    ):
-        raise unauthorized_exception
+    if endpoint_permissions.roles:
+
+        validate_roles(access_token_roles, secured_http_request_url)
 
 
 def is_endpoint_protected(endpoint_request):
-
-    if (
+    endpoint_permissions = get_endpoint_permissions(
         SecuredHttpRequestUrl(
-            path=endpoint_request.path, method=endpoint_request.method
+            path=str(endpoint_request.url_rule), method=endpoint_request.method
         )
-        in ENDPOINT_ROLES_MAP
-    ):
+    )
+    if endpoint_permissions:
         return True
-
