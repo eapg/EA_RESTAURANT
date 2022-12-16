@@ -208,6 +208,43 @@ ENDPOINT_ROLES_MAP = {
         roles=[Roles.ADMINISTRATOR.value],
         scopes=[Scopes.READ.value, Scopes.WRITE.value],
     ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories", method=HttpMethods.POST.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories/<order_status_history_id>",
+        method=HttpMethods.GET.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories/<order_status_history_id>",
+        method=HttpMethods.PUT.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories/<order_status_history_id>",
+        method=HttpMethods.DELETE.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/order_status_histories/by_order_id/<order_id>",
+        method=HttpMethods.GET.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
 }
 
 
