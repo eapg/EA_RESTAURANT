@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta
 
-import bcrypt
-import jwt
-
-from src.constants.http import HttpMethods
 from src.constants.oauth2 import Roles, Scopes
-from src.exceptions.exceptions import UnAuthorizedEndpoint
+from src.constants.http import HttpMethods
 from src.lib.entities.secured_http_request_uri import SecuredHttpRequestUrl
 from src.lib.entities.secured_http_request_Url_permissions import (
     SecuredHttpRequestUrlPermissions,
 )
+import bcrypt
+import jwt
+
+from src.exceptions.exceptions import UnAuthorizedEndpoint
 
 ENDPOINT_ROLES_MAP = {
     SecuredHttpRequestUrl(
@@ -44,6 +44,33 @@ ENDPOINT_ROLES_MAP = {
     ): SecuredHttpRequestUrlPermissions(
         roles=[Roles.ADMINISTRATOR.value],
         scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/ingredients/<ingredient_id>", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/ingredients", method=HttpMethods.POST.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/ingredients", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/ingredients/<ingredient_id>", method=HttpMethods.PUT.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/ingredients/<ingredient_id>", method=HttpMethods.DELETE.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
     ),
 }
 
@@ -170,6 +197,7 @@ def validate_roles_and_scopes(secret_key, endpoint_request):
 
 
 def is_endpoint_protected(endpoint_request):
+
     if (
         SecuredHttpRequestUrl(
             path=str(endpoint_request.url_rule), method=endpoint_request.method
