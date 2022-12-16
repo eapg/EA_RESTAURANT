@@ -9,7 +9,7 @@ from src.tests.utils.fixtures.token_fixture import build_user_access_token
 class ChefApiE2ETest(BaseFlaskSetupTest):
     def after_base_setup(self):
         access_token = build_user_access_token(
-            roles=Roles.ADMINISTRATOR.value, scopes=[Scopes.READ_WRITE.value]
+            roles=Roles.ADMINISTRATOR.value, scopes=[Scopes.WRITE.value]
         )
         self.headers = {"Authorization": "access_token " + access_token}
 
