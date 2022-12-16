@@ -3,6 +3,7 @@ from injector import inject
 from sqlalchemy import text
 from sqlalchemy.engine.base import Engine
 import jwt
+from src.exceptions.exceptions import BcryptException
 from src.env_config import get_env_config_instance
 from src.utils.oauth2_util import (
     build_client_credentials_access_token,
@@ -126,14 +127,16 @@ class Oauth2RepositoryImpl:
     def _validate_client_credentials(self, client_id, client_secret):
         client = self._get_client_by_client_id(client_id)
 
-        bcrypt.checkpw(
+        if not bcrypt.checkpw(
             client_secret.encode("utf-8"), client.client_secret.encode("utf-8")
-        )
+        ):
+            raise BcryptException("Invalid Client Secret")
 
     def _validate_user_credentials(self, client, username, password):
         user = self._get_user_by_username(username)
 
-        bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8"))
+        if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+            raise BcryptException("Invalid User Password")
         self._get_client_user_by_username_and_app_client_id(username, client.id)
 
     def _get_user_by_username(self, username):
