@@ -275,6 +275,43 @@ ENDPOINT_ROLES_MAP = {
     ): SecuredHttpRequestUrlPermissions(
         roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
     ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients", method=HttpMethods.POST.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients/<product_ingredient_id>",
+        method=HttpMethods.GET.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients", method=HttpMethods.GET.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients/<product_ingredient_id>",
+        method=HttpMethods.PUT.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients/<product_ingredient_id>",
+        method=HttpMethods.DELETE.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value], scopes=[Scopes.WRITE.value]
+    ),
+    SecuredHttpRequestUrl(
+        path="/product_ingredients/by_product_id/<product_id>",
+        method=HttpMethods.GET.value,
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[Roles.ADMINISTRATOR.value],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
 }
 
 
