@@ -1,16 +1,23 @@
-from src.constants.http_status_code import HttpStatus
+from src.constants.http import HttpStatus
+from src.constants.oauth2 import Roles, Scopes
 from src.tests.e2e.base_flask_setup_test import BaseFlaskSetupTest
 from src.tests.utils.fixtures.json_entities_fixture import build_order_status_history
+from src.tests.utils.fixtures.token_fixture import build_user_access_token
 
 
 class OrderStatusHistoryApiE2ETest(BaseFlaskSetupTest):
     def after_base_setup(self):
-        pass
+        access_token = build_user_access_token(
+            roles=Roles.ADMINISTRATOR.value, scopes=[Scopes.WRITE.value]
+        )
+        self.headers = {"Authorization": "access_token " + access_token}
 
     def test_add_order_status_history_request(self):
         json_order_status_history = build_order_status_history()
         request = self.client.post(
-            "/order_status_histories", json=json_order_status_history
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history,
         )
         json_order_status_history["id"] = 1
         self.assertEqual(request.get_json(), json_order_status_history)
@@ -18,9 +25,14 @@ class OrderStatusHistoryApiE2ETest(BaseFlaskSetupTest):
     def test_get_by_id_request_successfully(self):
         json_order_status_history = build_order_status_history()
         order_status_history_1 = self.client.post(
-            "/order_status_histories", json=json_order_status_history
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history,
         )
-        request = self.client.get("/order_status_histories/1")
+        request = self.client.get(
+            "/order_status_histories/1",
+            headers=self.headers,
+        )
         self.assertEqual(request.get_json(), order_status_history_1.get_json())
 
     def test_get_all_order_status_history_request_successfully(self):
@@ -34,16 +46,25 @@ class OrderStatusHistoryApiE2ETest(BaseFlaskSetupTest):
             order_status_history_id=3
         )
         order_status_history_1 = self.client.post(
-            "/order_status_histories", json=json_order_status_history_1
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history_1,
         )
         order_status_history_2 = self.client.post(
-            "/order_status_histories", json=json_order_status_history_2
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history_2,
         )
         order_status_history_3 = self.client.post(
-            "/order_status_histories", json=json_order_status_history_3
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history_3,
         )
 
-        request = self.client.get("/order_status_histories")
+        request = self.client.get(
+            "/order_status_histories",
+            headers=self.headers,
+        )
 
         self.assertEqual(
             request.get_json(),
@@ -56,13 +77,18 @@ class OrderStatusHistoryApiE2ETest(BaseFlaskSetupTest):
 
     def test_updated_order_status_history_request_successfully(self):
         json_order_status_history = build_order_status_history()
-        self.client.post("/order_status_histories", json=json_order_status_history)
+        self.client.post(
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history,
+        )
         order_status_history_with_parameter_updated = {
             "to_status": "IN_PROCESS",
             "updated_by": 2,
         }
         request = self.client.put(
             "/order_status_histories/1",
+            headers=self.headers,
             json=order_status_history_with_parameter_updated,
         )
         request_updated_parameter = request.get_json()
@@ -70,16 +96,25 @@ class OrderStatusHistoryApiE2ETest(BaseFlaskSetupTest):
 
     def test_deleted_order_status_history_request_successfully(self):
         json_order_status_history = build_order_status_history()
-        self.client.post("/order_status_histories", json=json_order_status_history)
+        self.client.post(
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history,
+        )
         request = self.client.delete(
-            "/order_status_histories/1", json={"updated_by": 3}
+            "/order_status_histories/1", headers=self.headers, json={"updated_by": 3}
         )
         self.assertEqual(request.status_code, HttpStatus.OK.value)
 
     def test_get_by_order_id_request_successfully(self):
         json_order_status_history = build_order_status_history()
         order_status_history_1 = self.client.post(
-            "/order_status_histories", json=json_order_status_history
+            "/order_status_histories",
+            headers=self.headers,
+            json=json_order_status_history,
         )
-        request = self.client.get("/order_status_histories/by_order_id/1")
+        request = self.client.get(
+            "/order_status_histories/by_order_id/1",
+            headers=self.headers,
+        )
         self.assertEqual(request.get_json(), [order_status_history_1.get_json()])
