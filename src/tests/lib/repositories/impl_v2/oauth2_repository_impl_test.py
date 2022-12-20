@@ -234,8 +234,8 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
-        mocked_oauth2_repository._get_refresh_token_by_token = mock.Mock()
-        mocked_oauth2_repository._get_refresh_token_by_token.return_value = (
+        mocked_oauth2_repository._get_refresh_token_by_access_and_refresh_token = mock.Mock()
+        mocked_oauth2_repository._get_refresh_token_by_access_and_refresh_token.return_value = (
             app_refresh_token
         )
 

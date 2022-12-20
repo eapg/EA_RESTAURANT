@@ -14,6 +14,12 @@ from src.utils.time_util import get_time_in_seconds_from_unix_time
 
 ENDPOINT_ROLES_MAP = {
     SecuredHttpRequestUrl(
+        path="/refresh_token", method=HttpMethods.POST.value
+    ): SecuredHttpRequestUrlPermissions(
+        roles=[],
+        scopes=[Scopes.READ.value, Scopes.WRITE.value],
+    ),
+    SecuredHttpRequestUrl(
         path="/chefs", method=HttpMethods.GET.value
     ): SecuredHttpRequestUrlPermissions(
         roles=[Roles.ADMINISTRATOR.value],
@@ -426,23 +432,23 @@ def validate_roles(roles, secured_http_request_url):
     raise UnAuthorizedEndpoint("Unauthorized Endpoint Access")
 
 
-def validate_roles_and_scopes(secret_key, endpoint_request):
+def validate_roles_and_scopes(secret_key, request):
 
-    authorization_header = endpoint_request.headers.get("Authorization")
-    authorization_header_split = authorization_header.split(" ")
-    token = authorization_header_split[1]
-    token_decode = jwt.decode(token, secret_key, algorithms="HS256")
-    access_token_roles = token_decode.get("roles")
-    access_token_scopes = token_decode.get("scopes")
+    token = get_request_token(request)
+
+    decoded_token = jwt.decode(token, secret_key, algorithms="HS256")
+
+    token_roles = decoded_token.get("user", {}).get("roles")
+    token_scopes = decoded_token.get("scopes")
     secured_http_request_url = SecuredHttpRequestUrl(
-        path=str(endpoint_request.url_rule), method=endpoint_request.method
+        path=str(request.url_rule), method=request.method
     )
     endpoint_permissions = get_endpoint_permissions(secured_http_request_url)
-    validate_scopes(access_token_scopes, secured_http_request_url)
+    validate_scopes(token_scopes, secured_http_request_url)
 
     if endpoint_permissions.roles:
 
-        validate_roles(access_token_roles, secured_http_request_url)
+        validate_roles(token_roles, secured_http_request_url)
 
 
 def is_endpoint_protected(endpoint_request):
@@ -462,8 +468,8 @@ def build_authentication_response(secret_key, access_token, refresh_token):
 
     authentication_response = {
         "access_token": access_token,
-        "expires_in": get_time_in_seconds_from_unix_time(decoded_token.get("exp")),
         "refresh_token": refresh_token,
+        "expires_in": get_time_in_seconds_from_unix_time(decoded_token.get("exp")),
         "scopes": decoded_token.get("scopes"),
         "client_name": decoded_token.get("client_name"),
     }
@@ -473,3 +479,18 @@ def build_authentication_response(secret_key, access_token, refresh_token):
         authentication_response.update({"user": decoded_token.get("user")})
 
     return authentication_response
+
+
+def get_request_token(request):
+
+    if (
+        str(request.url_rule) == "/refresh_token"
+        and request.method == HttpMethods.POST.value
+    ):
+        refresh_token_request = request.get_json()
+        return refresh_token_request["refresh_token"]
+
+    authorization_header = request.headers.get("Authorization")
+    authorization_header_split = authorization_header.split(" ")
+    access_token = authorization_header_split[1]
+    return access_token

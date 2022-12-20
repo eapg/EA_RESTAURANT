@@ -23,6 +23,13 @@ SELECT *
   where token = :token
 """
 
+SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_AND_REFRESH_TOKEN = """
+SELECT art.*
+  FROM app_refresh_tokens art 
+ INNER JOIN app_access_tokens aat 
+    ON art.id = aat.refresh_token_id 
+ WHERE art.token = :refresh_token AND aat.token = :access_token
+"""
 
 SQL_QUERY_TO_GET_SCOPES_BY_CLIENT_ID = """
 SELECT scope

@@ -1,4 +1,5 @@
 from flask import Blueprint, make_response, request
+
 from src.constants.http import HttpStatus
 from src.constants.oauth2 import GranTypes
 from src.exceptions.exceptions import BcryptException, WrongCredentialsException
@@ -41,6 +42,29 @@ def setup_oauth2_routes(ioc):
                 str(invalid_credentials), HttpStatus.UNAUTHORIZED.value
             )
             return exception_response
+
+        except WrongCredentialsException as invalid_credentials:
+            exception_response = make_response(
+                str(invalid_credentials), HttpStatus.UNAUTHORIZED.value
+            )
+            return exception_response
+
+    @oauth2_blueprint.route("/refresh_token", methods=["POST"])
+    def refresh_token():
+        try:
+            refresh_token_request = request.get_json()
+            refresh_token = refresh_token_request["refresh_token"]
+            access_token = refresh_token_request["access_token"]
+            client_id = refresh_token_request["client_id"]
+            client_secret = refresh_token_request["client_secret"]
+
+            access_token_response = oauth2_repository.refresh_token(
+                refresh_token, access_token, client_id, client_secret
+            )
+            refresh_token_response = make_response(
+                access_token_response, HttpStatus.OK.value
+            )
+            return refresh_token_response
 
         except WrongCredentialsException as invalid_credentials:
             exception_response = make_response(

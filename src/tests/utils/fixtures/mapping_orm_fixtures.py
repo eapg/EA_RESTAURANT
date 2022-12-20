@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 from src.constants.audit import Status
 from src.constants.cooking_type import CookingType
-from src.constants.oauth2 import Roles
+from src.constants.oauth2 import Roles, GranTypes
 from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import (
     Chef,
@@ -19,6 +19,10 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
 )
 from src.tests.utils.fixtures.fixture_args import BaseEntityArgs
 from src.utils.oauth2_util import encrypt_password
+from src.utils.sql_oath2_queries import (
+    SQL_QUERY_TO_ADD_ACCESS_TOKEN,
+    SQL_QUERY_TO_ADD_REFRESH_TOKEN,
+)
 
 DEFAULT_BASE_ENTITY_ARGS = BaseEntityArgs()
 
@@ -301,5 +305,23 @@ def create_user_with_procedure(
                 "username": username,
                 "password": encrypted_password,
                 "roles": roles or Roles.CHEF.value,
+            },
+        )
+
+
+def insert_access_and_refresh_token_in_db(engine, access_token, refresh_token):
+
+    with engine.begin() as conn:
+        conn.execute(
+            text(SQL_QUERY_TO_ADD_ACCESS_TOKEN),
+            {"refresh_token_id": 1, "token": access_token},
+        )
+
+        conn.execute(
+            text(SQL_QUERY_TO_ADD_REFRESH_TOKEN),
+            {
+                "token": refresh_token,
+                "app_client_id": 1,
+                "grant_type": GranTypes.CLIENT_CREDENTIALS.value,
             },
         )
