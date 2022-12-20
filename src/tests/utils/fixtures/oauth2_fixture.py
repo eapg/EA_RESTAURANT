@@ -75,7 +75,7 @@ def build_user(id=None, name=None, last_name=None, username=None, password=None,
     user.username = username or "juperez"
     password_encrypted = encrypt_password(password or "1234abcd")
     user.password = password_encrypted
-    user.roles = roles or ["administrator"]
+    user.roles = roles or "administrator"
     return user
 
 
