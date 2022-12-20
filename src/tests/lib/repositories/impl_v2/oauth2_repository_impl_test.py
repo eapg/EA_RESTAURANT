@@ -278,7 +278,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         app_refresh_token = build_refresh_token(
             id=1,
             token=user_refresh_token,
-            grant_type=GranType.PASSWORD.value,
+            grant_type=GranTypes.PASSWORD.value,
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
         self.assertRaises(
@@ -320,7 +320,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         app_refresh_token = build_refresh_token(
             id=1,
             token=client_refresh_token,
-            grant_type=GranType.CLIENT_CREDENTIALS.value,
+            grant_type=GranTypes.CLIENT_CREDENTIALS.value,
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
 
@@ -329,4 +329,89 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
             mocked_oauth2_repository.login_client,
             self.test_client_id,
             "wrong client secret",
+        )
+
+    @mock.patch(
+        "src.lib.repositories.impl_v2.oauth2_repository_impl.build_user_credential_refresh_token",
+    )
+    @mock.patch(
+        "src.lib.repositories.impl_v2.oauth2_repository_impl.build_user_credential_access_token",
+    )
+    def test_user_login_exception_wrong_user(
+        self, mocked_build_user_access_token, mocked_build_user_refresh_token
+    ):
+        user = build_user()
+        client = build_client()
+        client_user = build_client_user()
+        client_scope = ["READ/WRITE", "WRITE"]
+
+        user_access_token = build_user_credential_access_token(
+            user, client, self.env_config.oauth2_secret_key, client_scope
+        )
+        mocked_build_user_access_token.return_value = user_access_token
+        user_refresh_token = build_user_credential_refresh_token(
+            user, client, self.env_config.oauth2_secret_key, client_scope
+        )
+        mocked_build_user_refresh_token.return_value = user_refresh_token
+
+        mocked_oauth2_repository = mock_oauth2_repository(
+            self.oauth2_repository, client, user, client_user, client_scope
+        )
+        mocked_oauth2_repository._get_user_by_username.return_value = None
+
+        app_refresh_token = build_refresh_token(
+            id=1,
+            token=user_refresh_token,
+            grant_type=GranTypes.PASSWORD.value,
+        )
+        mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
+        self.assertRaises(
+            BcryptException,
+            mocked_oauth2_repository.login_user,
+            self.test_client_id,
+            self.test_client_secret,
+            "wrong username",
+            self.test_password,
+        )
+
+    @mock.patch(
+        "src.lib.repositories.impl_v2.oauth2_repository_impl.build_client_credentials_refresh_token",
+    )
+    @mock.patch(
+        "src.lib.repositories.impl_v2.oauth2_repository_impl.build_client_credentials_access_token",
+    )
+    def test_client_login_exception_wrong_client(
+        self, mocked_build_client_access_token, mocked_build_client_refresh_token
+    ):
+        user = build_user()
+        client = build_client()
+        client_user = build_client_user()
+        client_scope = ["READ/WRITE", "WRITE"]
+
+        client_access_token = build_client_credentials_access_token(
+            client, client_scope, self.env_config.oauth2_secret_key
+        )
+        mocked_build_client_access_token.return_value = client_access_token
+        client_refresh_token = build_client_credentials_refresh_token(
+            client, client_scope, self.env_config.oauth2_secret_key
+        )
+        mocked_build_client_refresh_token.return_value = client_refresh_token
+
+        mocked_oauth2_repository = mock_oauth2_repository(
+            self.oauth2_repository, client, user, client_user, client_scope
+        )
+        mocked_oauth2_repository._get_client_by_client_id.return_value = None
+
+        app_refresh_token = build_refresh_token(
+            id=1,
+            token=client_refresh_token,
+            grant_type=GranTypes.CLIENT_CREDENTIALS.value,
+        )
+        mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
+
+        self.assertRaises(
+            BcryptException,
+            mocked_oauth2_repository.login_client,
+            "wrong client id",
+            self.test_client_secret,
         )

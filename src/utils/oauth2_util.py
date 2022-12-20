@@ -350,13 +350,13 @@ def build_client_credentials_refresh_token(client, scopes, secret_key):
 
 
 def build_user_credential_access_token(user, client, secret_key, scopes):
-    roles = user.roles
+
     token = jwt.encode(
         {
             "username": user.username,
             "name": user.name,
             "last_name": user.last_name,
-            "roles": roles.split(","),
+            "roles": user.roles.split(","),
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.access_token_expiration_time),
@@ -369,13 +369,13 @@ def build_user_credential_access_token(user, client, secret_key, scopes):
 
 
 def build_user_credential_refresh_token(user, client, secret_key, scopes):
-    roles = user.roles
+
     token = jwt.encode(
         {
             "username": user.username,
             "name": user.name,
             "last_name": user.last_name,
-            "roles": roles.split(","),
+            "roles": user.roles.split(","),
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.refresh_token_expiration_time),

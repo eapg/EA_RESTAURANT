@@ -127,17 +127,21 @@ class Oauth2RepositoryImpl:
     def _validate_client_credentials(self, client_id, client_secret):
         client = self._get_client_by_client_id(client_id)
 
-        if not bcrypt.checkpw(
-            client_secret.encode("utf-8"), client.client_secret.encode("utf-8")
-        ):
-            raise BcryptException("Invalid Client Secret")
+        if client:
+
+            if bcrypt.checkpw(client_secret.encode("utf-8"), client.client_secret.encode("utf-8")) is True:
+                return
+
+        raise BcryptException("Invalid credentials")
 
     def _validate_user_credentials(self, client, username, password):
         user = self._get_user_by_username(username)
 
-        if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
-            raise BcryptException("Invalid User Password")
-        self._get_client_user_by_username_and_app_client_id(username, client.id)
+        if user:
+            if bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")) is True:
+                return
+            self._get_client_user_by_username_and_app_client_id(username, client.id)
+        raise BcryptException("Invalid credentials")
 
     def _get_user_by_username(self, username):
         with self.engine.begin() as conn:
