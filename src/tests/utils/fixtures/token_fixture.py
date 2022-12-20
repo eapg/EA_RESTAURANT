@@ -5,7 +5,10 @@ import jwt
 from src.constants.oauth2 import Roles, Scopes
 from src.env_config import get_env_config_instance
 from src.tests.utils.fixtures.oauth2_fixture import build_user, build_client
-from src.utils.oauth2_util import build_user_credential_access_token
+from src.utils.oauth2_util import (
+    build_user_credential_access_token,
+    build_client_credentials_access_token,
+)
 
 
 def build_user_access_token(roles=None, scopes=None):
@@ -14,6 +17,16 @@ def build_user_access_token(roles=None, scopes=None):
     client = build_client()
     access_token = build_user_credential_access_token(
         user, client, env_config.oauth2_secret_key, scopes
+    )
+
+    return access_token
+
+
+def build_client_access_token(scopes=None):
+    env_config = get_env_config_instance()
+    client = build_client()
+    access_token = build_client_credentials_access_token(
+        client, scopes, env_config.oauth2_secret_key
     )
 
     return access_token
