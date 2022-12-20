@@ -357,7 +357,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
-        mocked_oauth2_repository._get_user_by_username.return_value = None
+        mocked_oauth2_repository._get_user_by_username.side_effect = BcryptException("invalid credentials")
 
         app_refresh_token = build_refresh_token(
             id=1,
@@ -400,7 +400,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
-        mocked_oauth2_repository._get_client_by_client_id.return_value = None
+        mocked_oauth2_repository._get_client_by_client_id.side_effect = BcryptException("invalid credentials")
 
         app_refresh_token = build_refresh_token(
             id=1,

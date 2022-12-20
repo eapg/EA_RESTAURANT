@@ -6,3 +6,7 @@ class UnAuthorizedEndpoint(Exception):
 
 class BcryptException(Exception):
     pass
+
+
+class WrongCredentialsException(Exception):
+    pass
