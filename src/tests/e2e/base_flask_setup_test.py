@@ -15,6 +15,7 @@ def clean_database(engine):
 
 class BaseFlaskSetupTest(BaseEnvConfigTest):
     def setUp(self):
+        super().setUp()
         self.engine = get_engine()
         self.app = setup_api(Flask(__name__))
         self.app_context = self.app.app_context()

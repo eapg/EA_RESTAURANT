@@ -10,6 +10,7 @@ import bcrypt
 import jwt
 
 from src.exceptions.exceptions import UnAuthorizedEndpoint
+from src.utils.time_util import get_time_in_seconds_from_unix_time
 
 ENDPOINT_ROLES_MAP = {
     SecuredHttpRequestUrl(
@@ -324,6 +325,7 @@ def build_client_credentials_access_token(client, scopes, secret_key):
 
     token = jwt.encode(
         {
+            "client_name": client.client_name,
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.access_token_expiration_time),
@@ -338,6 +340,7 @@ def build_client_credentials_access_token(client, scopes, secret_key):
 def build_client_credentials_refresh_token(client, scopes, secret_key):
     token = jwt.encode(
         {
+            "client_name": client.client_name,
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.refresh_token_expiration_time),
@@ -353,10 +356,13 @@ def build_user_credential_access_token(user, client, secret_key, scopes):
 
     token = jwt.encode(
         {
-            "username": user.username,
-            "name": user.name,
-            "last_name": user.last_name,
-            "roles": user.roles.split(","),
+            "user": {
+                "username": user.username,
+                "name": user.name,
+                "last_name": user.last_name,
+                "roles": user.roles.split(","),
+            },
+            "client_name": client.client_name,
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.access_token_expiration_time),
@@ -372,10 +378,13 @@ def build_user_credential_refresh_token(user, client, secret_key, scopes):
 
     token = jwt.encode(
         {
-            "username": user.username,
-            "name": user.name,
-            "last_name": user.last_name,
-            "roles": user.roles.split(","),
+            "user": {
+                "username": user.username,
+                "name": user.name,
+                "last_name": user.last_name,
+                "roles": user.roles.split(","),
+            },
+            "client_name": client.client_name,
             "scopes": scopes,
             "exp": datetime.utcnow()
             + timedelta(seconds=client.refresh_token_expiration_time),
@@ -445,3 +454,22 @@ def is_endpoint_protected(endpoint_request):
         in ENDPOINT_ROLES_MAP
     ):
         return True
+
+
+def build_authentication_response(secret_key, access_token, refresh_token):
+
+    decoded_token = jwt.decode(access_token, secret_key, algorithms="HS256")
+
+    authentication_response = {
+        "access_token": access_token,
+        "expires_in": get_time_in_seconds_from_unix_time(decoded_token.get("exp")),
+        "refresh_token": refresh_token,
+        "scopes": decoded_token.get("scopes"),
+        "client_name": decoded_token.get("client_name"),
+    }
+    user = decoded_token.get("user")
+
+    if user:
+        authentication_response.update({"user": decoded_token.get("user")})
+
+    return authentication_response

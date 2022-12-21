@@ -1,3 +1,4 @@
+
 import bcrypt
 from injector import inject
 from sqlalchemy import text
@@ -10,6 +11,7 @@ from src.utils.oauth2_util import (
     build_client_credentials_refresh_token,
     build_user_credential_access_token,
     build_user_credential_refresh_token,
+    build_authentication_response,
 )
 from src.constants.oauth2 import GranTypes
 from src.utils.sql_oath2_queries import (
@@ -71,6 +73,10 @@ class Oauth2RepositoryImpl:
                 client, client_scopes, self.env_config.oauth2_secret_key
             )
 
+            authentication_response = build_authentication_response(
+                self.env_config.oauth2_secret_key, access_token, refresh_token
+            )
+
         elif grant_type == GranTypes.PASSWORD:
             self._validate_user_credentials(client, username, password)
 
@@ -83,12 +89,16 @@ class Oauth2RepositoryImpl:
                 user, client, self.env_config.oauth2_secret_key, client_scopes
             )
 
+            authentication_response = build_authentication_response(
+                self.env_config.oauth2_secret_key, access_token, refresh_token
+            )
+
         persisted_refresh_token = self._add_refresh_token(
             refresh_token, client.id, grant_type.value
         )
         self._add_access_token(persisted_refresh_token.id, access_token)
 
-        return {"refresh_token": refresh_token, "access_token": access_token}
+        return authentication_response
 
     def validate_token(self, token):
         # That is the way how jwt library validates the token
@@ -127,13 +137,21 @@ class Oauth2RepositoryImpl:
     def _validate_client_credentials(self, client_id, client_secret):
         client = self._get_client_by_client_id(client_id)
 
-        if bcrypt.checkpw(client_secret.encode("utf-8"), client.client_secret.encode("utf-8")) is False:
+        if (
+            bcrypt.checkpw(
+                client_secret.encode("utf-8"), client.client_secret.encode("utf-8")
+            )
+            is False
+        ):
             raise BcryptException("Invalid credentials")
 
     def _validate_user_credentials(self, client, username, password):
         user = self._get_user_by_username(username)
 
-        if bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")) is False:
+        if (
+            bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8"))
+            is False
+        ):
             raise BcryptException("Invalid credentials")
         self._get_client_user_by_username_and_app_client_id(username, client.id)
 

@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from src.constants.audit import Status
 from src.constants.cooking_type import CookingType
+from src.constants.oauth2 import Roles
 from src.constants.order_status import OrderStatus
 from src.lib.entities.sqlalchemy_orm_mapping import (
     Chef,
@@ -17,6 +18,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     ProductIngredient,
 )
 from src.tests.utils.fixtures.fixture_args import BaseEntityArgs
+from src.utils.oauth2_util import encrypt_password
 
 DEFAULT_BASE_ENTITY_ARGS = BaseEntityArgs()
 
@@ -278,4 +280,26 @@ def create_product_ingredient_with_procedure(engine, product_id=None):
                      product_ingredient_product_id:= :product_id);"""
             ),
             {"product_id": product_id},
+        )
+
+
+def create_user_with_procedure(
+    engine, user_name=None, username=None, password=None, roles=None
+):
+    encrypted_password = encrypt_password(password)
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """CALL insert_user_with_defaults(
+                     user_name:= :user_name,
+                     user_username:= :username,
+                     user_password:= :password,
+                     user_roles:= :roles);"""
+            ),
+            {
+                "user_name": user_name,
+                "username": username,
+                "password": encrypted_password,
+                "roles": roles or Roles.CHEF.value,
+            },
         )
