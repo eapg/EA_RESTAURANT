@@ -9,6 +9,7 @@ from src.lib.repositories.impl_v2.oauth2_repository_impl import Oauth2Repository
 from src.utils.oauth2_util import (
     validate_roles_and_scopes,
     is_endpoint_protected,
+    get_request_token,
 )
 
 
@@ -26,10 +27,9 @@ def setup_security_route_middleware(ioc):
 
         if endpoint_protected:
             try:
-                authorization_header = request.headers.get("Authorization")
-                authorization_header_split = authorization_header.split(" ")
-                access_token = authorization_header_split[1]
-                oauth2_repository.validate_token(access_token)
+
+                token = get_request_token(request)
+                oauth2_repository.validate_token(token)
                 validate_roles_and_scopes(env_config.oauth2_secret_key, request)
 
             except jwt.exceptions.ExpiredSignatureError as token_expired:

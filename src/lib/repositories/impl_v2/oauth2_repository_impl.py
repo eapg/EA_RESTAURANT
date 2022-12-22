@@ -1,4 +1,3 @@
-
 import bcrypt
 from injector import inject
 from sqlalchemy import text
@@ -20,11 +19,12 @@ from src.utils.sql_oath2_queries import (
     SQL_QUERY_TO_GET_CLIENT_BY_ID,
     SQL_QUERY_TO_ADD_ACCESS_TOKEN,
     SQL_QUERY_TO_ADD_REFRESH_TOKEN,
-    SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_TOKEN,
     SQL_QUERY_TO_GET_SCOPES_BY_CLIENT_ID,
     SQL_QUERY_TO_DELETE_ACCESS_TOKEN_BY_REFRESH_TOKEN_ID,
     SQL_QUERY_TO_DELETE_REFRESH_TOKEN,
     SQL_QUERY_TO_GET_CLIENT_USER_BY_USERNAME_AND_CLIENT_ID,
+    SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_AND_REFRESH_TOKEN,
+    SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_TOKEN,
 )
 
 
@@ -104,35 +104,56 @@ class Oauth2RepositoryImpl:
         # That is the way how jwt library validates the token
         jwt.decode(token, self.env_config.oauth2_secret_key, algorithms="HS256")
 
-    def refresh_token(self, refresh_token):
-        self.validate_token(refresh_token)
+    def refresh_token(self, refresh_token, access_token, client_id, client_secret):
 
-        app_refresh_token = self._get_refresh_token_by_token(refresh_token)
-        client = self._get_client_by_id(app_refresh_token.app_client_id)
-        client_scopes = self._get_scope_by_app_client_id(
-            app_refresh_token.app_client_id
-        )
+        self._validate_client_credentials(client_id, client_secret)
 
-        if app_refresh_token.grant_type == GranTypes.CLIENT_CREDENTIALS.value:
-
-            new_access_token = build_client_credentials_access_token(
-                client, client_scopes, self.env_config.oauth2_secret_key
+        try:
+            self.validate_token(access_token)
+            return build_authentication_response(
+                self.env_config.oauth2_secret_key, access_token, refresh_token
             )
 
-        else:
-            refresh_token_decoded = jwt.decode(
-                refresh_token, self.env_config.oauth2_secret_key, algorithms="HS256"
+        except jwt.exceptions.ExpiredSignatureError:
+
+            app_refresh_token = self._get_refresh_token_by_access_and_refresh_token(
+                access_token, refresh_token
+            )
+            client = self._get_client_by_id(app_refresh_token.app_client_id)
+            client_scopes = self._get_scope_by_app_client_id(
+                app_refresh_token.app_client_id
             )
 
-            user = self._get_user_by_username(refresh_token_decoded.get("username"))
-            new_access_token = build_user_credential_access_token(
-                user, client, self.env_config.oauth2_secret_key, client_scopes
-            )
+            if app_refresh_token.grant_type == GranTypes.CLIENT_CREDENTIALS.value:
 
-        self._delete_access_token_by_refresh_token_id(app_refresh_token.id)
-        self._add_access_token(app_refresh_token.id, new_access_token)
+                new_access_token = build_client_credentials_access_token(
+                    client, client_scopes, self.env_config.oauth2_secret_key
+                )
 
-        return {"access_token": new_access_token}
+                authentication_response = build_authentication_response(
+                    self.env_config.oauth2_secret_key, new_access_token, refresh_token
+                )
+
+            else:
+                refresh_token_decoded = jwt.decode(
+                    refresh_token, self.env_config.oauth2_secret_key, algorithms="HS256"
+                )
+
+                user = self._get_user_by_username(
+                    refresh_token_decoded.get("user").get("username")
+                )
+                new_access_token = build_user_credential_access_token(
+                    user, client, self.env_config.oauth2_secret_key, client_scopes
+                )
+
+                authentication_response = build_authentication_response(
+                    self.env_config.oauth2_secret_key, new_access_token, refresh_token
+                )
+
+            self._delete_access_token_by_refresh_token_id(app_refresh_token.id)
+            self._add_access_token(app_refresh_token.id, new_access_token)
+
+            return authentication_response
 
     def _validate_client_credentials(self, client_id, client_secret):
         client = self._get_client_by_client_id(client_id)
@@ -193,11 +214,13 @@ class Oauth2RepositoryImpl:
 
         return client_as_dict
 
-    def _get_refresh_token_by_token(self, token):
+    def _get_refresh_token_by_access_and_refresh_token(
+        self, access_token, refresh_token
+    ):
         with self.engine.begin() as conn:
             refresh_token = conn.execute(
-                text(SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_TOKEN),
-                {"token": token},
+                text(SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_AND_REFRESH_TOKEN),
+                {"access_token": access_token, "refresh_token": refresh_token},
             )
             refresh_token_as_dict = refresh_token.mappings().first()
 
