@@ -23,7 +23,7 @@ from src.utils.sql_oath2_queries import (
     SQL_QUERY_TO_DELETE_ACCESS_TOKEN_BY_REFRESH_TOKEN_ID,
     SQL_QUERY_TO_DELETE_REFRESH_TOKEN,
     SQL_QUERY_TO_GET_CLIENT_USER_BY_USERNAME_AND_CLIENT_ID,
-    SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_AND_REFRESH_TOKEN,
+    SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_REFRESH_TOKEN_AND_CLIENT,
     SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_TOKEN,
 )
 
@@ -116,8 +116,17 @@ class Oauth2RepositoryImpl:
 
         except jwt.exceptions.ExpiredSignatureError:
 
-            app_refresh_token = self._get_refresh_token_by_access_and_refresh_token(
-                access_token, refresh_token
+            refresh_token_decoded = jwt.decode(
+                refresh_token, self.env_config.oauth2_secret_key, algorithms="HS256"
+            )
+
+            app_refresh_token = (
+                self._get_refresh_token_by_access_refresh_token_and_client_id(
+                    access_token,
+                    refresh_token,
+                    client_id,
+                    refresh_token_decoded.get("user", {}).get("username"),
+                )
             )
             client = self._get_client_by_id(app_refresh_token.app_client_id)
             client_scopes = self._get_scope_by_app_client_id(
@@ -214,13 +223,19 @@ class Oauth2RepositoryImpl:
 
         return client_as_dict
 
-    def _get_refresh_token_by_access_and_refresh_token(
-        self, access_token, refresh_token
+    def _get_refresh_token_by_access_refresh_token_and_client_id(
+        self, access_token, refresh_token, client_id, username
     ):
+
         with self.engine.begin() as conn:
             refresh_token = conn.execute(
-                text(SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_AND_REFRESH_TOKEN),
-                {"access_token": access_token, "refresh_token": refresh_token},
+                text(SQL_QUERY_TO_GET_REFRESH_TOKEN_BY_ACCESS_REFRESH_TOKEN_AND_CLIENT),
+                {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "client_id": client_id,
+                    "username": username or "",
+                },
             )
             refresh_token_as_dict = refresh_token.mappings().first()
 
