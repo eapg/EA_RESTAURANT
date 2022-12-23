@@ -29,9 +29,14 @@ class Oauth2ApiE2ETest(BaseFlaskSetupTest):
         self.test_access_token = build_access_token(self.env_config.oauth2_secret_key)
         self.test_refresh_token = build_refresh_token(self.env_config.oauth2_secret_key)
 
+        # test auth "postman001:postmansecret01"
+        self.headers = {"Authorization": "Basic cG9zdG1hbjAwMTpwb3N0bWFuc2VjcmV0MDE="}
+
     def test_login_client_successfully(self):
 
-        request = self.client.post("/login", json=self.login_client)
+        request = self.client.post(
+            "/login", headers=self.headers, json=self.login_client
+        )
         request_as_json = request.get_json()
         token_decoded = jwt.decode(
             request_as_json.get("access_token"),
@@ -51,7 +56,7 @@ class Oauth2ApiE2ETest(BaseFlaskSetupTest):
             username="ep_1234",
             password="1234abcd",
         )
-        request = self.client.post("/login", json=self.login_user)
+        request = self.client.post("/login", headers=self.headers, json=self.login_user)
         request_as_json = request.get_json()
         token_decoded = jwt.decode(
             request_as_json.get("access_token"),

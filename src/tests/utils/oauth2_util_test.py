@@ -1,3 +1,4 @@
+import base64
 import unittest
 
 from src.constants.http import HttpMethods
@@ -33,6 +34,7 @@ class Oauth2UtilTest(unittest.TestCase):
         validation = validate_roles_and_scopes(
             self.env_config.oauth2_secret_key, request
         )
+        print(validation)
         self.assertEqual(validation, None)
 
     def test_validated_roles_and_scopes_without_valid_role(self):
@@ -92,3 +94,15 @@ class Oauth2UtilTest(unittest.TestCase):
 
         self.assertEqual(authorization_response.get("scopes"), [Scopes.READ.value])
         self.assertNotIn("user", authorization_response)
+
+    def test_decrypt_client_credentials(self):
+
+        client_credentials = "client_id:client_secret"
+        client_credentials_encrypted = base64.b64encode(
+            client_credentials.encode("utf-8")
+        )
+        decrypted_client_credentials = base64.b64decode(
+            client_credentials_encrypted
+        ).decode("utf-8")
+
+        self.assertEqual(client_credentials, decrypted_client_credentials)

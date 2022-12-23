@@ -22,15 +22,13 @@ def create_request(url, method, access_token):
 
 
 def create_refresh_token_request(
-    client_id=None,
-    client_secret=None,
+    client_credentials=None,
     access_token=None,
     refresh_token=None,
 ):
 
     request = {
-        "client_id": client_id or "postman001",
-        "client_secret": client_secret or "postmansecret01",
+        "client_credentials": client_credentials or "cG9zdG1hbjAwMTpwb3N0bWFuc2VjcmV0MDE=",
         "access_token": access_token,
         "refresh_token": refresh_token,
     }

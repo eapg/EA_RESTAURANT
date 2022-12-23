@@ -115,24 +115,16 @@ def build_client_user(id=None, app_client_id=None, username=None):
     return client_user
 
 
-def build_login_client_json(client_id=None, client_secret=None):
+def build_login_client_json():
 
-    login_client = {
-        "client_id": client_id or "postman001",
-        "client_secret": client_secret or "postmansecret01",
-        "grant_type": "CLIENT_CREDENTIALS",
-    }
+    login_client = {"grant_type": "CLIENT_CREDENTIALS"}
 
     return login_client
 
 
-def build_login_user_json(
-    client_id=None, client_secret=None, username=None, password=None
-):
+def build_login_user_json(username=None, password=None):
 
     login_user = {
-        "client_id": client_id or "postman001",
-        "client_secret": client_secret or "postmansecret01",
         "username": username or "ep_1234",
         "password": password or "1234abcd",
         "grant_type": "PASSWORD",
