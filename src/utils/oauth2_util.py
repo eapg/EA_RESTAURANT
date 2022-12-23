@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta
 
 from src.constants.oauth2 import Roles, Scopes
@@ -494,3 +495,16 @@ def get_request_token(request):
     authorization_header_split = authorization_header.split(" ")
     access_token = authorization_header_split[1]
     return access_token
+
+
+def decrypt_client_credentials(encrypted_client_credentials):
+
+    decoded_base64_client_credentials = base64.b64decode(
+        encrypted_client_credentials
+    ).decode("utf-8")
+    client_credentials_split = decoded_base64_client_credentials.split(":")
+
+    return {
+        "client_id": client_credentials_split[0],
+        "client_secret": client_credentials_split[1],
+    }
