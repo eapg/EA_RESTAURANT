@@ -24,7 +24,7 @@ class Oauth2UtilTest(unittest.TestCase):
     def test_validated_roles_and_scopes_with_valid_role(self):
 
         access_token = build_user_access_token(
-            roles=Roles.ADMINISTRATOR.value, scopes=Scopes.READ.value
+            roles=Roles.ADMINISTRATOR.value, scopes=[Scopes.READ.value]
         )
         request = create_request(
             url="/chefs/<chef_id>",
