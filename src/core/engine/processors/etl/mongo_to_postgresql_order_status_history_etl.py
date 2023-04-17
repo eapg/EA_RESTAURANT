@@ -4,7 +4,7 @@ from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
 from src.constants.audit import InternalUsers
-from src.core.engine.processors.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
 from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderStatusHistory as SqlalchemyOrderStatusHistory,
 )
@@ -25,7 +25,7 @@ beginning.
 """
 
 
-class MongoToPostgresqlOrderStatusHistory(AbstractEtl):
+class MongoToPostgresqlOrderStatusHistoryEtl(AbstractEtl):
     def __init__(self, app_processor_config, app_context=None):
         super().__init__(
             app_processor_config=app_processor_config, app_context=app_context

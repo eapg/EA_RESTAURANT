@@ -8,8 +8,8 @@ from src.core.engine.processors.kitchen_simulator import (
     KitchenSimulator,
     initialize_kitchen_simulator,
 )
-from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
-    MongoToPostgresqlOrderStatusHistory,
+from src.core.engine.processors.etl.mongo_to_postgresql_order_status_history_etl import (
+    MongoToPostgresqlOrderStatusHistoryEtl,
 )
 from src.core.order_manager import OrderManager
 from src.env_config import get_env_config_instance
@@ -30,7 +30,7 @@ class AppEngineProcessor:
             order_manager=OrderManager(),
             on_start=initialize_kitchen_simulator,
         )
-        mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(
+        mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistoryEtl(
             mongo_to_postgres_etl_config
         )
         kitchen_simulator = KitchenSimulator(kitchen_simulator_config)
