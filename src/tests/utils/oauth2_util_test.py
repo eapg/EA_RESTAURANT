@@ -34,7 +34,7 @@ class Oauth2UtilTest(unittest.TestCase):
         validation = validate_roles_and_scopes(
             self.env_config.oauth2_secret_key, request
         )
-        print(validation)
+
         self.assertEqual(validation, None)
 
     def test_validated_roles_and_scopes_without_valid_role(self):
@@ -82,7 +82,6 @@ class Oauth2UtilTest(unittest.TestCase):
         self.assertEqual(
             authorization_response.get("user").get("roles"), [Roles.ADMINISTRATOR.value]
         )
-        print(authorization_response)
 
     def test_build_authentication_response_for_client_login_successfully(self):
 

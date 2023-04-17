@@ -5,9 +5,9 @@ from injector import Injector
 from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
 from src.core.di_config import DiProviders
-from src.core.engine.processors.abstract_etl_processor import AbstractEtl
-from src.core.engine.processors.mongo_to_postgresql_order_status_history import (
-    MongoToPostgresqlOrderStatusHistory,
+from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.etl.mongo_to_postgresql_order_status_history_etl import (
+    MongoToPostgresqlOrderStatusHistoryEtl,
 )
 from src.tests.lib.repositories.mongo_engine_base_repository_impl_test import (
     MongoEngineBaseRepositoryTestCase,
@@ -48,7 +48,7 @@ class MongoToPostgresOrderStatusHistoryIntegrationTest(
         self.app_context = build_app_engine_processor_context()
         self.app_context.ioc = ioc
 
-        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistory(AbstractEtl)
+        self.mongo_to_postgres_etl = MongoToPostgresqlOrderStatusHistoryEtl(AbstractEtl)
         self.mongo_to_postgres_etl.app_processor_config = self.app_config
 
         self.mongo_to_postgres_etl.set_app_context(self.app_context)
