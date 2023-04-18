@@ -37,6 +37,9 @@ class EnvConfig:
 
         self.oauth2_secret_key = os.environ.get("OAUTH2_SECRET_KEY")
 
+        self.ea_restaurant_java_etl_grpc_host = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_HOST")
+        self.ea_restaurant_java_etl_grpc_server_port = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_SERVER_PORT")
+
     def get_postgres_db_uri(self):
         return get_postgres_db_uri(
             self.postgres_user,
