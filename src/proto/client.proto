@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message NotParametersRequest {}
+
+message Oauth2TokenResponse{
+  string accessToken = 1;
+  string refreshToken = 2;
+  int32 expiresIn = 3;
+  string scopes = 4;
+  string clientName = 5;
+}
+
+message RefreshTokenRequest{
+  string refreshToken = 1;
+  string accessToken = 2;
+  string clientId = 3;
+  string clientSecret = 4;
+}
+
+service ClientService{
+  rpc loginClient(NotParametersRequest) returns (Oauth2TokenResponse){}
+
+  rpc refreshToken(RefreshTokenRequest) returns (Oauth2TokenResponse){}
+}
