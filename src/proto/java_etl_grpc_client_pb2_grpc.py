@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from src.proto import client_pb2 as src_dot_proto_dot_client__pb2
+from src.proto import java_etl_grpc_client_pb2 as src_dot_proto_dot_java__etl__grpc__client__pb2
 
 
-class ClientServiceStub(object):
+class Oauth2ServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,18 +15,18 @@ class ClientServiceStub(object):
             channel: A grpc.Channel.
         """
         self.loginClient = channel.unary_unary(
-                '/ClientService/loginClient',
-                request_serializer=src_dot_proto_dot_client__pb2.NotParametersRequest.SerializeToString,
-                response_deserializer=src_dot_proto_dot_client__pb2.Oauth2TokenResponse.FromString,
+                '/Oauth2Service/loginClient',
+                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
+                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
                 )
         self.refreshToken = channel.unary_unary(
-                '/ClientService/refreshToken',
-                request_serializer=src_dot_proto_dot_client__pb2.RefreshTokenRequest.SerializeToString,
-                response_deserializer=src_dot_proto_dot_client__pb2.Oauth2TokenResponse.FromString,
+                '/Oauth2Service/refreshToken',
+                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
+                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
                 )
 
 
-class ClientServiceServicer(object):
+class Oauth2ServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def loginClient(self, request, context):
@@ -42,26 +42,26 @@ class ClientServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_ClientServiceServicer_to_server(servicer, server):
+def add_Oauth2ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'loginClient': grpc.unary_unary_rpc_method_handler(
                     servicer.loginClient,
-                    request_deserializer=src_dot_proto_dot_client__pb2.NotParametersRequest.FromString,
-                    response_serializer=src_dot_proto_dot_client__pb2.Oauth2TokenResponse.SerializeToString,
+                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.FromString,
+                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
             ),
             'refreshToken': grpc.unary_unary_rpc_method_handler(
                     servicer.refreshToken,
-                    request_deserializer=src_dot_proto_dot_client__pb2.RefreshTokenRequest.FromString,
-                    response_serializer=src_dot_proto_dot_client__pb2.Oauth2TokenResponse.SerializeToString,
+                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.FromString,
+                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'ClientService', rpc_method_handlers)
+            'Oauth2Service', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class ClientService(object):
+class Oauth2Service(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -75,9 +75,9 @@ class ClientService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ClientService/loginClient',
-            src_dot_proto_dot_client__pb2.NotParametersRequest.SerializeToString,
-            src_dot_proto_dot_client__pb2.Oauth2TokenResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/Oauth2Service/loginClient',
+            src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
+            src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -92,8 +92,8 @@ class ClientService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ClientService/refreshToken',
-            src_dot_proto_dot_client__pb2.RefreshTokenRequest.SerializeToString,
-            src_dot_proto_dot_client__pb2.Oauth2TokenResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/Oauth2Service/refreshToken',
+            src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
+            src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

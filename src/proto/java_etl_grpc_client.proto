@@ -17,7 +17,7 @@ message RefreshTokenRequest{
   string clientSecret = 4;
 }
 
-service ClientService{
+service Oauth2Service{
   rpc loginClient(NotParametersRequest) returns (Oauth2TokenResponse){}
 
   rpc refreshToken(RefreshTokenRequest) returns (Oauth2TokenResponse){}
