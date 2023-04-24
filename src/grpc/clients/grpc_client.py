@@ -1,5 +1,5 @@
 import grpc
-from src.proto import client_pb2_grpc
+from src.proto import java_etl_grpc_client_pb2_grpc
 
 
 class GrpcClient:
@@ -11,4 +11,4 @@ class GrpcClient:
         )
 
     def get_service_stub(self):
-        return client_pb2_grpc.ClientServiceStub(self.channel)
+        return java_etl_grpc_client_pb2_grpc.Oauth2ServiceStub(self.channel)
