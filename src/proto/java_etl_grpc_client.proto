@@ -17,8 +17,37 @@ message RefreshTokenRequest{
   string clientSecret = 4;
 }
 
+message InsertMongoOrderStatusHistoriesResponse{
+  repeated string uuids = 1;
+}
+
+message MongoOrderStatusHistory{
+  string id = 1;
+  int64 orderId = 2;
+  int64 fromTime = 3;
+  int64 toTime = 4;
+  string fromStatus = 5;
+  string toStatus = 6;
+  string etlStatus = 7;
+  string entityStatus = 8;
+  int64 createdBy = 9;
+  int64 updatedBy = 10;
+  int64 createdDate = 11;
+  int64 updatedDate = 12;
+
+}
+
+message MongoOrderStatusHistoriesFromPythonRequest{
+  repeated MongoOrderStatusHistory mongoOrderStatusHistory = 1;
+}
+
 service Oauth2Service{
   rpc loginClient(NotParametersRequest) returns (Oauth2TokenResponse){}
 
   rpc refreshToken(RefreshTokenRequest) returns (Oauth2TokenResponse){}
 }
+
+service MongoOrderStatusHistoryService{
+  rpc insertMongoOrderStatusHistoriesFromPythonEtl(MongoOrderStatusHistoriesFromPythonRequest)
+      returns(InsertMongoOrderStatusHistoriesResponse);
+    }
