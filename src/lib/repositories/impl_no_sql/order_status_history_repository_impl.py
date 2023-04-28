@@ -4,7 +4,7 @@ from injector import inject
 from pymongo import MongoClient
 
 from src.constants.audit import InternalUsers, Status
-from src.constants.etl_status import EtlStatus
+from src.constants.etl_status import EtlStatus, Service
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
@@ -20,6 +20,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         order_status_history.created_date = datetime.now()
         order_status_history.updated_by = order_status_history.created_by
         order_status_history.updated_date = order_status_history.created_date
+        order_status_history.service = Service.UNASSIGNED.value
         order_status_history.save()
 
     def get_by_id(self, order_status_history_id):
@@ -128,3 +129,22 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def get_last_order_status_histories_by_order_ids(self, order_id):
         pass
+
+    def get_order_status_histories_by_service(self, service, limit):
+        order_status_histories_by_service = OrderStatusHistory.objects(
+            service=service.value
+        ).limit(limit)
+        return order_status_histories_by_service
+
+    def update_batch_to_assigned_etl(self, order_status_history_ids, etl_service):
+
+        db_client = self.mongo_client["ea_restaurant"]
+        collection = db_client["order_status_histories"]
+        collection.update_many(
+            {"_id": {"$in": order_status_history_ids}},
+            {
+                "$set": {
+                    "service": etl_service.value,
+                }
+            },
+        )

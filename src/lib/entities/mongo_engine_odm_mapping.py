@@ -22,5 +22,6 @@ class OrderStatusHistory(BaseEntity):
     from_status = StringField()
     to_status = StringField()
     etl_status = StringField()
+    service = StringField()
 
     meta = {"collection": "order_status_histories"}
