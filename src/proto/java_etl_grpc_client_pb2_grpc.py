@@ -97,3 +97,64 @@ class Oauth2Service(object):
             src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class MongoOrderStatusHistoryServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.insertMongoOrderStatusHistoriesFromPythonEtl = channel.unary_unary(
+                '/MongoOrderStatusHistoryService/insertMongoOrderStatusHistoriesFromPythonEtl',
+                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
+                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
+                )
+
+
+class MongoOrderStatusHistoryServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def insertMongoOrderStatusHistoriesFromPythonEtl(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_MongoOrderStatusHistoryServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'insertMongoOrderStatusHistoriesFromPythonEtl': grpc.unary_unary_rpc_method_handler(
+                    servicer.insertMongoOrderStatusHistoriesFromPythonEtl,
+                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.FromString,
+                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'MongoOrderStatusHistoryService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class MongoOrderStatusHistoryService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def insertMongoOrderStatusHistoriesFromPythonEtl(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/MongoOrderStatusHistoryService/insertMongoOrderStatusHistoriesFromPythonEtl',
+            src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
+            src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -9,9 +9,10 @@ DEFAULT_BASE_ENTITY_ARGS = BaseEntityArgs()
 
 
 def build_order_status_history(
-    order_id=None, from_time=None, from_status=None, fixture_args=DEFAULT_BASE_ENTITY_ARGS
+    id=None, order_id=None, from_time=None, from_status=None, fixture_args=DEFAULT_BASE_ENTITY_ARGS
 ):
     order_status_history = OrderStatusHistory()
+    order_status_history.id = id
     order_status_history.order_id = order_id or 1
     order_status_history.from_time = from_time or datetime.now()
     order_status_history.from_status = from_status or OrderStatus.NEW_ORDER.name
