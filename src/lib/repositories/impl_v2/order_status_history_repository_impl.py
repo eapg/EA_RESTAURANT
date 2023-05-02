@@ -184,3 +184,6 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
 
     def get_unprocessed_order_status_histories(self):
         pass
+
+    def get_order_status_histories_by_service(self, service, limit):
+        pass

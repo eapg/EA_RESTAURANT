@@ -1,7 +1,7 @@
 from unittest import mock
 
 from src.constants.audit import InternalUsers, Status
-from src.constants.etl_status import EtlStatus
+from src.constants.etl_status import EtlStatus, Service
 from src.constants.order_status import OrderStatus
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
@@ -188,3 +188,59 @@ class OrderStatusHistoryRepositoryImplTest(MongoEngineBaseRepositoryTestCase):
             [order_status_history_1, order_status_history_2],
         )
         mocked_objects.assert_called_with(etl_status=EtlStatus.UNPROCESSED.value)
+
+    @mock.patch.object(OrderStatusHistory, "objects")
+    def test_get_order_status_histories_by_service(self, mocked_objects):
+        order_status_history_1 = build_order_status_history()
+        order_status_history_1.service = Service.PYTHON_ETL.value
+        order_status_history_2 = build_order_status_history()
+        order_status_history_2.service = Service.PYTHON_ETL.value
+
+        python_etl_order_status_histories = [
+            order_status_history_1,
+            order_status_history_2,
+        ]
+
+        mocked_objects.return_value.limit.return_value = (
+            python_etl_order_status_histories
+        )
+
+        python_etl_order_status_histories_returned = (
+            self.order_status_history_repository.get_order_status_histories_by_service(
+                Service.PYTHON_ETL, limit=2
+            )
+        )
+        self.assertEqual(
+            python_etl_order_status_histories_returned,
+            python_etl_order_status_histories,
+        )
+        mocked_objects.assert_called_with(service=Service.PYTHON_ETL.value)
+
+    def test_update_batch_to_assigned_etl(self):
+        order_status_history_ids = [
+            "63656f20f2a8a6a247ae31cc",
+            "63656f20f2a8a6a247ae31cd",
+        ]
+        self.order_status_history_repository.update_batch_to_assigned_etl(
+            order_status_history_ids, Service.PYTHON_ETL
+        )
+
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[0].args[0], "ea_restaurant"
+        )
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[1].args[0], "order_status_histories"
+        )
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[2].args[0],
+            {"_id": {"$in": order_status_history_ids}},
+        )
+
+        self.assertEqual(
+            self.mocked_mongo_client.mock_calls[2].args[1],
+            {
+                "$set": {
+                    "service": Service.PYTHON_ETL.value,
+                }
+            },
+        )

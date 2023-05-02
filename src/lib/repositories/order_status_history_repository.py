@@ -20,3 +20,7 @@ class OrderStatusHistoryRepository(GenericRepository, metaclass=ABCMeta):
     @abstractmethod
     def get_unprocessed_order_status_histories(self):
         pass
+
+    @abstractmethod
+    def get_order_status_histories_by_service(self, service, limit):
+        pass
