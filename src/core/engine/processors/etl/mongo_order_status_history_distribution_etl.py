@@ -1,4 +1,4 @@
-from src.constants.etl_status import Service
+from src.constants.etl_status import Service, EtlStatus
 from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
@@ -27,7 +27,9 @@ class MongoOrderStatusHistoryDistributionEtl(AbstractEtl):
 
         unassigned_order_status_histories_from_mongo = (
             mongo_repository.get_order_status_histories_by_service(
-                Service.UNASSIGNED, limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT
+                Service.UNASSIGNED,
+                etl_status=EtlStatus.UNPROCESSED,
+                limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
             )
         )
 

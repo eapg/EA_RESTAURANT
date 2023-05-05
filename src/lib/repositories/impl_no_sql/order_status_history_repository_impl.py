@@ -130,9 +130,9 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
     def get_last_order_status_histories_by_order_ids(self, order_id):
         pass
 
-    def get_order_status_histories_by_service(self, service, limit):
+    def get_order_status_histories_by_service(self, service, etl_status, limit):
         order_status_histories_by_service = OrderStatusHistory.objects(
-            service=service.value
+            service=service.value, etl_status=etl_status.value
         ).limit(limit)
         return order_status_histories_by_service
 

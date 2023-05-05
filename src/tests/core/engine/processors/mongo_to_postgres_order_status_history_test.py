@@ -1,7 +1,11 @@
 from unittest import mock
 
 from src.constants.audit import InternalUsers
+from src.constants.etl_status import EtlStatus, Service
 from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.etl.mongo_order_status_history_distribution_etl import (
+    UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
+)
 from src.core.engine.processors.etl.mongo_to_postgresql_order_status_history_etl import (
     MongoToPostgresqlOrderStatusHistoryEtl,
 )
@@ -44,10 +48,14 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
 
         etl.start()
         mongo_repository = etl.mongo_order_status_history_repository
-        mongo_repository.get_unprocessed_order_status_histories.assert_called()
+        mongo_repository.get_order_status_histories_by_service.assert_called_with(
+            Service.PYTHON_ETL,
+            etl_status=EtlStatus.UNPROCESSED,
+            limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
+        )
 
     @mock.patch(
-        "src.core.engine.processors.mongo_to_postgresql_order_status_history."
+        "src.core.engine.processors.etl.mongo_to_postgresql_order_status_history_etl."
         + "convert_mongo_order_status_history_to_postgres_order_status_history"
     )
     def test_transform_data_successfully(self, mocked_convert_mongo_to_postgres):
@@ -75,7 +83,7 @@ class MongoToPostgresOrderStatusHistoryTest(MongoEngineBaseRepositoryTestCase):
         )
 
     @mock.patch(
-        "src.core.engine.processors.mongo_to_postgresql_order_status_history."
+        "src.core.engine.processors.etl.mongo_to_postgresql_order_status_history_etl."
         + "update_last_order_status_history"
     )
     def test_load_data_successfully(self, mocked_update_last_order_status_history):

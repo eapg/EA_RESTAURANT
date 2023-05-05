@@ -4,7 +4,11 @@ from src.api.controllers.order_status_history_controller import (
     OrderStatusHistoryController,
 )
 from src.constants.audit import InternalUsers
+from src.constants.etl_status import Service, EtlStatus
 from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.etl.mongo_order_status_history_distribution_etl import (
+    UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
+)
 from src.lib.entities.sqlalchemy_orm_mapping import (
     OrderStatusHistory as SqlalchemyOrderStatusHistory,
 )
@@ -44,8 +48,10 @@ class MongoToPostgresqlOrderStatusHistoryEtl(AbstractEtl):
 
     def extract_data(self):
 
-        order_status_histories_from_mongo = (
-            self.mongo_order_status_history_repository.get_unprocessed_order_status_histories()
+        order_status_histories_from_mongo = self.mongo_order_status_history_repository.get_order_status_histories_by_service(
+            Service.PYTHON_ETL,
+            etl_status=EtlStatus.UNPROCESSED,
+            limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
         )
 
         return order_status_histories_from_mongo
