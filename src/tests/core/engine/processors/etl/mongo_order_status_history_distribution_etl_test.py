@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from src.constants.etl_status import Service
+from src.constants.etl_status import Service, EtlStatus
 from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
 from src.core.engine.processors.etl.mongo_order_status_history_distribution_etl import (
     MongoOrderStatusHistoryDistributionEtl,
@@ -45,7 +45,9 @@ class MongoOrderStatusHistoryDistributionEtlTest(MongoEngineBaseRepositoryTestCa
             mongo_order_status_distribution_etl.mongo_order_status_history_repository
         )
         mongo_repository.get_order_status_histories_by_service.assert_called_with(
-            Service.UNASSIGNED, limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT
+            Service.UNASSIGNED,
+            etl_status=EtlStatus.UNPROCESSED,
+            limit=UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT,
         )
 
     def test_transform_data_successfully(self):
