@@ -134,7 +134,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         order_status_histories_by_service = OrderStatusHistory.objects(
             service=service.value, etl_status=etl_status.value
         ).limit(limit)
-        return order_status_histories_by_service
+        return list(order_status_histories_by_service)
 
     def update_batch_to_assigned_etl(self, order_status_history_ids, etl_service):
 

@@ -1,6 +1,7 @@
 import base64
 
 from src.proto import java_etl_grpc_client_pb2
+from src.utils.time_util import get_unix_time_stamp_milliseconds
 
 
 def generate_basic_token_from_credentials(client_id, client_secret):
@@ -15,17 +16,26 @@ def map_mongo_order_status_history_to_grpc_mongo_order_status_history(
     mongo_order_status_history,
 ):
     return java_etl_grpc_client_pb2.MongoOrderStatusHistory(
+        id=str(mongo_order_status_history.id),
         orderId=mongo_order_status_history.order_id,
-        fromTime=mongo_order_status_history.from_time,
-        toTime=mongo_order_status_history.to_time,
+        fromTime=int(
+            get_unix_time_stamp_milliseconds(mongo_order_status_history.from_time)
+        ),
+        toTime=int(
+            get_unix_time_stamp_milliseconds(mongo_order_status_history.to_time)
+        ),
         fromStatus=mongo_order_status_history.from_status,
         toStatus=mongo_order_status_history.to_status,
         etlStatus=mongo_order_status_history.etl_status,
         entityStatus=mongo_order_status_history.entity_status,
         createdBy=mongo_order_status_history.created_by,
         updatedBy=mongo_order_status_history.updated_by,
-        createdDate=mongo_order_status_history.created_date,
-        updatedDate=mongo_order_status_history.updated_date,
+        createdDate=int(
+            get_unix_time_stamp_milliseconds(mongo_order_status_history.created_date)
+        ),
+        updatedDate=int(
+            get_unix_time_stamp_milliseconds(mongo_order_status_history.updated_date)
+        ),
     )
 
 
@@ -38,3 +48,7 @@ def map_mongo_order_status_histories_to_grpc_mongo_order_status_histories(
             mongo_order_status_histories,
         )
     )
+
+
+def generate_bearer_token_from_access_token(access_token):
+    return f"Bearer {access_token}"

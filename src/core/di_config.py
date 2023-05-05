@@ -17,8 +17,12 @@ from src.api.controllers.product_controller import ProductController
 from src.api.controllers.product_ingredient_controller import (
     ProductIngredientController,
 )
+from src.core.grpc_config import get_ea_restaurant_java_etl_grpc_client
 from src.core.mongo_engine_config import mongo_engine_connection
 from src.core.sqlalchemy_config import get_engine
+from src.grpc.clients.ea_restaurant_java_etl_grpc_client import (
+    EaRestaurantJavaEtlGrpcClient,
+)
 from src.lib.repositories.chef_repository import ChefRepository
 from src.lib.repositories.impl_no_sql.order_status_history_repository_impl import (
     OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
@@ -53,6 +57,12 @@ class DiProviders(Module):
     def get_mongo_client(self) -> MongoClient:
         return mongo_engine_connection()
 
+    # pylint: disable=R0201
+    @singleton
+    @provider
+    def get_ea_restaurant_java_etl(self) -> EaRestaurantJavaEtlGrpcClient:
+        return get_ea_restaurant_java_etl_grpc_client()
+
     def configure(self, binder):
 
         # Repositories
@@ -83,3 +93,9 @@ class DiProviders(Module):
         binder.bind(ProductIngredientController, scope=singleton)
         binder.bind(ProductController, scope=singleton)
 
+        # grpc_clients
+        binder.bind(
+            EaRestaurantJavaEtlGrpcClient,
+            to=self.get_ea_restaurant_java_etl(),
+            scope=singleton,
+        )
