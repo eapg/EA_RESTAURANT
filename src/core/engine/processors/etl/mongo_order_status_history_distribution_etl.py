@@ -33,11 +33,11 @@ class MongoOrderStatusHistoryDistributionEtl(AbstractEtl):
             )
         )
 
-        return unassigned_order_status_histories_from_mongo
+        return list(unassigned_order_status_histories_from_mongo)
 
     def transform_data(self, extracted_data):
         map_assigned_etl_list = {}
-        half_length = extracted_data // 2
+        half_length = len(extracted_data) // 2
 
         assigned_to_python_etl = extracted_data[:half_length]
 
