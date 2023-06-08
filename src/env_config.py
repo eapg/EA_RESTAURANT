@@ -39,6 +39,8 @@ class EnvConfig:
 
         self.ea_restaurant_java_etl_grpc_host = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_HOST")
         self.ea_restaurant_java_etl_grpc_server_port = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_SERVER_PORT")
+        self.ea_restaurant_java_etl_grpc_client_id = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_CLIENT_ID")
+        self.ea_restaurant_java_etl_grpc_client_secret = os.environ.get("EA_RESTAURANT_JAVA_ETL_GRPC_CLIENT_SECRET")
 
     def get_postgres_db_uri(self):
         return get_postgres_db_uri(
