@@ -3,7 +3,8 @@ from datetime import datetime
 
 
 def get_unix_time_stamp_milliseconds(datetime):
-    return (time.mktime(datetime.timetuple())) * 1000
+    if datetime:
+        return int((time.mktime(datetime.timetuple())) * 1000)
 
 
 def get_time_in_seconds_from_unix_time(unix_time):

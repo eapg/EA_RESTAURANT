@@ -18,23 +18,19 @@ def map_mongo_order_status_history_to_grpc_mongo_order_status_history(
     return java_etl_grpc_client_pb2.MongoOrderStatusHistory(
         id=str(mongo_order_status_history.id),
         orderId=mongo_order_status_history.order_id,
-        fromTime=int(
-            get_unix_time_stamp_milliseconds(mongo_order_status_history.from_time)
-        ),
-        toTime=int(
-            get_unix_time_stamp_milliseconds(mongo_order_status_history.to_time)
-        ),
+        fromTime=get_unix_time_stamp_milliseconds(mongo_order_status_history.from_time),
+        toTime=get_unix_time_stamp_milliseconds(mongo_order_status_history.to_time),
         fromStatus=mongo_order_status_history.from_status,
         toStatus=mongo_order_status_history.to_status,
         etlStatus=mongo_order_status_history.etl_status,
         entityStatus=mongo_order_status_history.entity_status,
         createdBy=mongo_order_status_history.created_by,
         updatedBy=mongo_order_status_history.updated_by,
-        createdDate=int(
-            get_unix_time_stamp_milliseconds(mongo_order_status_history.created_date)
+        createdDate=get_unix_time_stamp_milliseconds(
+            mongo_order_status_history.created_date
         ),
-        updatedDate=int(
-            get_unix_time_stamp_milliseconds(mongo_order_status_history.updated_date)
+        updatedDate=get_unix_time_stamp_milliseconds(
+            mongo_order_status_history.updated_date
         ),
     )
 
