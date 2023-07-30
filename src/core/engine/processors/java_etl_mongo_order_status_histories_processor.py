@@ -12,7 +12,7 @@ from src.lib.repositories.impl_no_sql.order_status_history_repository_impl impor
     OrderStatusHistoryRepositoryImpl as MongoOrderStatusHistoryRepository,
 )
 
-UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT = 1
+UNASSIGNED_ORDER_STATUS_HISTORIES_LIMIT = 100
 
 
 class JavaEtlMongoOrderStatusHistoriesProcessor(AbstractProcessor):
