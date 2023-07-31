@@ -34,6 +34,8 @@ class EnvConfig:
         # process config
         self.kitchen_simulator_interval = float(os.environ.get("KITCHEN_SIMULATOR_INTERVAL"))
         self.etl_interval = int(os.environ.get("ETL_INTERVAL"))
+        self.distribution_etl_interval = int(os.environ.get("DISTRIBUTION_ETL_INTERVAL"))
+        self.java_etl_interval = int(os.environ.get("JAVA_ETL_INTERVAL"))
 
         self.oauth2_secret_key = os.environ.get("OAUTH2_SECRET_KEY")
 

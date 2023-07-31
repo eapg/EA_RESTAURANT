@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from src.proto import java_etl_grpc_client_pb2 as src_dot_proto_dot_java__etl__grpc__client__pb2
+from src.proto import java_etl_grpc_client_pb2 as java__etl__grpc__client__pb2
 
 
 class Oauth2ServiceStub(object):
@@ -16,13 +16,13 @@ class Oauth2ServiceStub(object):
         """
         self.loginClient = channel.unary_unary(
                 '/Oauth2Service/loginClient',
-                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
-                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
+                request_serializer=java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
+                response_deserializer=java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
                 )
         self.refreshToken = channel.unary_unary(
                 '/Oauth2Service/refreshToken',
-                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
-                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
+                request_serializer=java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
+                response_deserializer=java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
                 )
 
 
@@ -46,13 +46,13 @@ def add_Oauth2ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'loginClient': grpc.unary_unary_rpc_method_handler(
                     servicer.loginClient,
-                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.FromString,
-                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
+                    request_deserializer=java__etl__grpc__client__pb2.NotParametersRequest.FromString,
+                    response_serializer=java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
             ),
             'refreshToken': grpc.unary_unary_rpc_method_handler(
                     servicer.refreshToken,
-                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.FromString,
-                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
+                    request_deserializer=java__etl__grpc__client__pb2.RefreshTokenRequest.FromString,
+                    response_serializer=java__etl__grpc__client__pb2.Oauth2TokenResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -76,8 +76,8 @@ class Oauth2Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Oauth2Service/loginClient',
-            src_dot_proto_dot_java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
-            src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
+            java__etl__grpc__client__pb2.NotParametersRequest.SerializeToString,
+            java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -93,8 +93,8 @@ class Oauth2Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Oauth2Service/refreshToken',
-            src_dot_proto_dot_java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
-            src_dot_proto_dot_java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
+            java__etl__grpc__client__pb2.RefreshTokenRequest.SerializeToString,
+            java__etl__grpc__client__pb2.Oauth2TokenResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -110,8 +110,8 @@ class MongoOrderStatusHistoryServiceStub(object):
         """
         self.insertMongoOrderStatusHistoriesFromPythonEtl = channel.unary_unary(
                 '/MongoOrderStatusHistoryService/insertMongoOrderStatusHistoriesFromPythonEtl',
-                request_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
-                response_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
+                request_serializer=java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
+                response_deserializer=java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
                 )
 
 
@@ -129,8 +129,8 @@ def add_MongoOrderStatusHistoryServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'insertMongoOrderStatusHistoriesFromPythonEtl': grpc.unary_unary_rpc_method_handler(
                     servicer.insertMongoOrderStatusHistoriesFromPythonEtl,
-                    request_deserializer=src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.FromString,
-                    response_serializer=src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.SerializeToString,
+                    request_deserializer=java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.FromString,
+                    response_serializer=java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -154,7 +154,7 @@ class MongoOrderStatusHistoryService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/MongoOrderStatusHistoryService/insertMongoOrderStatusHistoriesFromPythonEtl',
-            src_dot_proto_dot_java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
-            src_dot_proto_dot_java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
+            java__etl__grpc__client__pb2.MongoOrderStatusHistoriesFromPythonRequest.SerializeToString,
+            java__etl__grpc__client__pb2.InsertMongoOrderStatusHistoriesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

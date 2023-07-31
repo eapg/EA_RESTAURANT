@@ -3,7 +3,7 @@ from datetime import datetime
 from src.constants.audit import Status
 from src.constants.etl_status import EtlStatus
 from src.constants.order_status import OrderStatus
-from src.proto import java_etl_grpc_client_pb2
+from src.proto import java_etl_grpc_client_pb2_old
 from src.utils.time_util import get_unix_time_stamp_milliseconds
 
 

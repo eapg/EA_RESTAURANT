@@ -102,6 +102,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         new_status_history.entity_status = Status.ACTIVE.value
         new_status_history.order_id = order_id
         new_status_history.etl_status = EtlStatus.UNPROCESSED.value
+        new_status_history.service = Service.UNASSIGNED.value
         new_status_history.created_by = InternalUsers.KITCHEN_SIMULATOR.value
         new_status_history.updated_by = new_status_history.created_by
         new_status_history.save()

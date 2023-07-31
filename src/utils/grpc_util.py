@@ -2,6 +2,7 @@ import base64
 
 from src.proto import java_etl_grpc_client_pb2
 from src.utils.time_util import get_unix_time_stamp_milliseconds
+from google.protobuf import wrappers_pb2
 
 
 def generate_basic_token_from_credentials(client_id, client_secret):
@@ -15,13 +16,27 @@ def generate_basic_token_from_credentials(client_id, client_secret):
 def map_mongo_order_status_history_to_grpc_mongo_order_status_history(
     mongo_order_status_history,
 ):
+
+    to_status = (
+        wrappers_pb2.StringValue(value=mongo_order_status_history.to_status)
+        if mongo_order_status_history.to_status
+        else None
+    )
+    to_time = (
+        wrappers_pb2.Int64Value(
+            value=get_unix_time_stamp_milliseconds(mongo_order_status_history.to_time)
+        )
+        if mongo_order_status_history.to_time
+        else None
+    )
+
     return java_etl_grpc_client_pb2.MongoOrderStatusHistory(
         id=str(mongo_order_status_history.id),
         orderId=mongo_order_status_history.order_id,
         fromTime=get_unix_time_stamp_milliseconds(mongo_order_status_history.from_time),
-        toTime=get_unix_time_stamp_milliseconds(mongo_order_status_history.to_time),
+        toTime=to_time,
         fromStatus=mongo_order_status_history.from_status,
-        toStatus=mongo_order_status_history.to_status,
+        toStatus=to_status,
         etlStatus=mongo_order_status_history.etl_status,
         entityStatus=mongo_order_status_history.entity_status,
         createdBy=mongo_order_status_history.created_by,

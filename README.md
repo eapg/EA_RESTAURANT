@@ -62,6 +62,11 @@ Download and install the following tools:
       testing.
   * - Run the script that you want to run under chosen environment.
 
+### Generate proto python outputs
+
+* In order to generate proto python outputs use the following command:
+* `python -m grpc_tools.protoc -I. --proto_path=src/proto --python_out=src/proto --grpc_python_out=src/proto --pyi_out=src/proto java_etl_grpc_client.proto`
+
 ### setup Data base:
 * Create `POSTGRESQL` database with the name: `ea_restaurant` following the next steps:
   * Install postgreSQL 
