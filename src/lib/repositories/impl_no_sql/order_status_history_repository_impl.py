@@ -104,6 +104,8 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         new_status_history.etl_status = EtlStatus.UNPROCESSED.value
         new_status_history.service = Service.UNASSIGNED.value
         new_status_history.created_by = InternalUsers.KITCHEN_SIMULATOR.value
+        new_status_history.created_date = datetime.now()
+        new_status_history.updated_date = new_status_history.created_date
         new_status_history.updated_by = new_status_history.created_by
         new_status_history.save()
 
