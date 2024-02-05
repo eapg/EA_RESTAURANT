@@ -2,7 +2,7 @@ import unittest
 
 from src.constants.oauth2 import GranTypes
 from src.env_config import get_env_config_instance
-from src.exceptions.exceptions import BcryptException
+from src.exceptions.exceptions import InvalidCredentialsException
 from src.lib.repositories.impl_v2.oauth2_repository_impl import Oauth2RepositoryImpl
 from unittest import mock
 
@@ -57,8 +57,11 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         self.mocked_engine = mock.Mock()
         self.mocked_engine.begin.return_value.__enter__ = mock.Mock()
         self.mocked_engine.begin.return_value.__exit__ = mock.Mock()
+        self.mocked_password_encoder = mock.Mock()
 
-        self.oauth2_repository = Oauth2RepositoryImpl(self.mocked_engine)
+        self.oauth2_repository = Oauth2RepositoryImpl(
+            self.mocked_engine, self.mocked_password_encoder
+        )
 
         self.test_client_id = "client1234"
         self.test_client_secret = "1234"
@@ -278,7 +281,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
             user, client, self.env_config.oauth2_secret_key, client_scope
         )
         mocked_build_user_refresh_token.return_value = user_refresh_token
-
+        self.oauth2_repository.password_encoder.validate_password.return_value = False
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
@@ -290,7 +293,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
         self.assertRaises(
-            BcryptException,
+            InvalidCredentialsException,
             mocked_oauth2_repository.login_user,
             self.test_client_id,
             self.test_client_secret,
@@ -320,7 +323,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
             client, client_scope, self.env_config.oauth2_secret_key
         )
         mocked_build_client_refresh_token.return_value = client_refresh_token
-
+        self.oauth2_repository.password_encoder.validate_password.return_value = False
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
@@ -333,7 +336,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
 
         self.assertRaises(
-            BcryptException,
+            InvalidCredentialsException,
             mocked_oauth2_repository.login_client,
             self.test_client_id,
             "wrong client secret",
@@ -365,8 +368,8 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
-        mocked_oauth2_repository._get_user_by_username.side_effect = BcryptException(
-            "invalid credentials"
+        mocked_oauth2_repository._get_user_by_username.side_effect = (
+            InvalidCredentialsException("invalid credentials")
         )
 
         app_refresh_token = build_refresh_token(
@@ -376,7 +379,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         )
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
         self.assertRaises(
-            BcryptException,
+            InvalidCredentialsException,
             mocked_oauth2_repository.login_user,
             self.test_client_id,
             self.test_client_secret,
@@ -410,8 +413,8 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository = mock_oauth2_repository(
             self.oauth2_repository, client, user, client_user, client_scope
         )
-        mocked_oauth2_repository._get_client_by_client_id.side_effect = BcryptException(
-            "invalid credentials"
+        mocked_oauth2_repository._get_client_by_client_id.side_effect = (
+            InvalidCredentialsException("invalid credentials")
         )
 
         app_refresh_token = build_refresh_token(
@@ -422,7 +425,7 @@ class Oauth2RepositoryImplTest(unittest.TestCase):
         mocked_oauth2_repository._add_refresh_token.return_value = app_refresh_token
 
         self.assertRaises(
-            BcryptException,
+            InvalidCredentialsException,
             mocked_oauth2_repository.login_client,
             "wrong client id",
             self.test_client_secret,

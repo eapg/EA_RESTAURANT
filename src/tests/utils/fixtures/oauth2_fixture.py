@@ -1,6 +1,6 @@
 from src.constants.oauth2 import GranTypes
+from src.core.password_encoder_config import get_password_encoder
 from src.lib.entities.abstract_entity import AbstractEntity
-from src.utils.oauth2_util import encrypt_password
 
 """
 Those classes are created as fixtures because they dont have a service,
@@ -59,11 +59,12 @@ def build_client(
     access_token_expiration_time=None,
     refresh_token_expiration_time=None,
 ):
+    password_encoder = get_password_encoder()
     client = Client()
     client.id = id or 1
     client.client_name = client_name or "client"
     client.client_id = client_id or "client1234"
-    client_secret_encrypted = encrypt_password(client_secret or "1234")
+    client_secret_encrypted = password_encoder.encode_password(client_secret or "1234")
     client.client_secret = client_secret_encrypted
     client.access_token_expiration_time = access_token_expiration_time or 60
     client.refresh_token_expiration_time = refresh_token_expiration_time or 120
@@ -73,12 +74,13 @@ def build_client(
 def build_user(
     id=None, name=None, last_name=None, username=None, password=None, roles=None
 ):
+    password_encoder = get_password_encoder()
     user = User()
     user.id = id or 1
     user.name = name or "juan"
     user.last_name = last_name or "perez"
     user.username = username or "juperez"
-    password_encrypted = encrypt_password(password or "1234abcd")
+    password_encrypted = password_encoder.encode_password(password or "1234abcd")
     user.password = password_encrypted
     user.roles = roles or "administrator"
     return user

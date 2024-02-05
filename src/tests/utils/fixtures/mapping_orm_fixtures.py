@@ -6,6 +6,7 @@ from src.constants.audit import Status
 from src.constants.cooking_type import CookingType
 from src.constants.oauth2 import Roles, GranTypes
 from src.constants.order_status import OrderStatus
+from src.core.password_encoder_config import get_password_encoder
 from src.lib.entities.sqlalchemy_orm_mapping import (
     Chef,
     Ingredient,
@@ -18,7 +19,6 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
     ProductIngredient,
 )
 from src.tests.utils.fixtures.fixture_args import BaseEntityArgs
-from src.utils.oauth2_util import encrypt_password
 from src.utils.sql_oath2_queries import (
     SQL_QUERY_TO_ADD_ACCESS_TOKEN,
     SQL_QUERY_TO_ADD_REFRESH_TOKEN,
@@ -290,7 +290,8 @@ def create_product_ingredient_with_procedure(engine, product_id=None):
 def create_user_with_procedure(
     engine, user_name=None, username=None, password=None, roles=None
 ):
-    encrypted_password = encrypt_password(password)
+    password_encoder = get_password_encoder()
+    encrypted_password = password_encoder.encode_password(password)
     with engine.begin() as conn:
         conn.execute(
             text(

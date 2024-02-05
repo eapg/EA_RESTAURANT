@@ -1,10 +1,10 @@
-import bcrypt
 from injector import inject
 from sqlalchemy import text
 from sqlalchemy.engine.base import Engine
 import jwt
-from src.exceptions.exceptions import BcryptException, WrongCredentialsException
+from src.exceptions.exceptions import WrongCredentialsException, InvalidCredentialsException
 from src.env_config import get_env_config_instance
+from src.password_encoder.password_encoder import PasswordEncoder
 from src.utils.oauth2_util import (
     build_client_credentials_access_token,
     build_client_credentials_refresh_token,
@@ -30,8 +30,9 @@ from src.utils.sql_oath2_queries import (
 
 class Oauth2RepositoryImpl:
     @inject
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: Engine, password_encoder: PasswordEncoder):
         self.engine = engine
+        self.password_encoder = password_encoder
         self.env_config = get_env_config_instance()
 
     def login_client(self, client_id, client_secret):
@@ -167,22 +168,14 @@ class Oauth2RepositoryImpl:
     def _validate_client_credentials(self, client_id, client_secret):
         client = self._get_client_by_client_id(client_id)
 
-        if (
-            bcrypt.checkpw(
-                client_secret.encode("utf-8"), client.client_secret.encode("utf-8")
-            )
-            is False
-        ):
-            raise BcryptException("Invalid credentials")
+        if self.password_encoder.validate_password(client_secret, client.client_secret) is False:
+            raise InvalidCredentialsException("Invalid credentials")
 
     def _validate_user_credentials(self, client, username, password):
         user = self._get_user_by_username(username)
 
-        if (
-            bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8"))
-            is False
-        ):
-            raise BcryptException("Invalid credentials")
+        if self.password_encoder.validate_password(password, user.password) is False:
+            raise InvalidCredentialsException("Invalid credentials")
         self._get_client_user_by_username_and_app_client_id(username, client.id)
 
     def _get_user_by_username(self, username):

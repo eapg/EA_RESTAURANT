@@ -19,6 +19,7 @@ from src.api.controllers.product_ingredient_controller import (
 )
 from src.core.grpc_config import get_ea_restaurant_java_etl_grpc_client
 from src.core.mongo_engine_config import mongo_engine_connection
+from src.core.password_encoder_config import get_password_encoder
 from src.core.sqlalchemy_config import get_engine
 from src.grpc.clients.ea_restaurant_java_etl_grpc_client import (
     EaRestaurantJavaEtlGrpcClient,
@@ -42,6 +43,7 @@ from src.lib.repositories.product_ingredient_repository import (
     ProductIngredientRepository,
 )
 from src.lib.repositories.product_repository import ProductRepository
+from src.password_encoder.password_encoder import PasswordEncoder
 
 
 class DiProviders(Module):
@@ -62,6 +64,11 @@ class DiProviders(Module):
     @provider
     def get_ea_restaurant_java_etl(self) -> EaRestaurantJavaEtlGrpcClient:
         return get_ea_restaurant_java_etl_grpc_client()
+
+    @singleton
+    @provider
+    def get_password_encoder(self) -> PasswordEncoder:
+        return get_password_encoder()
 
     def configure(self, binder):
 
@@ -99,3 +106,6 @@ class DiProviders(Module):
             to=self.get_ea_restaurant_java_etl(),
             scope=singleton,
         )
+
+        # password_encoder
+        binder.bind(PasswordEncoder, to=self.get_password_encoder(), scope=singleton)
