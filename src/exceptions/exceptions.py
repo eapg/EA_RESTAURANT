@@ -5,7 +5,7 @@ class UnAuthorizedEndpoint(Exception):
     pass
 
 
-class BcryptException(Exception):
+class InvalidCredentialsException(Exception):
     pass
 
 

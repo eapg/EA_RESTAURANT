@@ -1,16 +1,15 @@
 import base64
 from datetime import datetime, timedelta
 
-from src.constants.oauth2 import Roles, Scopes
+import jwt
+
 from src.constants.http import HttpMethods
+from src.constants.oauth2 import Roles, Scopes
+from src.exceptions.exceptions import UnAuthorizedEndpoint
 from src.lib.entities.secured_http_request_uri import SecuredHttpRequestUrl
 from src.lib.entities.secured_http_request_Url_permissions import (
     SecuredHttpRequestUrlPermissions,
 )
-import bcrypt
-import jwt
-
-from src.exceptions.exceptions import UnAuthorizedEndpoint
 from src.utils.time_util import get_time_in_seconds_from_unix_time
 
 ENDPOINT_ROLES_MAP = {
@@ -401,15 +400,6 @@ def build_user_credential_refresh_token(user, client, secret_key, scopes):
     )
 
     return token
-
-
-def encrypt_password(password):
-
-    password_bytes = password.encode("utf-8")
-    salt = bcrypt.gensalt()
-    hash_password = bcrypt.hashpw(password_bytes, salt)
-    decode_hash_password = hash_password.decode("utf-8")
-    return decode_hash_password
 
 
 def validate_scopes(scopes, secured_http_request_url):

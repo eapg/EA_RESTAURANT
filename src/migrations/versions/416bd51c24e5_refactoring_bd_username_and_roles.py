@@ -8,7 +8,7 @@ Create Date: 2023-01-03 08:47:55.497499
 from alembic import op
 import sqlalchemy as sa
 
-from src.utils.oauth2_util import encrypt_password
+from src.core.password_encoder_config import get_password_encoder
 
 # revision identifiers, used by Alembic.
 revision = "416bd51c24e5"
@@ -68,7 +68,8 @@ $$;
 
 
 def upgrade() -> None:
-    bd_user_encrypted_password = encrypt_password("1234abcd")
+    password_encoder = get_password_encoder()
+    bd_user_encrypted_password = password_encoder.encode_password("1234abcd")
 
     op.alter_column("users", "role", new_column_name="roles", nullable=False)
     op.execute(sa.text(" ALTER TYPE user_role_enum ADD VALUE 'ADMINISTRATOR' "))
