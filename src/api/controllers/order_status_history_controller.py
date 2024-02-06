@@ -1,11 +1,22 @@
-class OrderStatusHistoryController:
-    def __init__(self, order_status_history_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.order_status_history_repository_impl import (
+    OrderStatusHistoryRepositoryImpl,
+)
+
+
+class OrderStatusHistoryController(Module):
+    @inject
+    def __init__(
+        self, order_status_history_repository: OrderStatusHistoryRepositoryImpl
+    ):
         self._order_status_history_repository = (
             order_status_history_repository  # order_status_historyRepository
         )
 
     def add(self, order_status_history):
-        self._order_status_history_repository.add(order_status_history)
+        order_status_history_added = self._order_status_history_repository.add(order_status_history)
+        return order_status_history_added
 
     def get_by_id(self, order_status_history_id):
         return self._order_status_history_repository.get_by_id(order_status_history_id)
@@ -43,7 +54,7 @@ class OrderStatusHistoryController:
 
     def last_order_status_histories_by_order_ids(self, order_ids):
         return self._order_status_history_repository.get_last_order_status_histories_by_order_ids(
-            self, order_ids
+            order_ids
         )
 
     def insert_new_or_updated_batch_order_status_histories(
@@ -51,4 +62,9 @@ class OrderStatusHistoryController:
     ):
         self._order_status_history_repository.insert_new_or_updated_batch_order_status_histories(
             order_status_histories
+        )
+
+    def get_unprocessed_order_status_histories(self):
+        return (
+            self._order_status_history_repository.get_unprocessed_order_status_histories()
         )

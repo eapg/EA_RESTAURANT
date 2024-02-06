@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from injector import inject
 from sqlalchemy import case, func
+from sqlalchemy.engine.base import Engine
 from sqlalchemy.sql import text
 
 from src.constants.audit import Status
@@ -13,7 +15,7 @@ from src.lib.entities.sqlalchemy_orm_mapping import (
 )
 from src.lib.repositories.order_repository import OrderRepository
 
-sql_query_to_reduce_ingredients_from_inventory = """
+SQL_QUERY_TO_REDUCE_INGREDIENTS_FROM_INVENTORY = """
                 with order_ingredients_cte as (
                       select product_ingredients.id
                         from product_ingredients
@@ -31,24 +33,29 @@ sql_query_to_reduce_ingredients_from_inventory = """
 
 
 class OrderRepositoryImpl(OrderRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 
     def add(self, order):
         session = create_session(self.engine)
         with session.begin():
+            order.entity_status = Status.ACTIVE.value
             order.created_date = datetime.now()
             order.updated_by = order.created_by
             order.updated_date = order.created_date
             session.add(order)
+            session.flush()
+            session.refresh(order)
+            return order
 
     def get_by_id(self, order_id):
         session = create_session(self.engine)
         return (
             session.query(Order)
-            .filter(Order.id == order_id)
             .filter(Order.entity_status == Status.ACTIVE.value)
+            .filter(Order.id == order_id)
             .first()
         )
 
@@ -155,6 +162,6 @@ class OrderRepositoryImpl(OrderRepository):
         with self.engine.begin() as conn:
 
             conn.execute(
-                text(sql_query_to_reduce_ingredients_from_inventory),
+                text(SQL_QUERY_TO_REDUCE_INGREDIENTS_FROM_INVENTORY),
                 {"order_id": order_id},
             )

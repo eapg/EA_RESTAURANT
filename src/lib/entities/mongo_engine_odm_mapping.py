@@ -1,7 +1,9 @@
-from mongoengine import Document, IntField, DateTimeField, StringField
+from mongoengine import Document, IntField, DateTimeField, StringField, QuerySetManager
 
 
 class BaseEntity(Document):
+
+    objects = QuerySetManager()
     entity_status = StringField()
     created_date = DateTimeField()
     updated_date = DateTimeField()
@@ -20,5 +22,6 @@ class OrderStatusHistory(BaseEntity):
     from_status = StringField()
     to_status = StringField()
     etl_status = StringField()
+    service = StringField()
 
     meta = {"collection": "order_status_histories"}

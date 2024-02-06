@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from injector import inject
 from sqlalchemy import desc, select, text
+from sqlalchemy.engine.base import Engine
 
 from src.constants.audit import Status
 from src.core.sqlalchemy_config import create_session
@@ -30,24 +32,29 @@ SQL_QUERY_LATEST_ORDER_STATUS_HISTORIES_BY_ORDER_IDS = """
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 
     def add(self, order_status_history):
         session = create_session(self.engine)
         with session.begin():
+            order_status_history.entity_status = Status.ACTIVE.value
             order_status_history.created_date = datetime.now()
             order_status_history.updated_by = order_status_history.created_by
             order_status_history.updated_date = order_status_history.created_date
             session.add(order_status_history)
+            session.flush()
+            session.refresh(order_status_history)
+            return order_status_history
 
     def get_by_id(self, order_status_history_id):
         session = create_session(self.engine)
         return (
             session.query(OrderStatusHistory)
-            .filter(OrderStatusHistory.id == order_status_history_id)
             .filter(OrderStatusHistory.entity_status == Status.ACTIVE.value)
+            .filter(OrderStatusHistory.id == order_status_history_id)
             .first()
         )
 
@@ -173,4 +180,10 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             session.bulk_save_objects(order_status_histories)
 
     def get_last_status_history_by_order_id(self, order_id):
+        pass
+
+    def get_unprocessed_order_status_histories(self):
+        pass
+
+    def get_order_status_histories_by_service(self, service, limit):
         pass

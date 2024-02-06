@@ -1,6 +1,7 @@
 from datetime import datetime
-
+from injector import inject
 from sqlalchemy import not_
+from sqlalchemy.engine.base import Engine
 
 from src.constants.audit import Status
 from src.constants.order_status import OrderStatus
@@ -10,24 +11,29 @@ from src.lib.repositories.chef_repository import ChefRepository
 
 
 class ChefRepositoryImpl(ChefRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 
     def add(self, chef):
         session = create_session(self.engine)
         with session.begin():
+            chef.entity_status = Status.ACTIVE.value
             chef.created_date = datetime.now()
             chef.updated_by = chef.created_by
             chef.updated_date = chef.created_date
             session.add(chef)
+            session.flush()
+            session.refresh(chef)
+            return chef
 
     def get_by_id(self, chef_id):
         session = create_session(self.engine)
         return (
             session.query(Chef)
-            .filter(Chef.id == chef_id)
             .filter(Chef.entity_status == Status.ACTIVE.value)
+            .filter(Chef.id == chef_id)
             .first()
         )
 
@@ -60,7 +66,7 @@ class ChefRepositoryImpl(ChefRepository):
     def get_available_chefs(self):
         session = create_session(self.engine)
         available_chef_ids = (
-            session.query(Chef.id)
+            session.query(Chef)
             .filter(Chef.entity_status == Status.ACTIVE.value)
             .filter(
                 not_(
@@ -72,5 +78,4 @@ class ChefRepositoryImpl(ChefRepository):
                 )
             )
         )
-
-        return [chef_id[0] for chef_id in available_chef_ids]
+        return list(available_chef_ids)

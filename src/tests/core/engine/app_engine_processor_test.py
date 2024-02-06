@@ -36,7 +36,7 @@ class TestAppEngineProcessor(unittest.TestCase):
         self.kitchen_simulator.set_app_context(app_engine_processor.app_context)
         self.assertEqual(len(app_engine_processor.app_context.processors), 2)
         self.assertEqual(
-            app_engine_processor.app_context.processors[
+            app_engine_processor.app_context.processors[  # pylint: disable=W0212
                 0
             ].app_processor_config._mock_wraps.id,
             self.app_processor_config.id,

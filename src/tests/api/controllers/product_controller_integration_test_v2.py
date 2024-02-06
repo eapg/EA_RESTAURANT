@@ -1,35 +1,36 @@
 from unittest import mock
 
 from src.api.controllers.product_controller import ProductController
-from src.constants.audit import Status
-from src.lib.repositories.impl_v2.product_repository_impl import (
-    ProductRepositoryImpl,
-)
-
-from src.tests.utils.fixtures.mapping_orm_fixtures import (
-    build_product,
-    build_products,
-)
+from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
 from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
     SqlAlchemyBaseRepositoryTestCase,
 )
 
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_product, build_products
+
 
 class ProductRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTestCase):
     def after_base_setup(self):
-
-        self.product_repository = mock.Mock(
-            wraps=ProductRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.product_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.product_repository = mock.Mock(
+            wraps=ProductRepositoryImpl(self.mocked_sqlalchemy_engine)
+        )
+        self.mocked_creation_session_path.start()
+
         self.product_controller = ProductController(self.product_repository)
 
     def test_add_product_to_repository_using_controller(self):
+
         product = build_product()
 
         self.product_controller.add(product)
         self.product_repository.add.assert_called_with(product)
 
     def test_get_product_from_repository_using_controller(self):
+
         products = build_products(count=3)
 
         self.product_controller.add(products[0])
@@ -71,8 +72,10 @@ class ProductRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTes
         self.assertEqual(products, [])
 
     def test_delete_an_product_from_repository_using_controller(self):
+
         products_to_insert = build_products(count=4)
-        product_to_delete = build_product(entity_status=Status.DELETED)
+
+        product_to_delete = build_product()
         self.product_controller.add(products_to_insert[0])
         self.product_controller.add(products_to_insert[1])
         self.product_controller.add(products_to_insert[2])
@@ -100,6 +103,7 @@ class ProductRepositoryControllerIntegrationTestCase(SqlAlchemyBaseRepositoryTes
         )
 
     def test_update_product_from_repository_using_controller(self):
+
         products_to_insert = build_products(count=2)
 
         self.product_controller.add(products_to_insert[0])

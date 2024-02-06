@@ -5,8 +5,8 @@ def products_qty_by_ingredients_qty_reducer(
     quantity_ingredients_result, product_ingredient, inventory_ingredient
 ):
     """
-    Reducer function to get a list of quantity of ingredient to make a product by divided the quantity in the inventory
-    divided by the quantity that the product needs
+    Reducer function to get a list of quantity of ingredient to make a product by
+    divided the quantity in the inventory divided by the quantity that the product needs
     """
     quantity_ingredients_result.append(
         inventory_ingredient[0].quantity / product_ingredient.quantity
@@ -27,8 +27,9 @@ def setup_products_qty_array_to_final_products_qty_map(
     get_inventory_ingredient_by_ingredient_id, get_product_ingredient_by_product_id
 ):
     def reduce_products_qty_by_ingredients_qty(product_id):
+        reducer = products_qty_by_ingredients_qty_reducer
         return reduce(
-            lambda quantity_ingredients_result, product_ingredient: products_qty_by_ingredients_qty_reducer(
+            lambda quantity_ingredients_result, product_ingredient: reducer(
                 quantity_ingredients_result,
                 product_ingredient,
                 get_inventory_ingredient_by_ingredient_id(
@@ -40,8 +41,9 @@ def setup_products_qty_array_to_final_products_qty_map(
         )
 
     def reduce_products_qty_array_to_final_products_qty_map(product_ids):
+        reducer = products_qty_array_to_final_products_qty_map_reducer
         return reduce(
-            lambda final_product_qty_result, product_id: products_qty_array_to_final_products_qty_map_reducer(
+            lambda final_product_qty_result, product_id: reducer(
                 final_product_qty_result,
                 product_id,
                 reduce_products_qty_by_ingredients_qty(

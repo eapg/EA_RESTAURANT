@@ -1,9 +1,10 @@
 # Interface for the repositories through Abstract method
 
 from abc import ABC, abstractmethod
+from injector import Module
 
 
-class GenericRepository(ABC):
+class GenericRepository(ABC, Module):
     @abstractmethod
     def add(self, obj):
         pass
