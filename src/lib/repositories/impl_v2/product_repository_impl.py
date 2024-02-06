@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from injector import inject
+from sqlalchemy.engine.base import Engine
+
 from src.constants.audit import Status
 from src.core.sqlalchemy_config import create_session
 from src.lib.entities.sqlalchemy_orm_mapping import Product
@@ -7,24 +10,29 @@ from src.lib.repositories.product_repository import ProductRepository
 
 
 class ProductRepositoryImpl(ProductRepository):
-    def __init__(self, engine):
+    @inject
+    def __init__(self, engine: Engine):
 
         self.engine = engine
 
     def add(self, product):
         session = create_session(self.engine)
         with session.begin():
+            product.entity_status = Status.ACTIVE.value
             product.created_date = datetime.now()
             product.updated_by = product.created_by
             product.updated_date = product.created_date
             session.add(product)
+            session.flush()
+            session.refresh(product)
+            return product
 
     def get_by_id(self, product_id):
         session = create_session(self.engine)
         return (
             session.query(Product)
-            .filter(Product.id == product_id)
             .filter(Product.entity_status == Status.ACTIVE.value)
+            .filter(Product.id == product_id)
             .first()
         )
 

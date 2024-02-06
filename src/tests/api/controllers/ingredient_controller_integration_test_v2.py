@@ -1,17 +1,16 @@
 from unittest import mock
 
 from src.api.controllers.ingredient_controller import IngredientController
-from src.constants.audit import Status
 from src.lib.repositories.impl_v2.ingredient_repository_impl import (
     IngredientRepositoryImpl,
+)
+from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
+    SqlAlchemyBaseRepositoryTestCase,
 )
 
 from src.tests.utils.fixtures.mapping_orm_fixtures import (
     build_ingredient,
     build_ingredients,
-)
-from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
-    SqlAlchemyBaseRepositoryTestCase,
 )
 
 
@@ -19,19 +18,26 @@ class IngredientRepositoryControllerIntegrationTestCase(
     SqlAlchemyBaseRepositoryTestCase
 ):
     def after_base_setup(self):
-
-        self.ingredient_repository = mock.Mock(
-            wraps=IngredientRepositoryImpl(self.mocked_sqlalchemy_session)
+        self.mocked_creation_session_path = mock.patch(
+            "src.lib.repositories.impl_v2.ingredient_repository_impl.create_session",
+            return_value=self.mocked_sqlalchemy_session,
         )
+        self.ingredient_repository = mock.Mock(
+            wraps=IngredientRepositoryImpl(self.mocked_sqlalchemy_engine)
+        )
+        self.mocked_creation_session_path.start()
+
         self.ingredient_controller = IngredientController(self.ingredient_repository)
 
     def test_add_ingredient_to_repository_using_controller(self):
+
         ingredient = build_ingredient()
 
         self.ingredient_controller.add(ingredient)
         self.ingredient_repository.add.assert_called_with(ingredient)
 
     def test_get_ingredient_from_repository_using_controller(self):
+
         ingredients = build_ingredients(count=3)
 
         self.ingredient_controller.add(ingredients[0])
@@ -73,8 +79,9 @@ class IngredientRepositoryControllerIntegrationTestCase(
         self.assertEqual(ingredients, [])
 
     def test_delete_an_ingredient_from_repository_using_controller(self):
+
         ingredients_to_insert = build_ingredients(count=4)
-        ingredient_to_delete = build_ingredient(entity_status=Status.DELETED)
+        ingredient_to_delete = build_ingredient()
         self.ingredient_controller.add(ingredients_to_insert[0])
         self.ingredient_controller.add(ingredients_to_insert[1])
         self.ingredient_controller.add(ingredients_to_insert[2])
@@ -102,6 +109,7 @@ class IngredientRepositoryControllerIntegrationTestCase(
         )
 
     def test_update_ingredient_from_repository_using_controller(self):
+
         ingredients_to_insert = build_ingredients(count=2)
 
         self.ingredient_controller.add(ingredients_to_insert[0])

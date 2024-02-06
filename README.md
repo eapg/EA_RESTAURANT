@@ -42,19 +42,76 @@ Download and install the following tools:
 
 * [Python 3](https://www.python.org/downloads/)
 * [PyCharm](https://www.jetbrains.com/pycharm/)
-* [MiniConda](https://docs.conda.io/en/latest/miniconda.html)
+* [PostgreSQL](https://www.postgresql.org/download/)
+* [MongoDb](https://www.mongodb.com/try/download/community)
+* [MongoDb Compass](https://www.mongodb.com/products/compass)
 
 ### Windows users
 
-* Open `miniconda3`.
-* Go to the project path
-* Run `conda create --prefix=.venv python=3.10.0`
-* In order to active an enviroment run the following command: `conda activate .\venv\Scripts\activate.bat`
+* Clone git Repository of this project `EA_RESTAURANT`.
+* * Open terminal in pycharm.
+* Run command `git checkout -b dev` and then `git pull origin dev`
+* In Order to create a virtual environment run `python -m venv .venv` 
+* In order to activate an environment run the following command: `.venv\Scripts\activate.bat`
+* In order to set python Interpreter config the one installed inside .venv in pycharm ide.
+* In order to install library dependency run the following command : `pip install -r requirements.txt`
 * In order to update library dependency run the following command : `pip freeze > requirements.txt`
+* In order to set Environment variables file :
+  * - Use `.env.local.example` file to create the different environment files: local, dev, test. 
+  * - choose under which environment you are going to work using command: `SET ENV=local` for local, `SET ENV=test` for
+      testing.
+  * - Run the script that you want to run under chosen environment.
+
+### Generate proto python outputs
+
+* In order to generate proto python outputs use the following command:
+* `python -m grpc_tools.protoc -I. --proto_path=src/proto --python_out=src/proto --grpc_python_out=src/proto --pyi_out=src/proto java_etl_grpc_client.proto`
+
+### setup Data base:
+* Create `POSTGRESQL` database with the name: `ea_restaurant` following the next steps:
+  * Install postgreSQL 
+  * Open `pgAdmin`
+  * Go to `tools` and open `Querytool` run command `CREATE DATABASE ea_restaurant`
+
+* Run migrations: 
+
+Executing `alembic upgrade head` in a clean database will execute all migrations
+in the orders that migrations were created. Like example image.
+
+![img.png](img.png)
+
+To know more about migrations refer to migrations section.
+
+* Create `MONGODB` database with name: `ea_restaurant` and create a collection with name:`order_status_histories`
+following next steps:
+  * Install MongoDb and MongoDb Compass
+  * Open `MongoDb Compass`
+  * Go to `Database` and `create new Database` with the name `ea_restaurant` and the collection `order_status_histories`
+
+### Migrations
+
+This project is Using [Alembic](https://alembic.sqlalchemy.org/en/latest/) for migrations. To
+install alembic in your project just run `pip install alembic`
+
+Commands to use alembic:
+
+* Initialize: `alembic init alembic`
+* Migration Script: `alembic revision -m "migration scrip name"` This script contains some header
+  information, identifiers for the current version and import a basic alembic directives, and empty
+  `upgrade()` and `downgrade()` functions.
+* Upgrade: `alembic upgrade <target-revision>`
+* Downgrade: `alembic downgrade <target-revision>`
+* Upgrade to head: `alembic upgrade head` This command executes all migrations from the current point to the last.
+
 ### Running tests
 
-This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing. To run tests just
-run `python -m unittest discover --pattern=*_test.py`
+This project is using [unittest](https://docs.python.org/3/library/unittest.html) for testing: 
+* In order to set enviroment to run test:
+  * create a test database example: `ea_restaurant_test`
+  * set in console test ENV using `set ENV=test`
+  * run migrations in test database using `alembic upgrade head`
+
+To run tests just  run `python -m unittest discover --pattern=*_test.py`
 
 This project is using [coverage](https://coverage.readthedocs.io/en/latest/index.html) for coverage. To run test
 coverage just run the commands:
@@ -76,24 +133,3 @@ Commands:
 * Sort imports: `isort .`
 * Lint file: `pylint [path-to-file.py]`
 
-### Migrations
-
-This project is Using [Alembic](https://alembic.sqlalchemy.org/en/latest/) for migrations. To
-install alembic in your project just run `pip install alembic`
-
-Commands to use alembic:
-
-* Initialize: `alembic init alembic`
-* Migration Script: `alembic revision -m "migration scrip name"` This script contains some header
-  information, identifiers for the current version and import a basic alembic directives, and empty
-  `upgrade()` and `downgrade()` functions.
-* Upgrade: `alembic upgrade <target-revision>`
-* Downgrade: `alembic downgrade <target-revision>`
-* Upgrade to head: `alembic upgrade head` This command executes all migrations from the current point to the last.
-
-Examples:
-
-![img.png](img.png)
-
-Executing `alembic upgrade head` in a clean database will execute all migrations
-in the orders that migrations were created. Like example image.

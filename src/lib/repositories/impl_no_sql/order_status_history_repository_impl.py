@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from injector import inject
 from pymongo import MongoClient
 
 from src.constants.audit import InternalUsers, Status
-from src.constants.etl_status import EtlStatus
+from src.constants.etl_status import EtlStatus, Service
 from src.lib.entities.mongo_engine_odm_mapping import OrderStatusHistory
 from src.lib.repositories.order_status_history_repository import (
     OrderStatusHistoryRepository,
@@ -11,14 +12,15 @@ from src.lib.repositories.order_status_history_repository import (
 
 
 class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
-    def __init__(self, mongo_engine_connection):
-        self.mongo_engine_connection = mongo_engine_connection
-        self.mongo_client = MongoClient("mongodb://localhost")
+    @inject
+    def __init__(self, mongo_client: MongoClient):
+        self.mongo_client = mongo_client
 
     def add(self, order_status_history):
         order_status_history.created_date = datetime.now()
         order_status_history.updated_by = order_status_history.created_by
         order_status_history.updated_date = order_status_history.created_date
+        order_status_history.service = Service.UNASSIGNED.value
         order_status_history.save()
 
     def get_by_id(self, order_status_history_id):
@@ -34,7 +36,7 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         return order_status_histories
 
     def delete_by_id(self, order_status_history_id, order_status_history):
-        order_status_history_to_delete = OrderStatusHistory.objects(
+        _order_status_history_to_delete = OrderStatusHistory.objects(
             id=order_status_history_id
         ).update_one(
             entity_status=Status.DELETED.value,
@@ -100,14 +102,17 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
         new_status_history.entity_status = Status.ACTIVE.value
         new_status_history.order_id = order_id
         new_status_history.etl_status = EtlStatus.UNPROCESSED.value
+        new_status_history.service = Service.UNASSIGNED.value
         new_status_history.created_by = InternalUsers.KITCHEN_SIMULATOR.value
+        new_status_history.created_date = datetime.now()
+        new_status_history.updated_date = new_status_history.created_date
         new_status_history.updated_by = new_status_history.created_by
         new_status_history.save()
 
     def update_batch_to_processed(self, order_status_history_ids):
 
-        db = self.mongo_client["ea_restaurant"]
-        collection = db["order_status_histories"]
+        db_client = self.mongo_client["ea_restaurant"]
+        collection = db_client["order_status_histories"]
         collection.update_many(
             {"_id": {"$in": order_status_history_ids}},
             {
@@ -119,5 +124,30 @@ class OrderStatusHistoryRepositoryImpl(OrderStatusHistoryRepository):
             },
         )
 
+    def get_unprocessed_order_status_histories(self):
+        order_status_histories_from_mongo = OrderStatusHistory.objects(
+            etl_status=EtlStatus.UNPROCESSED.value
+        )
+        return order_status_histories_from_mongo
+
     def get_last_order_status_histories_by_order_ids(self, order_id):
         pass
+
+    def get_order_status_histories_by_service(self, service, etl_status, limit):
+        order_status_histories_by_service = OrderStatusHistory.objects(
+            service=service.value, etl_status=etl_status.value
+        ).limit(limit)
+        return list(order_status_histories_by_service)
+
+    def update_batch_to_assigned_etl(self, order_status_history_ids, etl_service):
+
+        db_client = self.mongo_client["ea_restaurant"]
+        collection = db_client["order_status_histories"]
+        collection.update_many(
+            {"_id": {"$in": order_status_history_ids}},
+            {
+                "$set": {
+                    "service": etl_service.value,
+                }
+            },
+        )

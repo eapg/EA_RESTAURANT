@@ -1,8 +1,8 @@
 from abc import ABCMeta
-import unittest
 from unittest import mock
 
-from src.core.engine.processors.abstract_etl_processor import AbstractEtl
+from src.core.engine.processors.etl.abstract_etl_processor import AbstractEtl
+from src.tests.base_env_config_test import BaseEnvConfigTest
 from src.tests.utils.fixtures.app_processor_config_fixture import (
     build_app_processor_config,
 )
@@ -25,8 +25,9 @@ class TestEtlProcessor(AbstractEtl, metaclass=ABCMeta):
         pass
 
 
-class TestAbstractEtl(unittest.TestCase):
+class TestAbstractEtl(BaseEnvConfigTest):
     def setUp(self):
+        super().setUp()
         self.app_processor_config = build_app_processor_config()
 
         def after_execute(_app_processor_config, _app_context):

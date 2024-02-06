@@ -1,12 +1,12 @@
-import unittest
-
 from src.constants.order_status import OrderStatus
 from src.core.order_manager import OrderManager
-from src.tests.utils.fixtures.order_fixture import build_order
+from src.tests.base_env_config_test import BaseEnvConfigTest
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_order
 
 
-class OrderManagerTestCase(unittest.TestCase):
+class OrderManagerTestCase(BaseEnvConfigTest):
     def setUp(self):
+        super().setUp()
         self.order_manager = OrderManager()
 
     def test_get_from_order_storage(self):
@@ -36,7 +36,9 @@ class OrderManagerTestCase(unittest.TestCase):
         self.assertEqual(order_placed_storage_size, 2)
 
     def test_get_queue_status_empty(self):
-        queue_status = self.order_manager.is_order_queue_empty(OrderStatus.NEW_ORDER.name)
+        queue_status = self.order_manager.is_order_queue_empty(
+            OrderStatus.NEW_ORDER.name
+        )
         self.assertTrue(queue_status)
 
     def test_clean_queues_with_full_storage(self):

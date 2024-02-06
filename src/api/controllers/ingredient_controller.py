@@ -1,9 +1,18 @@
-class IngredientController:
-    def __init__(self, ingredient_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.ingredient_repository_impl import (
+    IngredientRepositoryImpl,
+)
+
+
+class IngredientController(Module):
+    @inject
+    def __init__(self, ingredient_repository: IngredientRepositoryImpl):
         self._ingredient_repository = ingredient_repository  # IngredientRepository
 
     def add(self, ingredient):
-        self._ingredient_repository.add(ingredient)
+        ingredient_added = self._ingredient_repository.add(ingredient)
+        return ingredient_added
 
     def get_by_id(self, ingredient_id):
         return self._ingredient_repository.get_by_id(ingredient_id)

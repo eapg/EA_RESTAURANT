@@ -9,8 +9,9 @@ def _update_to_status_and_to_time(
     updated_by,
 ):
     """
-    This function update the to_status and to_time of the last order status history taking the from_status and from
-    time of the new order status history of an order, using the order id.
+    This function update the to_status and to_time of the last order status history
+    taking the from_status and from time of the new order status history of an order,
+    using the order id.
     """
     order_status_history_filtered = list(
         filter(

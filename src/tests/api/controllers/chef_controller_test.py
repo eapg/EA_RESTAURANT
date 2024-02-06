@@ -2,8 +2,7 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.chef_controller import ChefController
-from src.constants.audit import Status
-from src.tests.utils.fixtures.chef_fixture import build_chef, build_chefs
+from src.tests.utils.fixtures.mapping_orm_fixtures import build_chef, build_chefs
 
 
 class ChefRepositoryControllerTestCase(unittest.TestCase):
@@ -40,7 +39,7 @@ class ChefRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_chefs), 3)
 
     def test_delete_an_chef_successfully(self):
-        chef_to_delete = build_chef(entity_status=Status.DELETED)
+        chef_to_delete = build_chef()
         self.chef_controller.delete_by_id(2, chef_to_delete)
 
         self.chef_repository.delete_by_id.assert_called_with(2, chef_to_delete)

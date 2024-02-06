@@ -9,6 +9,11 @@ from src.tests.lib.repositories.sqlalchemy_base_repository_impl_test import (
 )
 from src.tests.lib.repositories.sqlalchemy_mock_builder import QueryMock
 from src.tests.utils.fixtures.mapping_orm_fixtures import build_chef, build_chefs
+from src.tests.utils.test_util import (
+    assert_filter_entity_status_active,
+    assert_filter_id,
+    assert_filter_filter_id, build_update_mock_query,
+)
 
 
 class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
@@ -22,15 +27,17 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         self.mocked_creation_session_path.start()
 
     def test_add_chef_successfully(self):
-        chef_1 = build_chef(entity_status="ACTIVE", skill=2, create_by=1, user_id=1)
+
+        chef_1 = build_chef(user_id=1)
 
         self.chef_repository.add(chef_1)
         self.mocked_sqlalchemy_session.add.assert_called_with(chef_1)
 
     def test_get_chef_successfully(self):
 
-        chef_1 = build_chef(entity_status="ACTIVE", skill=2, create_by=1, user_id=1)
+        chef_1 = build_chef(user_id=1)
 
+        # pylint: disable=R0801
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
             .query()
@@ -39,32 +46,15 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .first(return_value=chef_1)
             .get_mocked_query()
         )
-        chef_1.id = 5
+        chef_1.id = 1
         result = self.chef_repository.get_by_id(chef_1.id)
+        assert_filter_entity_status_active(self, mocked_query)
+        assert_filter_filter_id(self, mocked_query)
 
-        mocked_query.assert_called_with(Chef)
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key, "id"
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            chef_1.id,
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.return_value.filter.mock_calls[0]
-            .args[0]
-            .right.value,
-            Status.ACTIVE.value,
-        )
         self.assertEqual(result, chef_1)
 
     def test_get_all_chefs_successfully(self):
+
         chefs = build_chefs(count=4)
 
         mocked_query = (
@@ -75,45 +65,22 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
         returned_chefs = self.chef_repository.get_all()
-
         mocked_query.assert_called_with(Chef)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_query)
         self.assertEqual(chefs, returned_chefs)
 
     @mock.patch("src.lib.repositories.impl_v2.chef_repository_impl.datetime")
     def test_delete_an_chef_successfully(self, mocked_datetime):
-        chef_1 = build_chef(entity_status="ACTIVE", skill=2, create_by=1, user_id=1)
+
+        chef_1 = build_chef(chef_id=1, skill=2, user_id=1)
         chef_1.updated_by = 1
 
-        mocked_query = (
-            QueryMock(self.mocked_sqlalchemy_session)
-            .query()
-            .filter()
-            .update()
-            .get_mocked_query()
-        )
+        mocked_query = build_update_mock_query(self.mocked_sqlalchemy_session)
 
-        chef_1.id = 5
         self.chef_repository.delete_by_id(chef_1.id, chef_1)
 
         mocked_query.assert_called_with(Chef)
-
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            chef_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         mocked_query.return_value.filter.return_value.update.assert_called_with(
             {
@@ -124,8 +91,9 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
     def test_update_chef_successfully(self):
-        chef_1 = build_chef(entity_status="ACTIVE", skill=2, create_by=1, user_id=1)
-        chef_1.id = 5
+
+        chef_1 = build_chef(chef_id=1, skill=2, user_id=1)
+
         chef_to_be_updated = build_chef()
         mocked_query = (
             QueryMock(self.mocked_sqlalchemy_session)
@@ -139,14 +107,7 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
 
         mocked_query.assert_called_with(Chef)
 
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "id",
-        )
-        self.assertEqual(
-            mocked_query.return_value.filter.mock_calls[0].args[0].right.value,
-            chef_1.id,
-        )
+        assert_filter_id(self, mocked_query)
 
         self.mocked_sqlalchemy_session.add.assert_called_with(chef_to_be_updated)
 
@@ -155,13 +116,13 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         chef_1 = build_chef(chef_id=1)
         chef_2 = build_chef(chef_id=2)
         chef_3 = build_chef(chef_id=3)
-        available_chef_ids = [(chef_1.id,), (chef_2.id,), (chef_3.id,)]
+        available_chef = [chef_1, chef_2, chef_3]
 
         mocked_chefs_query = (
             QueryMock()
             .query()
             .filter()
-            .filter(return_value=available_chef_ids)
+            .filter(return_value=available_chef)
             .get_mocked_query()
         )
 
@@ -169,10 +130,10 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             QueryMock().query().filter().filter().filter().exists().get_mocked_query()
         )
 
-        def mock_query_side_effect(t):
+        def mock_query_side_effect(param):
             return (
                 mocked_chefs_query.return_value
-                if t == Chef.id
+                if param is Chef
                 else mocked_orders_query.return_value
             )
 
@@ -181,23 +142,7 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
         )
 
         result = self.chef_repository.get_available_chefs()
-
-        self.assertEqual(
-            mocked_chefs_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_chefs_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
-        self.assertEqual(
-            mocked_orders_query.return_value.filter.mock_calls[0].args[0].left.key,
-            "entity_status",
-        )
-        self.assertEqual(
-            mocked_orders_query.return_value.filter.mock_calls[0].args[0].right.value,
-            Status.ACTIVE.value,
-        )
+        assert_filter_entity_status_active(self, mocked_orders_query)
 
         self.assertEqual(
             mocked_orders_query.return_value.filter.return_value.filter.mock_calls[0]
@@ -211,20 +156,15 @@ class ChefRepositoryImplTestCase(SqlAlchemyBaseRepositoryTestCase):
             .right,
             Chef.id,
         )
+        mocked_filter_filter = (
+            mocked_orders_query.return_value.filter.return_value.filter
+        )
         self.assertEqual(
-            mocked_orders_query.return_value.filter.return_value.filter.return_value.filter.mock_calls[
-                0
-            ]
-            .args[0]
-            .left,
+            mocked_filter_filter.return_value.filter.mock_calls[0].args[0].left,
             Order.status,
         )
         self.assertEqual(
-            mocked_orders_query.return_value.filter.return_value.filter.return_value.filter.mock_calls[
-                0
-            ]
-            .args[0]
-            .right.value,
+            mocked_filter_filter.return_value.filter.mock_calls[0].args[0].right.value,
             OrderStatus.IN_PROCESS.name,
         )
-        self.assertEqual(result, [chef_id[0] for chef_id in available_chef_ids])
+        self.assertEqual(result, available_chef)

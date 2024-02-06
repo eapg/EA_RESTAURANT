@@ -1,9 +1,16 @@
-class ProductController:
-    def __init__(self, product_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.product_repository_impl import ProductRepositoryImpl
+
+
+class ProductController(Module):
+    @inject
+    def __init__(self, product_repository: ProductRepositoryImpl):
         self._product_repository = product_repository  # productRepository
 
     def add(self, product):
-        self._product_repository.add(product)
+        product_added = self._product_repository.add(product)
+        return product_added
 
     def get_by_id(self, product_id):
         return self._product_repository.get_by_id(product_id)

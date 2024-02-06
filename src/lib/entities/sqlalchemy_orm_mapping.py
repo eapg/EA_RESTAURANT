@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import AbstractConcreteBase, declarative_base
 from sqlalchemy.orm import declared_attr, relationship
 
@@ -9,25 +8,25 @@ from src.lib.entities.chef import Chef as ChefBase
 from src.lib.entities.client import Client as ClientBase
 from src.lib.entities.ingredient import Ingredient as IngredientBase
 from src.lib.entities.inventory import Inventory as InventoryBase
-from src.lib.entities.inventory_ingredient import \
-    InventoryIngredient as InventoryIngredientBase
+from src.lib.entities.inventory_ingredient import (
+    InventoryIngredient as InventoryIngredientBase,
+)
 from src.lib.entities.order import Order as OrderBase
 from src.lib.entities.order_detail import OrderDetail as OrderDetailBase
-from src.lib.entities.order_status_history import \
-    OrderStatusHistory as OrderStatusHistoryBase
+from src.lib.entities.order_status_history import (
+    OrderStatusHistory as OrderStatusHistoryBase,
+)
 from src.lib.entities.product import Product as ProductBase
-from src.lib.entities.product_ingredient import \
-    ProductIngredient as ProductIngredientBase
+from src.lib.entities.product_ingredient import (
+    ProductIngredient as ProductIngredientBase,
+)
 from src.lib.entities.user import User as UserBase
 
 Base = declarative_base()
 
 
 class AbstractEntity(Base, AbstractConcreteBase):
-    entity_status = Column(
-        postgresql.ENUM("ACTIVE", "DELETE", name="status_enum", created_type=False),
-        nullable=False,
-    )
+    entity_status = Column(String(length=20), nullable=False)
     created_date = Column(DateTime(), default=datetime.now())
     updated_date = Column(DateTime(), default=datetime.now())
     created = None
@@ -97,16 +96,7 @@ class Order(AbstractEntity, OrderBase):
     __tablename__ = "orders"
 
     id = Column(Integer(), primary_key=True, nullable=False)
-    status = Column(
-        postgresql.ENUM(
-            "NEW_ORDER",
-            "IN_PROCESS",
-            "COMPLETED",
-            "CANCELLED",
-            name="order_status_enum",
-            create_type=False,
-        )
-    )
+    status = Column(String(length=50), nullable=False)
     assigned_chef_id = Column(
         Integer(), ForeignKey("chefs.id", ondelete="CASCADE"), nullable=False
     )
@@ -142,26 +132,8 @@ class OrderStatusHistory(AbstractEntity, OrderStatusHistoryBase):
     )
     from_time = Column(DateTime())
     to_time = Column(DateTime())
-    from_status = Column(
-        postgresql.ENUM(
-            "NEW_ORDER",
-            "IN_PROCESS",
-            "COMPLETED",
-            "CANCELLED",
-            name="order_status_enum",
-            create_type=False,
-        )
-    )
-    to_status = Column(
-        postgresql.ENUM(
-            "NEW_ORDER",
-            "IN_PROCESS",
-            "COMPLETED",
-            "CANCELLED",
-            name="order_status_enum",
-            create_type=False,
-        )
-    )
+    from_status = Column(String(length=50), nullable=False)
+    to_status = Column(String(length=50), nullable=False)
     etl_status = Column(String(length=50))
     order = None
 
@@ -185,20 +157,7 @@ class ProductIngredient(AbstractEntity, ProductIngredientBase):
         Integer(), ForeignKey("ingredients.id", ondelete="CASCADE"), nullable=False
     )
     quantity = Column(Integer(), nullable=False)
-    cooking_type = Column(
-        postgresql.ENUM(
-            "ADDING",
-            "ROASTING",
-            "BOILING",
-            "BAKING",
-            "FRYING",
-            "HEADING",
-            "PREPARING_DRINK",
-            name="cooking_type_enum",
-            create_type=False,
-        ),
-        nullable=False,
-    )
+    cooking_type = Column(String(length=50), nullable=False)
     product = None
     ingredient = None
 
@@ -208,26 +167,10 @@ class User(AbstractEntity, UserBase):
     id = Column(Integer(), primary_key=True, nullable=False)
     name = Column(String(length=50), nullable=False)
     last_name = Column(String(length=50), nullable=False)
-    user_name = Column(String(length=50), nullable=False)
+    username = Column(String(length=50), nullable=False)
     password = Column(String(length=500), nullable=False)
-    role = Column(
-        postgresql.ENUM(
-            "CHEF",
-            "CLIENT",
-            "CASHIER",
-            "SEEDER",
-            "KITCHEN_SIMULATOR",
-            name="user_role_enum",
-            create_type=False,
-        ),
-        nullable=False,
-    )
-    type = Column(
-        postgresql.ENUM(
-            "INTERNAL", "EXTERNAL", name="user_type_enum", create_type=False
-        ),
-        nullable=False,
-    )
+    role = Column(String(length=50), nullable=False)
+    type = Column(String(length=50), nullable=False)
 
 
 # Constraints

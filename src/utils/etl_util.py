@@ -17,4 +17,3 @@ def convert_mongo_order_status_history_to_postgres_order_status_history(
     )
 
     return postgres_order_status_history
-

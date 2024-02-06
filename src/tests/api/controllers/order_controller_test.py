@@ -2,11 +2,14 @@ import unittest
 from unittest import mock
 
 from src.api.controllers.order_controller import OrderController
-from src.constants.audit import Status
+
 from src.constants.order_status import OrderStatus
-from src.tests.utils.fixtures.order_fixture import build_order, build_orders
-from src.tests.utils.fixtures.product_ingredient_fixture import \
-    build_product_ingredients
+
+from src.tests.utils.fixtures.mapping_orm_fixtures import (
+    build_order,
+    build_orders,
+    build_product_ingredients,
+)
 
 
 class OrderRepositoryControllerTestCase(unittest.TestCase):
@@ -43,7 +46,7 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
         self.assertEqual(len(expected_orders), 3)
 
     def test_delete_an_order_successfully(self):
-        order_to_delete = build_order(entity_status=Status.DELETED)
+        order_to_delete = build_order()
         self.order_controller.delete_by_id(2, order_to_delete)
 
         self.order_repository.delete_by_id.assert_called_with(2, order_to_delete)
@@ -69,8 +72,9 @@ class OrderRepositoryControllerTestCase(unittest.TestCase):
         )
 
     def test_get_order_ingredients_by_order_id_successfully(self):
+
         order = build_order(order_id=1)
-        ingredients = build_product_ingredients(5)
+        ingredients = build_product_ingredients(count=5)
         self.order_repository.get_order_ingredients_by_order_id.return_value = (
             ingredients
         )

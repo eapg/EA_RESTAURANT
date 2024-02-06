@@ -1,9 +1,16 @@
-class OrderController:
-    def __init__(self, order_repository):
+from injector import Module, inject
+
+from src.lib.repositories.impl_v2.order_repository_impl import OrderRepositoryImpl
+
+
+class OrderController(Module):
+    @inject
+    def __init__(self, order_repository: OrderRepositoryImpl):
         self._order_repository = order_repository  # orderRepository
 
     def add(self, order):
-        self._order_repository.add(order)
+        order_added = self._order_repository.add(order)
+        return order_added
 
     def get_by_id(self, order_id):
         return self._order_repository.get_by_id(order_id)
